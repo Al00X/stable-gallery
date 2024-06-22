@@ -69,9 +69,15 @@ export default class App {
       height: height,
       show: false,
       webPreferences: {
-        contextIsolation: true,
+        nodeIntegration: true,
+        nodeIntegrationInSubFrames: true,
+        nodeIntegrationInWorker: true,
+
+        contextIsolation: false,
         backgroundThrottling: false,
-        preload: join(__dirname, 'main.preload.js'),
+        webSecurity: false,
+        allowRunningInsecureContent: true,
+        // preload: join(__dirname, 'main.preload.js'),
       },
     });
     App.mainWindow.setMenu(null);
@@ -81,6 +87,10 @@ export default class App {
     App.mainWindow.once('ready-to-show', () => {
       App.mainWindow.show();
     });
+
+    if (this.isDevelopmentMode()) {
+      App.mainWindow.webContents.openDevTools();
+    }
 
     // handle all external redirects in a new browser window
     // App.mainWindow.webContents.on('will-navigate', App.onRedirect);

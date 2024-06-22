@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "npm-run-all -p s:frontend s:backend",
-    "s:frontend": "nx s stable-gallery",
+    "s:frontend": "nx s stable-gallery --hmr",
     "s:backend": "nx s stable-gallery-electron",
     "postinstall": "electron-builder install-app-deps"
   },

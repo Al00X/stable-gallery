@@ -1,14 +1,18 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import {FilesService} from "./services/files.service";
 
 @Component({
   standalone: true,
-  imports: [NxWelcomeComponent, RouterModule],
+  imports: [RouterModule],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'stable-gallery';
+  fileService = inject(FilesService);
+
+  constructor() {
+    this.fileService.scan('D:/Dreams')
+  }
 }
