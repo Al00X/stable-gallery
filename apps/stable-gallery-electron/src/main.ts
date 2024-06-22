@@ -3,6 +3,8 @@ import ElectronEvents from './app/events/electron.events';
 import UpdateEvents from './app/events/update.events';
 import { app, BrowserWindow } from 'electron';
 import App from './app/app';
+import * as fs from 'fs/promises';
+import {dataPath} from "./app/constants";
 
 export default class Main {
   static initialize() {
@@ -24,11 +26,16 @@ export default class Main {
       // UpdateEvents.initAutoUpdateService();
     }
   }
+
+  static async prepare() {
+    await fs.mkdir(dataPath, {recursive: true});
+  }
 }
 
-// handle setup events as quickly as possible
-Main.initialize();
+// prepare app
+Main.prepare().then(() => {
+  Main.initialize();
 
-// bootstrap app
-Main.bootstrapApp();
-Main.bootstrapAppEvents();
+  Main.bootstrapApp();
+  Main.bootstrapAppEvents();
+})

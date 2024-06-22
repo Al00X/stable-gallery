@@ -5,6 +5,12 @@
   "prefix": "app",
   "sourceRoot": "apps/stable-gallery/src",
   "tags": [],
+  "schematics": {
+    "@schematics/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush"
+    }
+  },
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",

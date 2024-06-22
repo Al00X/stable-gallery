@@ -5,6 +5,7 @@
 
 import { app, ipcMain } from 'electron';
 import { environment } from '../../environments/environment';
+import {dataPath} from "../constants";
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
@@ -18,6 +19,10 @@ ipcMain.handle('get-app-version', (event) => {
 
   return environment.version;
 });
+
+ipcMain.handle('get-user-data-path', () => {
+  return dataPath;
+})
 
 // Handle App termination
 ipcMain.on('quit', (event, code) => {

@@ -1,8 +1,8 @@
-import { BrowserWindow, shell, screen } from 'electron';
+import { BrowserWindow, shell, screen, protocol, net } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
-import { format } from 'url';
+import * as url from 'url';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -48,6 +48,10 @@ export default class App {
       App.initMainWindow();
       App.loadMainWindow();
     }
+    protocol.handle('atom', (request) => {
+      const filePath = request.url.slice('atom://'.length)
+      return net.fetch(url.pathToFileURL(join(__dirname, filePath)).toString())
+    })
   }
 
   private static onActivate() {
@@ -85,6 +89,7 @@ export default class App {
 
     // if main window is ready to show, close the splash window and show the main window
     App.mainWindow.once('ready-to-show', () => {
+      console.log('???')
       App.mainWindow.show();
     });
 
@@ -113,7 +118,7 @@ export default class App {
       App.mainWindow.loadURL(`http://localhost:${rendererAppPort}`);
     } else {
       App.mainWindow.loadURL(
-        format({
+        url.format({
           pathname: join(__dirname, '..', rendererAppName, 'index.html'),
           protocol: 'file:',
           slashes: true,
@@ -131,6 +136,8 @@ export default class App {
     App.BrowserWindow = browserWindow;
     App.application = app;
 
+    this.initMainWindow();
+    this.loadMainWindow();
     App.application.on('window-all-closed', App.onWindowAllClosed); // Quit when all windows are closed.
     App.application.on('ready', App.onReady); // App is ready to load data
     App.application.on('activate', App.onActivate); // App is activated
