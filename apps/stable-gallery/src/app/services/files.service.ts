@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {inject, Injectable, NgZone} from '@angular/core';
 import type FS from 'fs/promises';
 import type PATH from 'path';
 import type CHOKIDAR from 'chokidar';
@@ -8,6 +8,8 @@ import {BehaviorSubject} from "rxjs";
   providedIn: 'root'
 })
 export class FilesService {
+  private readonly ngZone = inject(NgZone);
+
   public fs: typeof FS;
   public path: typeof PATH;
   public chokidar: typeof CHOKIDAR;
@@ -31,19 +33,38 @@ export class FilesService {
     return result;
   }
 
-  watch(dir: string) {
-    const state = new BehaviorSubject<string[]>([]);
+  watch(dir: string | string[]) {
+    const state = new BehaviorSubject<{
+      latest?: string;
+      memory: string[];
+      latestAction?: 'add' | 'remove';
+    }>({
+      memory: [],
+    });
     const watcher = this.chokidar.watch(dir).on('all', async (e, path, stats) => {
-      if (e === 'add') {
-        state.next(state.value.concat([path]))
-      } else if (e === 'unlink') {
-        const value = state.value;
-        const index = value.indexOf(path);
-        if (index !== -1) {
-          value.splice(index, 1);
-          state.next(value);
+      this.ngZone.run(() => {
+        if (e === 'add') {
+          const memo = state.value.memory;
+          memo.push(path);
+          state.next({
+            memory: memo,
+            latest: path,
+            latestAction: 'add',
+          })
+        } else if (e === 'unlink') {
+          const memo = state.value.memory;
+          const index = memo.indexOf(path);
+          if (index !== -1) {
+            memo.splice(index, 1);
+            state.next({
+              memory: memo,
+              latest: path,
+              latestAction: 'remove'
+            });
+          }
         }
-      }
+
+      })
     })
 
     return {

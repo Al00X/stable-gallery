@@ -6,6 +6,7 @@
     "start": "npm-run-all -p s:frontend s:backend",
     "s:frontend": "nx s stable-gallery --hmr",
     "s:backend": "nx s stable-gallery-electron",
+    "migrate": "npx drizzle-kit generate",
     "postinstall": "electron-builder install-app-deps"
   },
   "private": true,
@@ -18,6 +19,8 @@
     "@angular/platform-browser": "~17.3.0",
     "@angular/platform-browser-dynamic": "~17.3.0",
     "@angular/router": "~17.3.0",
+    "@ngneat/elf": "^2.5.1",
+    "@ngneat/elf-persist-state": "^1.2.1",
     "@nx/angular": "18.3.5",
     "better-sqlite3": "^11.0.0",
     "chokidar": "^3.6.0",

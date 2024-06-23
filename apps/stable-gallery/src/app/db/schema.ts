@@ -1,11 +1,11 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
-export const entries = sqliteTable('entries', {
+export const imagesEntry = sqliteTable('entries', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  path: text('path').notNull(),
-  seed: text('seed').notNull(),
+  path: text('path').unique().notNull(),
+  seed: text('seed'),
   prompt: text('prompt'),
-  negativePrompt: text('neegative_prompt'),
+  negativePrompt: text('negative_prompt'),
   sampler: text('sampler'),
   cfg: integer('cfg'),
   steps: integer('steps'),
@@ -16,3 +16,14 @@ export const entries = sqliteTable('entries', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
 });
+export type ImageEntry = typeof imagesEntry.$inferSelect;
+export type ImageEntryInsert = typeof imagesEntry.$inferInsert;
+
+
+export const statEntry = sqliteTable('stats', {
+  id: integer('id').primaryKey().references(() => imagesEntry.id),
+  favorite: integer('favorite', { mode: 'boolean' }).default(false),
+})
+export type StatsEntry = typeof statEntry.$inferSelect;
+export type StatsEntryInsert = typeof statEntry.$inferInsert;
+

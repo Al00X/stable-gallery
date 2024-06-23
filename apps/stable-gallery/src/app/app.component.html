@@ -1,2 +1,11 @@
+<div class="flex items-center p-4">
+  <div class="w-2 h-2 rounded-full {{ (imageService.isScanning$ | async) ? 'bg-green-500' : 'bg-red-600' }}"></div>
+  <p>{{ imageService.currentScanningFile$ | async }}</p>
+</div>
 <router-outlet></router-outlet>
-<img class="w-[20rem] h-[20rem]" [src]="test()" />
+
+<div class="mt-12 grid grid-cols-4 gap-1">
+  @for(item of items(); track item.path) {
+    <img class="w-full h-full object-cover" [src]="item.path" />
+  }
+</div>

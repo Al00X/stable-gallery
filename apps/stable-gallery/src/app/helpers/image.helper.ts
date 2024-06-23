@@ -1,21 +1,41 @@
+import {ImageEntry, ImageEntryInsert} from "../db/schema";
+
 const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
 
 export class ImageItem {
-  prompt!: string;
-  negativePrompt!: string;
-  steps!: string;
-  hash!: string;
-  seed!: string;
-  sampler!: string;
-  modelHash!: string;
-  cfgScale!: string;
-  width!: string;
-  height!: string;
+  prompt?: string;
+  negativePrompt?: string;
+  steps?: number;
+  hash?: string;
+  seed?: string;
+  sampler?: string;
+  modelHash?: string;
+  cfgScale?: number;
+  width!: number;
+  height!: number;
   createdAt!: Date;
-  updatedAt!: Date;
+  updatedAt?: Date;
 
   loaded = false;
+
+  static fromImageEntry(entry: ImageEntry): ImageItem {
+    const item = new ImageItem(entry.path);
+    item.loaded = true;
+    item.hash = entry.modelHash ?? undefined;
+    item.seed = entry.seed ?? undefined;
+    item.steps = entry.steps ?? undefined;
+    item.prompt = entry.prompt ?? undefined;
+    item.negativePrompt = entry.negativePrompt ?? undefined;
+    item.sampler = entry.sampler ?? undefined;
+    item.modelHash = entry.modelHash ?? undefined;
+    item.cfgScale = entry.cfg ?? undefined;
+    item.width = entry.width ?? 0;
+    item.height = entry.height ?? 0;
+    item.createdAt = entry.createdAt
+    item.updatedAt = entry.updatedAt ?? undefined;
+    return item;
+  }
 
   constructor(public path: string, load = false) {
     if (load) {
@@ -23,10 +43,29 @@ export class ImageItem {
     }
   }
 
-  async load() {
+  async load(force?: boolean) {
+    if (!force && this.loaded) return;
     await this.extractStat();
     await this.extractMetadata();
     this.loaded = true;
+  }
+
+  getModel(): ImageEntryInsert {
+    return {
+      path: this.path,
+      width: this.width,
+      height: this.height,
+      cfg: this.cfgScale,
+      modelHash: this.modelHash,
+      modelName: undefined,
+      negativePrompt: this.negativePrompt,
+      prompt: this.prompt,
+      sampler: this.sampler,
+      seed: this.seed,
+      steps: this.steps,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    }
   }
 
   private async extractStat() {
@@ -69,13 +108,13 @@ export class ImageItem {
 
     this.prompt = prompt;
     this.negativePrompt = negative;
-    this.cfgScale = cfg;
-    this.steps = steps;
+    this.cfgScale = cfg ? +cfg : undefined;
+    this.steps = steps ? +steps : undefined;
     this.hash = hash;
     this.seed = seed;
     this.sampler = sampler;
     this.modelHash = hash;
-    this.width = meta.ImageWidth;
-    this.height = meta.ImageHeight;
+    this.width = +meta.ImageWidth;
+    this.height = +meta.ImageHeight;
   }
 }
