@@ -23,6 +23,7 @@ export type ImageEntryInsert = typeof imagesEntry.$inferInsert;
 export const statEntry = sqliteTable('stats', {
   id: integer('id').primaryKey().references(() => imagesEntry.id),
   favorite: integer('favorite', { mode: 'boolean' }).default(false),
+  nsfw: integer('nsfw', { mode: 'boolean'}).default(false)
 })
 export type StatsEntry = typeof statEntry.$inferSelect;
 export type StatsEntryInsert = typeof statEntry.$inferInsert;

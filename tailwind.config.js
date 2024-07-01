@@ -1,10 +1,12 @@
-/** @type {import('tailwindcss').Config} */
-import {COLORS, VARIABLES} from "./tailwind.theme";
+import {COLORS, DARKCOLORS, VARIABLES} from "./tailwind.theme";
+import {colorVariable} from "@mertasan/tailwindcss-variables/src/helpers";
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./apps/stable-gallery/src/**/*.{html,ts}",
   ],
+  darkMode: 'class',
   theme: {
     borderRadius: {
       0: '0rem',
@@ -61,16 +63,29 @@ module.exports = {
       },
       colors: {
         inherit: 'inherit',
+        white: colorVariable('--colors-white'),
+        black: colorVariable('--colors-black'),
         ...VARIABLES,
       },
     },
     variables: {
       DEFAULT: {
         colors: {
+          white: '#f1eeee',
+          black: '#101010',
           ...COLORS,
         }
       },
     },
+    darkVariables: {
+      DEFAULT: {
+        colors: {
+          white: '#101010',
+          black: '#f1eeee',
+          ...DARKCOLORS,
+        }
+      }
+    }
   },
   plugins: [
     require('@mertasan/tailwindcss-variables')({

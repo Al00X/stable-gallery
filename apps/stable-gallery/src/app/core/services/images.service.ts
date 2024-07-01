@@ -15,7 +15,7 @@ export class ImagesService {
 
   isScanning$ = new BehaviorSubject(false);
   currentScanningFile$ = new BehaviorSubject<string | undefined>(undefined);
-  newItemScanned$ = new Subject<void>();
+  itemsUpdated$ = new Subject<void>();
 
   private _stopScanning?: () => void;
   private subs = new Subscription();
@@ -38,16 +38,24 @@ export class ImagesService {
           this.app.addToScanned(state.latest!);
           appState.scanned.push(state.latest!);
           this.currentScanningFile$.next(state.latest)
-          this.newItemScanned$.next();
+          this.itemsUpdated$.next();
         }).catch(err => {
           if (err.code === "SQLITE_CONSTRAINT_UNIQUE") {
             this.app.addToScanned(state.latest!);
             appState.scanned.push(state.latest!);
           }
         });
+      } else if (state.latest && state.latestAction === 'remove' && appState.scanned.includes(state.latest)) {
+        this.dbService.remove(state.latest!).then(() => {
+          this.app.removeFromScanned(state.latest!);
+          const index = appState.scanned.indexOf(state.latest!);
+          index !== -1 ? appState.scanned.splice(index, 1) : null;
+          this.currentScanningFile$.next(state.latest)
+          this.itemsUpdated$.next();
+        })
       }
     }))
-    this.subs.add(this.newItemScanned$.pipe(debounceTime(1000)).subscribe(() => {
+    this.subs.add(this.itemsUpdated$.pipe(debounceTime(1000)).subscribe(() => {
       this.currentScanningFile$.next(undefined)
     }))
     this._stopScanning = watcher.unwatch;

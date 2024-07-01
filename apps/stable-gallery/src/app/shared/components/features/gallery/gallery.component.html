@@ -1,0 +1,7 @@
+<div class="grid grid-cols-4 gap-1">
+  @for(item of items(); track item.path) {
+    <div class="overflow-hidden w-full h-full aspect-square" (mouseup)="onImageClick(item)">
+      <img class="w-full h-full object-cover {{ item.nsfw ? 'blur-2xl' : '' }}" [src]="item.path" alt="" />
+    </div>
+  }
+</div>

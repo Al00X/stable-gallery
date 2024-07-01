@@ -1,10 +1,7 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {AsyncPipe} from "@angular/common";
-import {debounceTime} from "rxjs";
 import {AppService, ImagesService} from "./core/services";
-import {DbService} from "./core/db";
-import {ImageItem} from "./core/helpers";
 
 @Component({
   standalone: true,
@@ -17,9 +14,6 @@ import {ImageItem} from "./core/helpers";
 export class AppComponent {
   private readonly app = inject(AppService);
   public readonly imageService = inject(ImagesService);
-  private readonly db = inject(DbService);
-
-  items = signal<ImageItem[]>([]);
 
   constructor() {
     setTimeout(() => {
@@ -29,19 +23,5 @@ export class AppComponent {
       ])
       this.imageService.startScan();
     }, 1000)
-
-    this.db.initialized$.subscribe(() => {
-      this.get()
-    })
-    this.imageService.newItemScanned$.pipe(debounceTime(2000)).subscribe(async () => {
-      this.get();
-    })
-  }
-
-  private async get() {
-    if (!this.db.initialized$.value) return;
-    this.items.set(await this.db.getImages({
-      perPage: 100
-    }));
   }
 }

@@ -10,6 +10,7 @@ import type { MigrationMeta } from 'drizzle-orm/migrator';
 import { ImageItem } from '../helpers/image.helper';
 import { imagesEntry } from '../db/schema';
 import {BehaviorSubject} from "rxjs";
+import {desc, eq} from "drizzle-orm";
 
 @Injectable({
   providedIn: 'root',
@@ -53,12 +54,19 @@ export class DbService {
     });
   }
 
+  // q is used as id or path
+  async remove(q: number | string) {
+    if (!q) return;
+    return this.db.delete(imagesEntry).where(typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q));
+  }
+
   async getImages(query?: { page?: number; perPage?: number }) {
     return this.db
       .select()
       .from(imagesEntry)
       .limit(query?.perPage ?? 10)
       .offset((query?.perPage ?? 10) * (query?.page ? query.page - 1 : 0))
+      .orderBy(desc(imagesEntry.createdAt))
       .then((res) => {
         return res.map((t) => ImageItem.fromImageEntry(t));
       });

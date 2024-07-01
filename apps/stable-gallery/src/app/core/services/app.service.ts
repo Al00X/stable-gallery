@@ -38,6 +38,18 @@ export class AppService {
     })
   }
 
+  removeFromScanned(path: string) {
+    appStore.update((state) => {
+      const index = state.scanned.indexOf(path);
+      if (index === -1) return state;
+      state.scanned.splice(index, 1);
+      return {
+        ...state,
+        scanned: state.scanned
+      }
+    })
+  }
+
   setDirs(dirs: string[]) {
     appStore.update((state) => ({
       ...state,

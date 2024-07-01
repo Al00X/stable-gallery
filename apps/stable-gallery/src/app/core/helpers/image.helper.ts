@@ -1,4 +1,4 @@
-import {ImageEntry, ImageEntryInsert} from "../db/schema";
+import { ImageEntry, ImageEntryInsert } from '../db/schema';
 
 const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
@@ -16,6 +16,7 @@ export class ImageItem {
   height!: number;
   createdAt!: Date;
   updatedAt?: Date;
+  nsfw?: boolean;
 
   loaded = false;
 
@@ -32,8 +33,15 @@ export class ImageItem {
     item.cfgScale = entry.cfg ?? undefined;
     item.width = entry.width ?? 0;
     item.height = entry.height ?? 0;
-    item.createdAt = entry.createdAt
+    item.createdAt = entry.createdAt;
     item.updatedAt = entry.updatedAt ?? undefined;
+    item.nsfw =
+      entry.prompt?.includes('nsfw') ||
+      entry.prompt?.includes('boobs') ||
+      entry.prompt?.includes('pussy') ||
+      entry.prompt?.includes('nude') ||
+      entry.prompt?.includes('naked') ||
+      entry.prompt?.includes('breasts');
     return item;
   }
 
@@ -65,7 +73,7 @@ export class ImageItem {
       steps: this.steps,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-    }
+    };
   }
 
   private async extractStat() {
@@ -88,13 +96,13 @@ export class ImageItem {
       const infoChunk =
         chunks.length > 2
           ? (chunks[2] as string).split(', ').reduce((pre, cur) => {
-            const entry = cur.split(': ');
+              const entry = cur.split(': ');
 
-            if (entry.length <= 1) return pre;
-            pre[entry[0]] = entry[1];
+              if (entry.length <= 1) return pre;
+              pre[entry[0]] = entry[1];
 
-            return pre;
-          }, {} as any)
+              return pre;
+            }, {} as any)
           : undefined;
 
       if (infoChunk && Object.keys(infoChunk).length > 0) {

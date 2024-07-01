@@ -10,6 +10,7 @@ const THEME = {
     700: '#004a77',
     800: '#003354',
     900: '#001d33',
+    950: '#01101c'
   },
   secondary: {
     50: '#ffeed8',
@@ -22,8 +23,64 @@ const THEME = {
     700: '#5e4200',
     800: '#422d00',
     900: '#271900',
+    950: '#120c00'
+  },
+  neutral: {
+    50: '#fafafa',
+    100: '#f5f5f5',
+    200: '#e5e5e5',
+    300: '#d4d4d4',
+    400: '#a3a3a3',
+    500: '#737373',
+    600: '#525252',
+    700: '#404040',
+    800: '#262626',
+    900: '#171717',
+    950: '#0a0a0a'
   }
 }
+
+const DARK_THEME = {
+  primary: {
+    50: '#001d33',
+    100: '#003354',
+    200: '#004a77',
+    300: '#00639c',
+    400: '#0078d7',
+    500: '#0088ff',
+    600: '#00a1ff',
+    700: '#00b8ff',
+    800: '#00d0ff',
+    900: '#00e7ff',
+    950: '#bdf3f3'
+  },
+  secondary: {
+    50: '#271900',
+    100: '#422d00',
+    200: '#5e4200',
+    300: '#7c5800',
+    400: '#9c6f00',
+    500: '#bd8700',
+    600: '#dba125',
+    700: '#fabc41',
+    800: '#ffdea8',
+    900: '#ffeed8',
+    950: '#fffbf0'
+  },
+  neutral: {
+    50: '#0a0a0a',
+    100: '#171717',
+    200: '#262626',
+    300: '#404040',
+    400: '#525252',
+    500: '#737373',
+    600: '#a3a3a3',
+    700: '#d4d4d4',
+    800: '#e5e5e5',
+    900: '#f5f5f5',
+    950: '#fafafa'
+  }
+} satisfies typeof THEME;
 
 // // // // // // // // // // // // //
 //
@@ -32,13 +89,16 @@ const THEME = {
 // // // // // // // // // // // // //
 
 const colors: any = {}
+const darkColors: any = {};
 const variables: any = {};
 
 for(const themeKey in THEME) {
   colors[themeKey] = {};
+  darkColors[themeKey] = {};
   variables[themeKey] = {};
   for(const colorKey in THEME[themeKey]) {
     colors[themeKey][colorKey] = THEME[themeKey][colorKey];
+    colors[themeKey][colorKey] = DARK_THEME[themeKey][colorKey];
     const variable = `--colors-${themeKey}-${colorKey}-rgb`;
     variables[themeKey][colorKey] = ({ opacityVariable, opacityValue }) => {
       if (opacityValue !== undefined) {
@@ -58,4 +118,5 @@ function hexToRgb(hex: string) {
 }
 
 export const COLORS = colors;
+export const DARKCOLORS = darkColors;
 export const VARIABLES = variables;
