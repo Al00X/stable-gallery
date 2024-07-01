@@ -2,38 +2,44 @@ import {Component, inject, signal} from '@angular/core';
 import {ImageItem} from "../../../../core/helpers";
 import {DbService} from "../../../../core/db";
 import {debounceTime} from "rxjs";
-import {ImagesService} from "../../../../core/services";
+import {AppService, ImagesService} from "../../../../core/services";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
-  selector: 'app-gallery',
+  selector: 'feature-gallery',
   standalone: true,
-  imports: [],
+  imports: [AsyncPipe],
   templateUrl: './gallery.component.html',
-  styleUrl: './gallery.component.scss'
+  styleUrl: './gallery.component.scss',
 })
 export class GalleryComponent {
   private readonly db = inject(DbService);
   public readonly imageService = inject(ImagesService);
+  public readonly app = inject(AppService);
 
   items = signal<ImageItem[]>([]);
 
   constructor() {
     this.db.initialized$.subscribe(() => {
-      this.get()
-    })
-    this.imageService.itemsUpdated$.pipe(debounceTime(2000)).subscribe(async () => {
       this.get();
-    })
+    });
+    this.imageService.itemsUpdated$
+      .pipe(debounceTime(2000))
+      .subscribe(async () => {
+        this.get();
+      });
   }
 
   onImageClick(item: ImageItem) {
-    console.log(item)
+    console.log(item);
   }
 
   private async get() {
     if (!this.db.initialized$.value) return;
-    this.items.set(await this.db.getImages({
-      perPage: 100
-    }));
+    this.items.set(
+      await this.db.getImages({
+        perPage: 100,
+      })
+    );
   }
 }

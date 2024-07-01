@@ -1,0 +1,22 @@
+.gallery-image {
+  @apply overflow-hidden w-full h-full aspect-square relative;
+  img {
+    @apply w-full h-full object-cover transition-all;
+  }
+
+  &::after {
+    @apply absolute inset-0;
+    transition: opacity 0.2s ease;
+    content: "";
+    opacity: 0;
+    backdrop-filter: none;
+    pointer-events: none;
+  }
+
+  &.is-nsfw {
+    &::after {
+      backdrop-filter: blur(38px);
+      opacity: 1;
+    }
+  }
+}

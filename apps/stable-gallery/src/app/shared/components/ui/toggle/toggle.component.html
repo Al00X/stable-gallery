@@ -1,0 +1,7 @@
+<div
+  class="ui-toggle"
+  [class.is-toggled]="control.value$ | async"
+  (mouseup)="onToggle()"
+>
+  {{ (control.value$ | async) ? activeText : inactiveText }}
+</div>

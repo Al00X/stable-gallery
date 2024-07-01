@@ -22,13 +22,13 @@ export class ImagesService {
 
   startScan() {
     const appState = this.app.state;
-    if (!appState.dirs.length) {
+    if (!appState.settings.dirs.length) {
       console.warn('No directory is selected to scan');
       return;
     }
     this.isScanning$.next(true);
 
-    const watcher = this.file.watch(appState.dirs)
+    const watcher = this.file.watch(appState.settings.dirs)
     this.subs = new Subscription();
     this.subs.add(watcher.state.subscribe((state) => {
       if (!state.latest?.endsWith('.png') && !state.latest?.endsWith('.jpg') && !state.latest?.endsWith('.jpeg')) return;

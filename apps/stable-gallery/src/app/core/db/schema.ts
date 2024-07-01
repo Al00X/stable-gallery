@@ -16,8 +16,8 @@ export const imagesEntry = sqliteTable('entries', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
 });
-export type ImageEntry = typeof imagesEntry.$inferSelect;
-export type ImageEntryInsert = typeof imagesEntry.$inferInsert;
+export type ImagePartialEntry = typeof imagesEntry.$inferSelect;
+export type ImagePartialEntryInsert = typeof imagesEntry.$inferInsert;
 
 
 export const statEntry = sqliteTable('stats', {
@@ -28,3 +28,4 @@ export const statEntry = sqliteTable('stats', {
 export type StatsEntry = typeof statEntry.$inferSelect;
 export type StatsEntryInsert = typeof statEntry.$inferInsert;
 
+export type ImageEntry = ImagePartialEntry & StatsEntry;

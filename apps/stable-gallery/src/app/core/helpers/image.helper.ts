@@ -1,4 +1,4 @@
-import { ImageEntry, ImageEntryInsert } from '../db/schema';
+import {ImageEntry, ImagePartialEntry, ImagePartialEntryInsert} from '../db/schema';
 
 const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
@@ -16,7 +16,7 @@ export class ImageItem {
   height!: number;
   createdAt!: Date;
   updatedAt?: Date;
-  nsfw?: boolean;
+  nsfw = false;
 
   loaded = false;
 
@@ -35,13 +35,7 @@ export class ImageItem {
     item.height = entry.height ?? 0;
     item.createdAt = entry.createdAt;
     item.updatedAt = entry.updatedAt ?? undefined;
-    item.nsfw =
-      entry.prompt?.includes('nsfw') ||
-      entry.prompt?.includes('boobs') ||
-      entry.prompt?.includes('pussy') ||
-      entry.prompt?.includes('nude') ||
-      entry.prompt?.includes('naked') ||
-      entry.prompt?.includes('breasts');
+    item.nsfw = entry.nsfw ?? false;
     return item;
   }
 
@@ -55,10 +49,11 @@ export class ImageItem {
     if (!force && this.loaded) return;
     await this.extractStat();
     await this.extractMetadata();
+    this.extractPopulatedFields();
     this.loaded = true;
   }
 
-  getModel(): ImageEntryInsert {
+  getModel() {
     return {
       path: this.path,
       width: this.width,
@@ -73,6 +68,7 @@ export class ImageItem {
       steps: this.steps,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      nsfw: this.nsfw,
     };
   }
 
@@ -88,21 +84,40 @@ export class ImageItem {
 
     let prompt, negative, steps, hash, cfg, seed, sampler;
 
+    let generateInfo: string | undefined = undefined;
     if (meta.parameters) {
-      const chunks = meta.parameters.split('\n');
+      generateInfo = meta.parameters;
+    } else if (meta.userComment) {
+      generateInfo = decodeUserCommentBuffer(meta.userComment);
+    } else if (meta.XPComment) {
+      generateInfo = meta.XPComment;
+    }
 
-      prompt = chunks.length > 0 ? chunks[0] : undefined;
-      negative = chunks.length > 1 ? chunks[1].substring(18) : undefined;
+    if (generateInfo) {
+      const chunks = generateInfo
+        .split('\n')
+        .map((t) => t.trim())
+        .filter((t) => t.length);
+
+      prompt = (chunks.length > 0 ? chunks.slice(0, -2) : undefined)
+        ?.join(' ')
+        ?.trim();
+      negative = (
+        chunks.length > 1 ? chunks.at(-2)!.substring(17) : undefined
+      )?.trim();
       const infoChunk =
         chunks.length > 2
-          ? (chunks[2] as string).split(', ').reduce((pre, cur) => {
-              const entry = cur.split(': ');
+          ? chunks
+              .at(-1)!
+              .split(', ')
+              .reduce((pre, cur) => {
+                const entry = cur.split(': ');
 
-              if (entry.length <= 1) return pre;
-              pre[entry[0]] = entry[1];
+                if (entry.length <= 1) return pre;
+                pre[entry[0]] = entry[1];
 
-              return pre;
-            }, {} as any)
+                return pre;
+              }, {} as any)
           : undefined;
 
       if (infoChunk && Object.keys(infoChunk).length > 0) {
@@ -125,4 +140,61 @@ export class ImageItem {
     this.width = +meta.ImageWidth;
     this.height = +meta.ImageHeight;
   }
+
+  private extractPopulatedFields() {
+    this.nsfw = checkForNSFW(this.prompt);
+  }
+}
+
+// prettier-ignore
+const nsfwKeys = [
+  'nsfw', 'boobs', 'pussy', 'nude', 'naked', 'breasts', 'butt', 'thigh', 'vagina', 'pubic',
+  'porn', 'sex', 'boobs', 'underboob', 'erotic', 'boobies', 'asshole', 'dick', 'penis',
+];
+function checkForNSFW(text: string | undefined | null) {
+  if (!text) return false;
+  text = text.toLowerCase();
+  for (const key of nsfwKeys) {
+    if (text.includes(key)) return true;
+  }
+  return false;
+}
+
+// Below are some civitAi functions
+
+const decoder = new TextDecoder('utf-16le');
+function decodeUserCommentBuffer(buffer: Uint8Array): string {
+  const bufferWithoutBOM = removeUnicodeHeader(buffer);
+  const littleEndianBuffer = swapByteOrder(bufferWithoutBOM);
+  return decoder.decode(littleEndianBuffer);
+}
+
+/**
+ * Swap the byte order of a Uint8Array from big-endian to little-endian.
+ * @param buffer - The input Uint8Array with big-endian byte order.
+ * @returns A new Uint8Array with little-endian byte order.
+ */
+function swapByteOrder(buffer: Uint8Array): Uint8Array {
+  const swapped = new Uint8Array(buffer.length);
+  for (let i = 0; i < buffer.length; i += 2) {
+    swapped[i] = buffer[i + 1];
+    swapped[i + 1] = buffer[i];
+  }
+  return swapped;
+}
+
+/**
+ * Remove Unicode header bytes if present.
+ * @param buffer - The input Uint8Array.
+ * @returns A new Uint8Array without BOM or header bytes.
+ */
+const unicodeHeader = new Uint8Array([85, 78, 73, 67, 79, 68, 69, 0]);
+function removeUnicodeHeader(buffer: Uint8Array): Uint8Array {
+  if (buffer.length < unicodeHeader.length) return buffer;
+
+  // Check for BOM (Byte Order Mark) for big-endian UTF-16 (0xFEFF) and remove it if present
+  for (let i = 0; i < unicodeHeader.length; i++) {
+    if (buffer[i] !== unicodeHeader[i]) return buffer;
+  }
+  return buffer.slice(unicodeHeader.length);
 }

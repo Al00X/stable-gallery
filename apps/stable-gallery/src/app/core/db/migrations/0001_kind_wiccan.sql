@@ -1,0 +1,1 @@
+ALTER TABLE `stats` ADD `nsfw` integer DEFAULT false;

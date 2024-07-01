@@ -8,9 +8,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as schema from '../db/schema';
 import type { MigrationMeta } from 'drizzle-orm/migrator';
 import { ImageItem } from '../helpers/image.helper';
-import { imagesEntry } from '../db/schema';
-import {BehaviorSubject} from "rxjs";
-import {desc, eq} from "drizzle-orm";
+import {ImageEntry, imagesEntry, statEntry} from '../db/schema';
+import { BehaviorSubject } from 'rxjs';
+import { desc, eq } from 'drizzle-orm';
 
 @Injectable({
   providedIn: 'root',
@@ -40,24 +40,48 @@ export class DbService {
       this.runMigration();
       setTimeout(() => {
         this.initialized$.next(true);
-      }, 1)
+      }, 1);
     });
   }
 
   async addImageEntry(image: ImageItem) {
-    return image.load().then(() => {
-      return this.db.insert(imagesEntry).values({
-        ...image.getModel(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+    return image
+      .load()
+      .then(async () => {
+        const model = image.getModel();
+        if (!model.createdAt) {
+          model.createdAt = new Date();
+        }
+        if (!model.updatedAt) {
+          model.updatedAt = new Date();
+        }
+        const insetRes = await this.db.insert(imagesEntry).values(model).returning({ id: imagesEntry.id });
+        if (insetRes.at(0)) {
+          await this.db.insert(statEntry).values({
+            id: insetRes.at(0)!.id,
+            favorite: false,
+            nsfw: model.nsfw
+          })
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        throw err;
       });
-    });
   }
 
   // q is used as id or path
   async remove(q: number | string) {
     if (!q) return;
-    return this.db.delete(imagesEntry).where(typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q));
+    return this.db
+      .delete(imagesEntry)
+      .where(
+        typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q)
+      )
+      .catch((err) => {
+        console.error(err);
+        throw err;
+      });
   }
 
   async getImages(query?: { page?: number; perPage?: number }) {
@@ -67,8 +91,12 @@ export class DbService {
       .limit(query?.perPage ?? 10)
       .offset((query?.perPage ?? 10) * (query?.page ? query.page - 1 : 0))
       .orderBy(desc(imagesEntry.createdAt))
+      .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id))
       .then((res) => {
-        return res.map((t) => ImageItem.fromImageEntry(t));
+        return res.map((t) => ImageItem.fromImageEntry({
+          ...t.entries,
+          ...t.stats
+        } as ImageEntry));
       });
   }
 

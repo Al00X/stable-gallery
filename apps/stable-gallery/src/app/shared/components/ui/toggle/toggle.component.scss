@@ -1,0 +1,12 @@
+.ui-toggle {
+  transition: all 0.15s ease;
+  @apply flex flex-col items-center justify-center;
+  @apply border border-black;
+  @apply cursor-pointer select-none;
+  @apply text-sm font-semibold;
+  padding: 0.125rem 0.5rem;
+
+  &.is-toggled {
+    @apply bg-black text-white;
+  }
+}
