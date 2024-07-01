@@ -1,8 +1,8 @@
 import {inject, Injectable} from '@angular/core';
 import {FilesService} from "./files.service";
 import {AppService} from "./app.service";
-import {ImageItem} from "../helpers/image.helper";
-import {DbService} from "../db/db.service";
+import {ImageItem} from "../helpers";
+import {DbService} from "../db";
 import {BehaviorSubject, debounceTime, Subject, Subscription} from "rxjs";
 
 @Injectable({
@@ -16,6 +16,8 @@ export class ImagesService {
   isScanning$ = new BehaviorSubject(false);
   currentScanningFile$ = new BehaviorSubject<string | undefined>(undefined);
   itemsUpdated$ = new Subject<void>();
+  itemAdded$ = new Subject<ImageItem>();
+  itemRemoved$ = new Subject<string>();
 
   private _stopScanning?: () => void;
   private subs = new Subscription();
@@ -50,6 +52,7 @@ export class ImagesService {
           appState.scanned.push(state.latest!);
           this.currentScanningFile$.next(state.latest)
           this.itemsUpdated$.next();
+          this.itemAdded$.next(image);
         }).catch(err => {
           if (err.code === "SQLITE_CONSTRAINT_UNIQUE") {
             this.app.addToScanned(state.latest!);
@@ -63,6 +66,7 @@ export class ImagesService {
           index !== -1 ? appState.scanned.splice(index, 1) : null;
           this.currentScanningFile$.next(state.latest)
           this.itemsUpdated$.next();
+          this.itemRemoved$.next(state.latest!);
         })
       }
     }))

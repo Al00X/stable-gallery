@@ -59,18 +59,36 @@ export class DbService {
           .insert(imagesEntry)
           .values(model)
           .returning({ id: imagesEntry.id });
-        if (insetRes.at(0)) {
+        const id = insetRes.at(0)?.id;
+        if (id) {
           await this.db.insert(statEntry).values({
-            id: insetRes.at(0)!.id,
+            id: id,
             favorite: false,
             nsfw: model.nsfw,
           });
         }
+        return await this.getImage(id)
       })
       .catch((err) => {
         console.error(err);
         throw err;
       });
+  }
+
+  async update(image: ImageItem) {
+    if (!image.id) return;
+    return image
+      .load()
+      .then(async () => {
+        const model = image.getModel();
+        await this.db.update(imagesEntry).set(model).where(eq(imagesEntry.id, image.id!));
+        await this.db.update(statEntry).set(model).where(eq(statEntry.id, image.id!));
+      })
+      .catch((err) => {
+        console.error(err);
+        throw err;
+      });
+
   }
 
   // q is used as id or path
@@ -117,6 +135,20 @@ export class DbService {
           ...t.stats,
         } as ImageEntry)
       );
+    });
+  }
+
+  async getImage(q: string | number | undefined) {
+    if (!q) return;
+    return this.db.select().from(imagesEntry).where(
+      typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q)
+    ).limit(1).leftJoin(statEntry, eq(imagesEntry.id, statEntry.id)).then((res) => {
+      const t = res.at(0);
+      if (!t) return undefined;
+      return ImageItem.fromImageEntry({
+        ...t.entries,
+        ...t.stats,
+      } as ImageEntry)
     });
   }
 

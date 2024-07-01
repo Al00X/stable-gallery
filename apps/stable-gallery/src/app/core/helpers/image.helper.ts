@@ -4,6 +4,7 @@ const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
 
 export class ImageItem {
+  id?: number;
   prompt?: string;
   negativePrompt?: string;
   steps?: number;
@@ -23,6 +24,7 @@ export class ImageItem {
   static fromImageEntry(entry: ImageEntry): ImageItem {
     const item = new ImageItem(entry.path);
     item.loaded = true;
+    item.id = entry.id ?? undefined;
     item.hash = entry.modelHash ?? undefined;
     item.seed = entry.seed ?? undefined;
     item.steps = entry.steps ?? undefined;
@@ -149,7 +151,7 @@ export class ImageItem {
 // prettier-ignore
 const nsfwKeys = [
   'nsfw', 'boobs', 'pussy', 'nude', 'naked', 'breasts', 'butt', 'thigh', 'vagina', 'pubic',
-  'porn', 'sex', 'boobs', 'underboob', 'erotic', 'boobies', 'asshole', 'dick', 'penis',
+  'porn', 'sex', 'boobs', 'underboob', 'boobies', 'asshole', 'dick', 'penis',
 ];
 function checkForNSFW(text: string | undefined | null) {
   if (!text) return false;

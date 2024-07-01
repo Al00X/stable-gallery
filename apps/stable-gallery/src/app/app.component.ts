@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {AsyncPipe} from "@angular/common";
 import {AppService, ImagesService} from "./core/services";
+import {registerIcons} from "./icons.config";
 
 @Component({
   standalone: true,
@@ -16,6 +17,8 @@ export class AppComponent {
   public readonly imageService = inject(ImagesService);
 
   constructor() {
+    registerIcons();
+
     setTimeout(async () => {
       this.app.setSettings({
         dirs: [

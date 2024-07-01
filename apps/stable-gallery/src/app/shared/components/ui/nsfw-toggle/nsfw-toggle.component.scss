@@ -1,0 +1,10 @@
+.ui-nsfw {
+  transition: all 0.2s ease;
+  @apply relative border-2 border-black rounded-full w-7 h-7 text-xs font-medium;
+  @apply flex items-center justify-center;
+  @apply cursor-pointer;
+
+  &.toggled {
+    @apply border-error-600 text-error-800 bg-error-200 bg-opacity-20;
+  }
+}
