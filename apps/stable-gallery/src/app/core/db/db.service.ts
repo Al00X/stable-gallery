@@ -75,7 +75,7 @@ function readMigrationFiles(): MigrationMeta[] {
   const fs = window.require('fs');
   const crypto = window.require('crypto');
 
-  const migrationFolderTo = './apps/stable-gallery/src/app/db/migrations';
+  const migrationFolderTo = './apps/stable-gallery/src/app/core/db/migrations';
 
   const migrationQueries: MigrationMeta[] = [];
 

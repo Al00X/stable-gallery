@@ -1,11 +1,10 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {RouterModule} from '@angular/router';
-import {ImagesService} from "./services/images.service";
 import {AsyncPipe} from "@angular/common";
-import {AppService} from "./services/app.service";
 import {debounceTime} from "rxjs";
-import {DbService} from "./db/db.service";
-import {ImageItem} from "./helpers/image.helper";
+import {AppService, ImagesService} from "./core/services";
+import {DbService} from "./core/db";
+import {ImageItem} from "./core/helpers";
 
 @Component({
   standalone: true,
