@@ -21,7 +21,7 @@ export type ImagePartialEntryInsert = typeof imagesEntry.$inferInsert;
 
 
 export const statEntry = sqliteTable('stats', {
-  id: integer('id').primaryKey().references(() => imagesEntry.id),
+  id: integer('id').primaryKey().references(() => imagesEntry.id, { onDelete: 'cascade' }),
   favorite: integer('favorite', { mode: 'boolean' }).default(false),
   nsfw: integer('nsfw', { mode: 'boolean'}).default(false)
 })

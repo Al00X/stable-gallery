@@ -1,0 +1,12 @@
+<div class="ui-field">
+  <ui-label class="ui-field-label" [text]="label"></ui-label>
+  <div class="ui-field-input" [style.width]="width ?? '100%'">
+    <input [formControl]="control" [placeholder]="placeholder ?? ''" [readOnly]="type === 'number'" />
+  </div>
+  @if(type === 'number') {
+    <div class="flex flex-col items-center w-4 h-6 gap-px ms-px">
+      <span class="w-full flex-auto bg-neutral-50 hover:bg-neutral-100" (mouseup)="onNumericButton(true)"></span>
+      <span class="w-full flex-auto bg-neutral-50 hover:bg-neutral-100" (mouseup)="onNumericButton(false)"></span>
+    </div>
+  }
+</div>

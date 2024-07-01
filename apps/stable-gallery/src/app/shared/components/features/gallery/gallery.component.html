@@ -1,7 +1,40 @@
-<div class="grid grid-cols-4 gap-1">
-  @for(item of items(); track item.path) {
-    <div class="gallery-image" [class.is-nsfw]="(app.showNsfw$ | async) ? false : item.nsfw" (mouseup)="onImageClick(item)">
-      <img [src]="item.path" alt="" />
+<div class="flex flex-col relative h-full">
+  <div class="flex-none flex items-center w-full bg-neutral-200 gap-6">
+    <ui-field
+      [control]="itemPerRowControl"
+      type="number"
+      label="Items Per Row"
+      [min]="2"
+      [max]="12"
+      width="2.5rem"
+      class="text-center"
+    ></ui-field>
+
+    <ui-slider
+      [control]="itemSizeControl"
+      label="Items Aspect Ratio"
+      [min]="0.3"
+      [max]="1.7"
+      [step]="0.05"
+    ></ui-slider>
+  </div>
+  <div class="flex-auto overflow-auto">
+    <div
+      class="grid gap-1"
+      [style.grid-template-columns]="
+      'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
+    "
+    >
+      @for(item of items(); track item.path) {
+        <div
+          class="gallery-image"
+          [class.is-nsfw]="(app.showNsfw$ | async) ? false : item.nsfw"
+          [style.aspect-ratio]="itemSizeControl.value$ | async"
+          (mouseup)="onImageClick(item)"
+        >
+          <img [src]="item.path" alt="" />
+        </div>
+      }
     </div>
-  }
+  </div>
 </div>

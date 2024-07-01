@@ -8,6 +8,8 @@ interface AppState {
   settings: {
     dirs: string[];
     showNsfw: boolean;
+    galleryItemPerRow: number;
+    galleryItemAspectRatio: number;
   };
 }
 
@@ -18,6 +20,8 @@ const appStore = createStore(
     settings: {
       dirs: [],
       showNsfw: false,
+      galleryItemPerRow: 4,
+      galleryItemAspectRatio: 1,
     },
   })
 );

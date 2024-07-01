@@ -1,0 +1,24 @@
+:host {
+  text-align: start;
+}
+
+.ui-field {
+  @apply inline-flex items-center p-1;
+  .ui-field-label {
+    flex: none;
+  }
+  .ui-field-input {
+    @apply bg-neutral-50 px-2;
+    width: 100%;
+    min-width: 2rem;
+    input {
+      @apply bg-transparent outline-0 w-full;
+      text-align: inherit;
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+  }
+}

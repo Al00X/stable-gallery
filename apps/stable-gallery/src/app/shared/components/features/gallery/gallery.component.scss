@@ -1,5 +1,5 @@
 .gallery-image {
-  @apply overflow-hidden w-full h-full aspect-square relative;
+  @apply overflow-hidden w-full h-full relative;
   img {
     @apply w-full h-full object-cover transition-all;
   }

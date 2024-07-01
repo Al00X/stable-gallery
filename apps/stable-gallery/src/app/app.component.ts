@@ -16,13 +16,16 @@ export class AppComponent {
   public readonly imageService = inject(ImagesService);
 
   constructor() {
-    setTimeout(() => {
+    setTimeout(async () => {
       this.app.setSettings({
         dirs: [
           // 'E:/sources/automatic1111-sd-webui/outputs/extras-images',
           'D:/Dreams',
         ]
       })
+      console.time('exist')
+      await this.imageService.checkExistence();
+      console.timeEnd('exist')
       this.imageService.startScan();
     }, 1000)
   }

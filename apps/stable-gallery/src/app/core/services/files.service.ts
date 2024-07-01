@@ -73,15 +73,15 @@ export class FilesService {
     }
   }
 
-  private async isDir(dir: string) {
-    const res = await this.fs.lstat(dir);
-    return res.isDirectory();
-  }
-
-  private exists(path: string) {
+  async exists(path: string) {
     return this.fs
       .access(path)
       .then(() => true)
       .catch(() => false);
+  }
+
+  private async isDir(dir: string) {
+    const res = await this.fs.lstat(dir);
+    return res.isDirectory();
   }
 }

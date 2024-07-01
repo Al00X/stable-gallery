@@ -6,6 +6,7 @@ module.exports = {
   content: [
     "./apps/stable-gallery/src/**/*.{html,ts}",
   ],
+  important: true,
   darkMode: 'class',
   theme: {
     borderRadius: {

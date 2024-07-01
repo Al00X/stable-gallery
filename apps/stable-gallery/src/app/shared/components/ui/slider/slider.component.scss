@@ -1,0 +1,18 @@
+:host ::ng-deep mat-slider {
+  .mdc-slider__track--active_fill {
+    @apply bg-neutral-900;
+  }
+  .mdc-slider__track--inactive {
+    @apply bg-neutral-50;
+    opacity: 1 !important;
+  }
+  .mdc-slider__tick-mark--active {
+    @apply bg-neutral-600;
+  }
+  .mdc-slider__tick-mark--inactive {
+    @apply bg-neutral-100;
+  }
+  .mdc-slider__thumb-knob {
+    @apply bg-neutral-900;
+  }
+}

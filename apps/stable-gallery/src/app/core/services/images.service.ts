@@ -20,6 +20,17 @@ export class ImagesService {
   private _stopScanning?: () => void;
   private subs = new Subscription();
 
+  async checkExistence() {
+    const appState = this.app.state;
+    for(const path of appState.scanned) {
+      const exists = await this.file.exists(path);
+      if (!exists) {
+        this.app.removeFromScanned(path);
+        this.dbService.remove(path);
+      }
+    }
+  }
+
   startScan() {
     const appState = this.app.state;
     if (!appState.settings.dirs.length) {

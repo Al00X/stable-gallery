@@ -75,6 +75,7 @@ export class DbService {
     if (!q) return;
     return this.db
       .delete(imagesEntry)
+
       .where(
         typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q)
       )

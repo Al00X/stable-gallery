@@ -18,7 +18,8 @@ CREATE TABLE `entries` (
 CREATE TABLE `stats` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`favorite` integer DEFAULT false,
-	FOREIGN KEY (`id`) REFERENCES `entries`(`id`) ON UPDATE no action ON DELETE no action
+	`nsfw` integer DEFAULT false,
+	FOREIGN KEY (`id`) REFERENCES `entries`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `entries_path_unique` ON `entries` (`path`);
