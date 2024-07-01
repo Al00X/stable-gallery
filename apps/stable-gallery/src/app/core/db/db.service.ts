@@ -8,9 +8,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as schema from '../db/schema';
 import type { MigrationMeta } from 'drizzle-orm/migrator';
 import { ImageItem } from '../helpers/image.helper';
-import {ImageEntry, imagesEntry, statEntry} from '../db/schema';
+import { ImageEntry, imagesEntry, lower, statEntry } from '../db/schema';
 import { BehaviorSubject } from 'rxjs';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, like, or } from 'drizzle-orm';
 
 @Injectable({
   providedIn: 'root',
@@ -55,13 +55,16 @@ export class DbService {
         if (!model.updatedAt) {
           model.updatedAt = new Date();
         }
-        const insetRes = await this.db.insert(imagesEntry).values(model).returning({ id: imagesEntry.id });
+        const insetRes = await this.db
+          .insert(imagesEntry)
+          .values(model)
+          .returning({ id: imagesEntry.id });
         if (insetRes.at(0)) {
           await this.db.insert(statEntry).values({
             id: insetRes.at(0)!.id,
             favorite: false,
-            nsfw: model.nsfw
-          })
+            nsfw: model.nsfw,
+          });
         }
       })
       .catch((err) => {
@@ -85,20 +88,36 @@ export class DbService {
       });
   }
 
-  async getImages(query?: { page?: number; perPage?: number }) {
-    return this.db
+  async getImages(query?: {
+    page?: number;
+    perPage?: number;
+    search?: string;
+  }) {
+    const fn = this.db
       .select()
       .from(imagesEntry)
       .limit(query?.perPage ?? 10)
       .offset((query?.perPage ?? 10) * (query?.page ? query.page - 1 : 0))
       .orderBy(desc(imagesEntry.createdAt))
-      .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id))
-      .then((res) => {
-        return res.map((t) => ImageItem.fromImageEntry({
+      .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id));
+    if (query?.search) {
+      fn.where(
+        or(
+          like(lower(imagesEntry.prompt), `%${query.search.toLowerCase()}%`),
+          like(lower(imagesEntry.sampler), `%${query.search.toLowerCase()}%`),
+          like(lower(imagesEntry.seed), `%${query.search.toLowerCase()}%`),
+          like(lower(imagesEntry.modelHash), `%${query.search.toLowerCase()}%`)
+        )
+      );
+    }
+    return fn.then((res) => {
+      return res.map((t) =>
+        ImageItem.fromImageEntry({
           ...t.entries,
-          ...t.stats
-        } as ImageEntry));
-      });
+          ...t.stats,
+        } as ImageEntry)
+      );
+    });
   }
 
   private runMigration() {

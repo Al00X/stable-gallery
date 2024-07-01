@@ -8,7 +8,7 @@
     flex: none;
   }
   .ui-field-input {
-    @apply bg-neutral-50 px-2;
+    @apply bg-neutral-50 px-2 py-0.5;
     width: 100%;
     min-width: 2rem;
     input {

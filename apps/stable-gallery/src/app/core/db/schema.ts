@@ -1,4 +1,5 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import {AnySQLiteColumn, integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
+import {SQL, sql} from "drizzle-orm";
 
 export const imagesEntry = sqliteTable('entries', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -29,3 +30,7 @@ export type StatsEntry = typeof statEntry.$inferSelect;
 export type StatsEntryInsert = typeof statEntry.$inferInsert;
 
 export type ImageEntry = ImagePartialEntry & StatsEntry;
+
+export function lower(col: AnySQLiteColumn): any {
+  return sql`lower(${col})`;
+}

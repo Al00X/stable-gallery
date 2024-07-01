@@ -1,5 +1,5 @@
 <div class="flex flex-col relative h-full">
-  <div class="flex-none flex items-center w-full bg-neutral-200 gap-6">
+  <div class="flex-none flex items-center w-full bg-neutral-200 gap-6 px-4">
     <ui-field
       [control]="itemPerRowControl"
       type="number"
@@ -17,6 +17,13 @@
       [max]="1.7"
       [step]="0.05"
     ></ui-slider>
+
+    <div class="flex-auto"><!-- Spacer --></div>
+
+    <ui-field
+      [control]="searchControl"
+      placeholder="Search..."
+    ></ui-field>
   </div>
   <div class="flex-auto overflow-auto">
     <div
