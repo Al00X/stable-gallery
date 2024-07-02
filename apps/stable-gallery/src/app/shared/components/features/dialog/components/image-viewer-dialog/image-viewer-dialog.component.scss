@@ -1,0 +1,48 @@
+:host ::ng-deep .pan-element {
+  inset: 0;
+  & > div {
+    height: 100%;
+  }
+}
+
+.details-panel {
+  $width: 30rem;
+  @apply absolute top-0 bottom-0 end-0 transition-all bg-neutral-50 bg-opacity-90 flex flex-col;
+  width: 0;
+  &.open {
+    width: $width;
+  }
+
+  .details-panel-sections {
+    transition: all 0.2s ease;
+    min-width: $width;
+    @apply w-full h-full flex flex-col overflow-hidden py-6 px-6;
+
+    .details-panel-generation {
+      @apply flex-auto flex flex-col gap-6 overflow-y-auto;
+      & section {
+        @apply flex flex-col gap-2;
+        label {
+          @apply font-medium;
+        }
+        div {
+          @apply bg-neutral-300 py-1 px-2;
+          max-height: 14.75rem;
+          overflow: auto;
+        }
+      }
+    }
+    .details-panel-metadata {
+      @apply flex-none grid grid-cols-2 gap-4;
+      & section {
+        @apply flex flex-row gap-2;
+        label {
+          @apply font-medium;
+        }
+        div {
+          @apply px-2 bg-neutral-200;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+<div class="flex h-full max-h-inherit overflow-hidden">
+  <pan-zoom
+    [config]="panZoom"
+    class="flex-auto"
+    (mousedown)="onMouseDown($event)"
+    (mouseup)="onMouseUp($event)"
+  >
+    <div class="w-full h-full flex items-center justify-center">
+      <img
+        class="w-auto h-auto max-h-full cursor-grab select-none"
+        [src]="data.image.path"
+        alt=""
+      />
+    </div>
+  </pan-zoom>
+  <div class="details-panel {{ isDetailsOpen() ? 'open' : '' }}">
+    <div class="relative start-0 top-1/2 flex flex-col justify-center">
+      <div
+        class="absolute flex items-center justify-center transition-all bg-neutral-100 rounded-l-4 select-none cursor-pointer hover:bg-neutral-200 {{
+          isDetailsOpen() ? 'w-7 h-32 -ms-7' : 'w-9 h-48 -ms-9'
+        }}"
+        (click)="isDetailsOpen.set(!isDetailsOpen())"
+      >
+        <span class="absolute rotate-90 font-medium">DETAILS</span>
+      </div>
+    </div>
+
+    <div class="details-panel-sections">
+      <div class="details-panel-generation">
+        <div class="flex flex-col gap-4">
+          @for (item of detailsSection()!.main; track item.label) {
+            <section class="col-span-full">
+              <label>{{ item.label }}</label>
+              <div>{{ item.value ?? '-' }}</div>
+            </section>
+          }
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          @for(item of detailsSection()!.other; track item.label) {
+            <section>
+              <label>{{ item.label }}</label>
+              <div>{{ item.value !== undefined ? item.value : '-' }}</div>
+            </section>
+          }
+        </div>
+
+
+      </div>
+      <div class="details-panel-metadata">
+        @for(item of detailsSection()!.metadata; track item.label; let first = $first) {
+          <section class="{{ first ? 'col-span-full' : '' }}">
+            <label>{{ item.label }}: </label>
+            <div>{{ item.value ?? '-' }}</div>
+          </section>
+        }
+      </div>
+    </div>
+  </div>
+</div>

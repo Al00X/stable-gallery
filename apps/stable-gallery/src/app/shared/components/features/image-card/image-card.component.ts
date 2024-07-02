@@ -60,5 +60,6 @@ export class ImageCardComponent implements OnInit {
 
   onImageClick() {
     console.log(this.image);
+    dialog$.imageViewer({image: this.image});
   }
 }

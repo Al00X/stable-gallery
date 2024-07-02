@@ -2,17 +2,18 @@ import {ImageEntry} from '../db';
 
 const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
+const sharp = window.require('sharp');
 
 export class ImageItem {
   id?: number;
   prompt?: string;
   negativePrompt?: string;
   steps?: number;
-  hash?: string;
   seed?: string;
   sampler?: string;
   modelHash?: string;
   cfgScale?: number;
+  clipSkip?: number;
   width!: number;
   height!: number;
   createdAt!: Date;
@@ -26,7 +27,6 @@ export class ImageItem {
     const item = new ImageItem(entry.path);
     item.loaded = true;
     item.id = entry.id ?? undefined;
-    item.hash = entry.modelHash ?? undefined;
     item.seed = entry.seed ?? undefined;
     item.steps = entry.steps ?? undefined;
     item.prompt = entry.prompt ?? undefined;
@@ -34,6 +34,7 @@ export class ImageItem {
     item.sampler = entry.sampler ?? undefined;
     item.modelHash = entry.modelHash ?? undefined;
     item.cfgScale = entry.cfg ?? undefined;
+    item.clipSkip = entry.clipSkip ?? undefined;
     item.width = entry.width ?? 0;
     item.height = entry.height ?? 0;
     item.createdAt = entry.createdAt;
@@ -63,6 +64,7 @@ export class ImageItem {
       width: this.width,
       height: this.height,
       cfg: this.cfgScale,
+      clipSkip: this.clipSkip,
       modelHash: this.modelHash,
       modelName: undefined,
       negativePrompt: this.negativePrompt,
@@ -85,17 +87,18 @@ export class ImageItem {
 
   private async extractMetadata() {
     const buffer = await fs.readFile(this.path);
-    const meta = await exifr.parse(buffer, true);
+    const meta = await sharp(buffer).metadata();
+    const exif = await exifr.parse(buffer, true);
 
-    let prompt, negative, steps, hash, cfg, seed, sampler;
+    let prompt, negative, steps, hash, cfg, seed, sampler, clipSkip;
 
     let generateInfo: string | undefined = undefined;
-    if (meta.parameters) {
-      generateInfo = meta.parameters;
-    } else if (meta.userComment) {
-      generateInfo = decodeUserCommentBuffer(meta.userComment);
-    } else if (meta.XPComment) {
-      generateInfo = meta.XPComment;
+    if (exif.parameters) {
+      generateInfo = exif.parameters;
+    } else if (exif.userComment) {
+      generateInfo = decodeUserCommentBuffer(exif.userComment);
+    } else if (exif.XPComment) {
+      generateInfo = exif.XPComment;
     }
 
     if (generateInfo) {
@@ -131,19 +134,20 @@ export class ImageItem {
         cfg = infoChunk['CFG scale'];
         seed = infoChunk.Seed;
         sampler = infoChunk.Sampler;
+        clipSkip = infoChunk['Clip skip']
       }
     }
 
     this.prompt = prompt;
     this.negativePrompt = negative;
     this.cfgScale = cfg ? +cfg : undefined;
+    this.clipSkip = clipSkip ? +clipSkip : undefined;
     this.steps = steps ? +steps : undefined;
-    this.hash = hash;
     this.seed = seed;
     this.sampler = sampler;
     this.modelHash = hash;
-    this.width = +meta.ImageWidth;
-    this.height = +meta.ImageHeight;
+    this.width = meta.width;
+    this.height = meta.height;
   }
 
   private extractPopulatedFields() {
@@ -153,12 +157,19 @@ export class ImageItem {
 
 // prettier-ignore
 const nsfwKeys = [
-  'nsfw', 'boobs', 'pussy', 'nude', 'naked', 'breasts', 'butt', 'thigh', 'vagina', 'pubic',
-  'porn', 'sex', 'boobs', 'underboob', 'boobies', 'asshole', 'dick', 'penis',
+  'nsfw', 'pussy', 'nude', 'nudity', 'naked', 'breast', 'thigh', 'vagina', 'pubic',
+  'porn', 'boobs', 'underboob', 'boobies', 'asshole', 'dick', 'penis',
+  'nipple', 'titties',
+
+  // words that could be a part of a non-nsfw words (trailed by a space)
+  'ass ', 'butt ', 'boob ', 'tits ',
+
+  // or things that are not just about porn!
+  'gore',
 ];
 function checkForNSFW(text: string | undefined | null) {
   if (!text) return false;
-  text = text.toLowerCase();
+  text = text.toLowerCase().replace(/,/g, ' , ');
   for (const key of nsfwKeys) {
     if (text.includes(key)) return true;
   }

@@ -9,6 +9,7 @@ export const imagesEntry = sqliteTable('entries', {
   negativePrompt: text('negative_prompt'),
   sampler: text('sampler'),
   cfg: integer('cfg'),
+  clipSkip: integer('clip_skip'),
   steps: integer('steps'),
   width: integer('width'),
   height: integer('height'),

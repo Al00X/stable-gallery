@@ -1,0 +1,9 @@
+.mat-mdc-dialog-surface {
+  box-shadow: none !important;
+  background: none !important;
+  overflow-x: hidden !important;
+}
+.ui-backdrop-blur {
+  background: rgba(0,0,0,0.55) !important;
+  backdrop-filter: blur(6px);
+}

@@ -3,6 +3,7 @@ import {RouterModule} from '@angular/router';
 import {AsyncPipe} from "@angular/common";
 import {AppService, ImagesService} from "./core/services";
 import {registerIcons} from "./icons.config";
+import {setupGlobalServices} from "./globawls";
 
 @Component({
   standalone: true,
@@ -17,6 +18,7 @@ export class AppComponent {
   public readonly imageService = inject(ImagesService);
 
   constructor() {
+    setupGlobalServices();
     registerIcons();
 
     setTimeout(async () => {
