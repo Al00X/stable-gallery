@@ -1,0 +1,21 @@
+.ui-star {
+  transition: all 0.5s cubic-bezier(.16,.7,.16,1.41);
+  @apply text-black;
+  @apply cursor-pointer;
+  mat-icon {
+    color: inherit;
+  }
+  &.toggled {
+    //@apply text-yellow-500;
+    transform: scale(1);
+    scale: 1.1;
+  }
+  &:hover {
+    opacity: 0.95;
+    transform: scale(1.05);
+  }
+  &:hover:active {
+    opacity: 0.9;
+    transform: scale(0.9);
+  }
+}

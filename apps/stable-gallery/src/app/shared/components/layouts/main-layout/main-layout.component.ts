@@ -2,14 +2,14 @@ import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterOutlet} from "@angular/router";
 import {AppService, ImagesService} from "../../../../core/services";
-import {ButtonComponent, ToggleComponent} from "../../ui";
+import {ToggleComponent} from "../../ui";
 import {formControl} from "../../../../core/helpers";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ToggleComponent, ButtonComponent],
+  imports: [CommonModule, RouterOutlet, ToggleComponent],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

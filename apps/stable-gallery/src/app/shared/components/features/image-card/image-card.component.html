@@ -8,6 +8,7 @@
     class="cursor-pointer"
     (mouseup)="onImageClick()"
   />
+  <div class="feature-image-card-top-shadow"></div>
   @if(isNsfw()) {
   <div
     class="text-2xs font-medium inline-block absolute top-2 start-2 rounded-full bg-error-400 text-black px-1 py-px pointer-events-none z-1"
@@ -15,6 +16,12 @@
     NSFW
   </div>
   }
+  <ui-favorite-toggle
+    class="absolute top-2 end-2 z-1"
+    [value]="isFavorite()"
+    (click)="$event.stopPropagation()"
+    (onToggle)="isFavorite.set($event)"
+  ></ui-favorite-toggle>
   <div class="feature-image-card-tools z-1" (click)="$event.stopPropagation()">
     <ui-nsfw-toggle
       [value]="isNsfw()"

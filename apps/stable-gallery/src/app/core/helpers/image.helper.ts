@@ -1,4 +1,4 @@
-import {ImageEntry, ImagePartialEntry, ImagePartialEntryInsert} from '../db/schema';
+import {ImageEntry} from '../db';
 
 const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
@@ -18,6 +18,7 @@ export class ImageItem {
   createdAt!: Date;
   updatedAt?: Date;
   nsfw = false;
+  favorite = false;
 
   loaded = false;
 
@@ -38,6 +39,7 @@ export class ImageItem {
     item.createdAt = entry.createdAt;
     item.updatedAt = entry.updatedAt ?? undefined;
     item.nsfw = entry.nsfw ?? false;
+    item.favorite = entry.favorite ?? false;
     return item;
   }
 
@@ -71,6 +73,7 @@ export class ImageItem {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       nsfw: this.nsfw,
+      favorite: this.favorite,
     };
   }
 
