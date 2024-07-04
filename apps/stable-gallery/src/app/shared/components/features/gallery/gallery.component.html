@@ -20,20 +20,20 @@
 
     <div class="flex-auto"><!-- Spacer --></div>
 
-    <ui-field
-      [control]="searchControl"
-      placeholder="Search..."
-    ></ui-field>
+    <ui-field [control]="searchControl" placeholder="Search..."></ui-field>
   </div>
   <div class="flex-auto overflow-auto px-1" (scroll)="onScroll($event)">
     <div
       class="grid gap-1"
       [style.grid-template-columns]="
-      'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
-    "
+        'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
+      "
     >
       @for(item of items(); track item.path) {
-        <feature-image-card [image]="item" [style.aspect-ratio]="itemSizeControl.value$ | async"></feature-image-card>
+      <feature-image-card
+        [image]="item"
+        [style.aspect-ratio]="itemSizeControl.value$ | async"
+      ></feature-image-card>
       }
     </div>
   </div>

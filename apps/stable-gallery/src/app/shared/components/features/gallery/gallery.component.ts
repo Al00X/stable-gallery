@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import { formControl, ImageItem } from '../../../../core/helpers';
 import { DbService } from '../../../../core/db';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -21,7 +21,7 @@ const SCROLL_THRESHOLD = 200;
     MatSlider,
     MatSliderThumb,
     SliderComponent,
-    ImageCardComponent,
+    ImageCardComponent
   ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
@@ -36,6 +36,7 @@ export class GalleryComponent {
     search?: string;
   }>({});
   page = signal(0);
+  currentCount = computed(() => this.items().length);
   allLoaded = signal(false);
 
   itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);
@@ -46,21 +47,21 @@ export class GalleryComponent {
     this.db.initialized$.subscribe(() => {
       this.get(true);
     });
-    this.scan.itemAdded$.pipe(takeUntilDestroyed()).subscribe(image => {
-      this.items.update(v => {
+    this.scan.itemAdded$.pipe(takeUntilDestroyed()).subscribe((image) => {
+      this.items.update((v) => {
         v.unshift(image);
         return v;
-      })
-    })
-    this.scan.itemRemoved$.pipe(takeUntilDestroyed()).subscribe(path => {
-      this.items.update(v => {
-        const i = v.findIndex(t => t.path === path);
+      });
+    });
+    this.scan.itemRemoved$.pipe(takeUntilDestroyed()).subscribe((path) => {
+      this.items.update((v) => {
+        const i = v.findIndex((t) => t.path === path);
         if (i !== -1) {
           v.splice(i, 1);
         }
         return v;
-      })
-    })
+      });
+    });
     // this.imageService.itemsUpdated$
     //   .pipe(debounceTime(2000))
     //   .subscribe(async () => {
@@ -108,22 +109,23 @@ export class GalleryComponent {
     const filters = this.filters();
     const perPage = 100;
 
-    const fn = async () => await this.db.getImages({
-      page: this.page(),
-      perPage,
-      search: filters.search,
-    })
+    const fn = async () =>
+      await this.db.getImages({
+        page: this.page(),
+        perPage,
+        search: filters.search,
+      });
     if (reset) {
       this.page.set(1);
       this.items.set(await fn());
     } else {
       if (this.allLoaded()) return;
-      this.page.update(v => v+1);
+      this.page.update((v) => v + 1);
       const res = await fn();
       if (res.length < perPage) {
         this.allLoaded.set(true);
       }
-      this.items.update((v) => v.concat(res))
+      this.items.update((v) => v.concat(res));
     }
   }
 }

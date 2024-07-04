@@ -1,9 +1,7 @@
-import {Component, inject, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {BaseDialogComponent} from "../_base-dialog.component";
 import {DialogLayoutComponent} from "../../../../layouts";
-import {AppService, ElectronService} from "../../../../../../core/services";
-import {formControl} from "../../../../../../core/helpers";
-import {ButtonComponent, ListFieldAddEvent, ListFieldComponent} from "../../../../ui";
+import {ButtonComponent, ListFieldComponent} from "../../../../ui";
 import {SettingsFormComponent} from "../../../settings-form/settings-form.component";
 
 export type SettingsDialogData = {} | undefined;
