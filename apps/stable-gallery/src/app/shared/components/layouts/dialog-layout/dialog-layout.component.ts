@@ -1,20 +1,21 @@
 import {Component, EventEmitter, Input, Output, signal} from '@angular/core';
 import {AbstractControl} from "@angular/forms";
-import {ButtonClickEvent} from "../../ui";
+import {ButtonClickEvent, ButtonComponent, IconComponent} from "../../ui";
 import {MatDialogRef} from "@angular/material/dialog";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-dialog-layout',
   standalone: true,
-  imports: [],
+  imports: [IconComponent, NgIf, ButtonComponent],
   templateUrl: './dialog-layout.component.html',
-  styleUrl: './dialog-layout.component.scss'
+  styleUrl: './dialog-layout.component.scss',
 })
 export class DialogLayoutComponent {
   @Input() title = '';
   @Input() subtitle?: string;
-  @Input() submitBtn?: string;
-  @Input() cancelBtn?: string;
+  @Input() submitBtn?: string = 'Submit';
+  @Input() cancelBtn?: string = 'Cancel';
   @Input() submitClass?: string;
   @Input() cancelClass?: string;
   @Input() showCloseBtn = true;

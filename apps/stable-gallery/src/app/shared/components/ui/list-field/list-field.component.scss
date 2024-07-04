@@ -1,0 +1,11 @@
+.ui-list-field {
+  @apply flex flex-col gap-2;
+
+  .ui-list-field-wrapper {
+    @apply flex flex-col bg-neutral-100 rounded-1 p-1 gap-px;
+    min-height: 10rem;
+    & > div {
+      @apply flex items-center px-4 py-1 bg-neutral-50 gap-2;
+    }
+  }
+}

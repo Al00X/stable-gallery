@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { formControl, ImageItem } from '../../../../core/helpers';
 import { DbService } from '../../../../core/db';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { AppService, ImagesService } from '../../../../core/services';
+import { AppService, ScanService } from '../../../../core/services';
 import { AsyncPipe } from '@angular/common';
 import { FieldComponent, SliderComponent } from '../../ui';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
@@ -28,7 +28,7 @@ const SCROLL_THRESHOLD = 200;
 })
 export class GalleryComponent {
   private readonly db = inject(DbService);
-  public readonly imageService = inject(ImagesService);
+  public readonly scan = inject(ScanService);
   public readonly app = inject(AppService);
 
   items = signal<ImageItem[]>([]);
@@ -46,13 +46,13 @@ export class GalleryComponent {
     this.db.initialized$.subscribe(() => {
       this.get(true);
     });
-    this.imageService.itemAdded$.pipe(takeUntilDestroyed()).subscribe(image => {
+    this.scan.itemAdded$.pipe(takeUntilDestroyed()).subscribe(image => {
       this.items.update(v => {
         v.unshift(image);
         return v;
       })
     })
-    this.imageService.itemRemoved$.pipe(takeUntilDestroyed()).subscribe(path => {
+    this.scan.itemRemoved$.pipe(takeUntilDestroyed()).subscribe(path => {
       this.items.update(v => {
         const i = v.findIndex(t => t.path === path);
         if (i !== -1) {

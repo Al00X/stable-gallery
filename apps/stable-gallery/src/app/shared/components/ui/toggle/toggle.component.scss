@@ -1,12 +1,44 @@
 .ui-toggle {
   transition: all 0.15s ease;
-  @apply flex flex-col items-center justify-center;
+  @apply relative flex flex-col items-center justify-center;
   @apply border border-black;
   @apply cursor-pointer select-none;
-  @apply text-sm font-semibold;
-  padding: 0.125rem 0.5rem;
+  @apply text-xs font-semibold tracking-widest;
+  padding: 0.25rem 0.5rem;
+
+  & > * {
+    z-index: 1;
+  }
+
+  &::before {
+    transition: all 0.35s cubic-bezier(.03,.93,.89,.99);
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    //backdrop-filter: invert(100%);
+    @apply bg-black;
+  }
 
   &.is-toggled {
-    @apply bg-black text-white;
+    @apply text-white #{!important};
+    &::before {
+      width: 100%;
+    }
+    //&:hover {
+    //  @apply bg-neutral-900 brightness-95;
+    //}
+    //&:hover:active {
+    //  @apply bg-neutral-900 brightness-90;
+    //}
+  }
+
+  &:not(.is-toggled):hover {
+    @apply bg-neutral-50 brightness-95;
+  }
+  &:not(.is-toggled):hover:active {
+    @apply bg-neutral-50 brightness-90;
   }
 }

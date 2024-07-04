@@ -38,6 +38,7 @@
   transition-property: width, height, background-color, opacity, font-size, border, box-shadow, filter;
   transition-duration: 0.15s;
   transition-timing-function: ease;
+  box-sizing: content-box;
   height: 1.75rem;
   max-width: initial;
   width: auto;
@@ -118,7 +119,7 @@
   }
 
   .ui-button-content {
-    @apply flex flex-row items-center w-full h-full relative;
+    @apply flex flex-row items-center justify-center w-full h-full relative;
     &.loading {
       & > *:not(.ui-button-loading-spinner) {
         visibility: hidden !important;

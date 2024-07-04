@@ -1,30 +1,27 @@
-<!--<div class="flex flex-col w-full h-full pt-6 pb-9 px-5 sm:px-11 flex-auto overflow-hidden">-->
-<!--  <ui-icon-->
-<!--    *ngIf="showCloseBtn"-->
-<!--    class="absolute top-0.5 sm:top-5 end-0.5 sm:end-9 rounded-full text-theme-table-row-text w-10 h-10"-->
-<!--    (onClick)="closeDialog()"-->
-<!--    size="1.75rem"-->
-<!--    icon="close"-->
-<!--  ></ui-icon>-->
-<!--  <div class="flex flex-col">-->
-<!--    <p class="text-theme-highest text-xl font-medium">{{ title }}</p>-->
-<!--    <p *ngIf="subtitle" class="text-surface-on-variant text-sm mt-2">{{ subtitle }}</p>-->
-<!--  </div>-->
-<!--  <div class="flex flex-col mt-6 px-1 sm:px-4 flex-auto overflow-auto">-->
-<!--    <ng-content></ng-content>-->
-<!--  </div>-->
-<!--  <feature-bottom-controls-->
-<!--    *ngIf="!hideControls"-->
-<!--    [form]="form"-->
-<!--    [actionType]="actionType()"-->
-<!--    [submitText]="submitBtn"-->
-<!--    [cancelText]="cancelBtn"-->
-<!--    [submitClass]="submitClass"-->
-<!--    [cancelClass]="cancelClass"-->
-<!--    (onSubmit)="onSubmit.emit($event)"-->
-<!--    (onCancel)="onCancelClick()"-->
-<!--    (onError)="onError.emit()"-->
-<!--  >-->
-<!--    <ng-content select="[slot=bottom]"></ng-content>-->
-<!--  </feature-bottom-controls>-->
-<!--</div>-->
+<div class="flex flex-col w-full h-full pt-6 pb-9 px-5 sm:px-11 flex-auto overflow-hidden bg-neutral-200">
+  <ui-icon
+    *ngIf="showCloseBtn"
+    class="absolute top-0.5 sm:top-5 end-0.5 sm:end-9 rounded-full text-theme-table-row-text w-10 h-10 opacity-60"
+    (onClick)="closeDialog()"
+    size="2.75rem"
+    icon="close"
+  ></ui-icon>
+  <div class="flex flex-col">
+    <p class="text-theme-highest text-xl font-medium -ms-1">{{ title }}</p>
+    <p *ngIf="subtitle" class="text-surface-on-variant text-sm mt-2">{{ subtitle }}</p>
+  </div>
+  <div class="flex flex-col mt-6 flex-auto overflow-auto">
+    <ng-content></ng-content>
+  </div>
+  <div class="flex flex-row-reverse gap-4 pt-6">
+    @if(!hideControls) {
+      @if(submitBtn) {
+        <ui-button theme="custom" class="dialog-default-btn submit-btn {{ submitClass ?? '' }}">{{ submitBtn }}</ui-button>
+      }
+      @if(cancelBtn) {
+        <ui-button class="dialog-default-btn {{ cancelClass ?? ''}}" appearance="stroked" (onClick)="closeDialog()">{{ cancelBtn }}</ui-button>
+      }
+    }
+    <ng-content select="[slot=bottom]"></ng-content>
+  </div>
+</div>

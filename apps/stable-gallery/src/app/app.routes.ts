@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import {lazyLoad} from "./core/helpers";
+import {SettingsValidGuard} from "./core/guards/settings-valid.guard";
 
 export const appRoutes: Route[] = [
   {
@@ -8,7 +9,17 @@ export const appRoutes: Route[] = [
     children: [
       {
         path: '',
-        loadComponent: () => lazyLoad(import('./pages/home/home.component'))
+        canActivateChild: [SettingsValidGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () => lazyLoad(import('./pages/home/home.component'))
+          }
+        ]
+      },
+      {
+        path: 'welcome',
+        loadComponent: () => lazyLoad(import('./pages/welcome/welcome.component')),
       }
     ]
   }

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "300fe869-c565-4d85-aebb-21aacaf34eb0",
+  "id": "9a212a37-c9ad-4749-9014-051b15341074",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "entries": {
@@ -51,6 +51,13 @@
         },
         "cfg": {
           "name": "cfg",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "clip_skip": {
+          "name": "clip_skip",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,

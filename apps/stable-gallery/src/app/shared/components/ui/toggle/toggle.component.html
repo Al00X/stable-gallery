@@ -2,6 +2,7 @@
   class="ui-toggle"
   [class.is-toggled]="control.value$ | async"
   (mouseup)="onToggle()"
+  [matTooltip]="(control.value$ | async) ? activeTooltip! : inactiveTooltip!"
 >
-  {{ (control.value$ | async) ? activeText : inactiveText }}
+  <span>{{ (control.value$ | async) ? activeText : inactiveText }}</span>
 </div>

@@ -1,4 +1,4 @@
-/* eslint-disable */
+@typescript-eslint/ban-types/* eslint-disable */
 export default {
   displayName: 'stable-gallery',
   preset: '../../jest.preset.js',

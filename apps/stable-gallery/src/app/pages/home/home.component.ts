@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {GalleryComponent} from "../../shared/components/features";
+import {ScanService} from "../../core/services";
 
 @Component({
   selector: 'app-home',
@@ -8,4 +9,10 @@ import {GalleryComponent} from "../../shared/components/features";
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {}
+export class HomeComponent {
+  private scan = inject(ScanService)
+
+  constructor() {
+    this.scan.startScan();
+  }
+}

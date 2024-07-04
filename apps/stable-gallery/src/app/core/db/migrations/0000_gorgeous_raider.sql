@@ -6,6 +6,7 @@ CREATE TABLE `entries` (
 	`negative_prompt` text,
 	`sampler` text,
 	`cfg` integer,
+	`clip_skip` integer,
 	`steps` integer,
 	`width` integer,
 	`height` integer,

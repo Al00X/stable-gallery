@@ -1,0 +1,12 @@
+:host {
+  @apply flex flex-col h-full;
+}
+
+.dialog-default-btn {
+  padding: 0.25rem 0.75rem;
+  width: 5.5rem;
+
+  &.submit-btn {
+    @apply bg-primary-500 text-black;
+  }
+}

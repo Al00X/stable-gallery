@@ -9,6 +9,12 @@ import {
   ImageViewerDialogComponent,
   ImageViewerDialogData, ImageViewerDialogResult
 } from "./components/image-viewer-dialog/image-viewer-dialog.component";
+import {
+  SettingsDialogComponent,
+  SettingsDialogData,
+  SettingsDialogResult
+} from "./components/settings-dialog/settings-dialog.component";
+import {ScanProgressDialogComponent} from "./components/scan-progress-dialog/scan-progress-dialog.component";
 
 @Injectable({
   providedIn: 'root',
@@ -30,5 +36,21 @@ export class DialogService {
       maxWidth: '100vw',
       maxHeight: '100vh'
     })
+  }
+
+  settings(data: SettingsDialogData) {
+    return this.dialog.open<SettingsDialogComponent, SettingsDialogData, SettingsDialogResult>(SettingsDialogComponent, data, {
+      width: '60%',
+      height: '60%',
+      maxWidth: '1020px',
+      maxHeight: '720px'
+    })
+  }
+
+  scanProgress() {
+    return this.dialog.open(ScanProgressDialogComponent, undefined, {
+      width: '600px',
+      disableClose: true,
+    });
   }
 }

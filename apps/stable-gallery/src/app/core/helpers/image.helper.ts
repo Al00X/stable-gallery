@@ -159,13 +159,13 @@ export class ImageItem {
 const nsfwKeys = [
   'nsfw', 'pussy', 'nude', 'nudity', 'naked', 'breast', 'thigh', 'vagina', 'pubic',
   'porn', 'boobs', 'underboob', 'boobies', 'asshole', 'dick', 'penis',
-  'nipple', 'titties',
+  'nipple', 'titties', 'tight',
 
   // words that could be a part of a non-nsfw words (trailed by a space)
-  'ass ', 'butt ', 'boob ', 'tits ',
+  ' ass ', ' butt ', ' boob ', ' tits ',
 
   // or things that are not just about porn!
-  'gore',
+  // 'gore',
 ];
 function checkForNSFW(text: string | undefined | null) {
   if (!text) return false;

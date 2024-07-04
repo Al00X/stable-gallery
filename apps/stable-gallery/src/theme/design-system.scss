@@ -7,3 +7,12 @@
   background: rgba(0,0,0,0.55) !important;
   backdrop-filter: blur(6px);
 }
+
+mat-progress-bar {
+  @apply bg-neutral-300 #{!important};
+
+  .mdc-linear-progress__bar-inner {
+    @apply border-primary-700 #{!important};
+  }
+}
+

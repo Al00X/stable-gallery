@@ -24,6 +24,10 @@ export class ElectronService {
     })
   }
 
+  async openDirectorySelectDialog() {
+    return await this.ipc.invoke('open-directory-select-dialog')
+  }
+
   private async getUserDataPath() {
     this.userDataPath = await this.ipc.invoke('get-user-data-path');
   }

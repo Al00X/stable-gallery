@@ -3,9 +3,10 @@
  * between the frontend to the electron backend.
  */
 
-import { app, ipcMain } from 'electron';
+import {app, dialog, ipcMain} from 'electron';
 import { environment } from '../../environments/environment';
 import {dataPath} from "../constants";
+import App from "../app";
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
@@ -22,6 +23,18 @@ ipcMain.handle('get-app-version', (event) => {
 
 ipcMain.handle('get-user-data-path', () => {
   return dataPath;
+})
+
+ipcMain.handle('open-directory-select-dialog', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(App.mainWindow, {
+    title: 'Choose a directory',
+    properties: ['openDirectory']
+  })
+  if (canceled) {
+    return
+  } else {
+    return filePaths[0]
+  }
 })
 
 // Handle App termination

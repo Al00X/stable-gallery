@@ -1,0 +1,29 @@
+:host {
+  @apply text-black;
+  display: block;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  border-radius: 0.25rem;
+}
+
+.ui-icon {
+  @apply transition-all duration-150 filter w-inherit h-inherit text-inherit;
+  @apply flex items-center justify-center;
+  border-radius: inherit;
+
+  &.is-clickable {
+    @apply cursor-pointer;
+    &:hover {
+      @apply bg-neutral-50 brightness-90 drop-shadow-sm #{!important};
+    }
+    &:hover:active {
+      @apply bg-neutral-50 brightness-100 drop-shadow-none #{!important};
+    }
+  }
+
+  &.disabled {
+    cursor: default !important;
+    @apply text-gray-400;
+  }
+}

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
-import {debounceTime, map} from 'rxjs';
+import {map} from 'rxjs';
 
 interface AppState {
-  scanned: string[];
   settings: {
     dirs: string[];
     showNsfw: boolean;
@@ -16,7 +15,6 @@ interface AppState {
 const appStore = createStore(
   { name: 'app' },
   withProps<AppState>({
-    scanned: [],
     settings: {
       dirs: [],
       showNsfw: false,
@@ -28,7 +26,6 @@ const appStore = createStore(
 
 persistState(appStore, {
   storage: localStorageStrategy,
-  source: () => appStore.pipe(debounceTime(1000)),
 });
 
 @Injectable({
@@ -40,28 +37,6 @@ export class AppService {
 
   get state() {
     return appStore.state;
-  }
-
-  addToScanned(path: string) {
-    appStore.update((state) => {
-      if (state.scanned.includes(path)) return state;
-      return {
-        ...state,
-        scanned: state.scanned.concat(path),
-      };
-    });
-  }
-
-  removeFromScanned(path: string) {
-    appStore.update((state) => {
-      const index = state.scanned.indexOf(path);
-      if (index === -1) return state;
-      state.scanned.splice(index, 1);
-      return {
-        ...state,
-        scanned: state.scanned,
-      };
-    });
   }
 
   setSettings(settings: Partial<AppState['settings']>) {
@@ -76,5 +51,13 @@ export class AppService {
 
   reset() {
     appStore.reset();
+  }
+
+  isSettingsValid() {
+    const settings = this.state.settings;
+    if (settings.dirs.length === 0) {
+      return false;
+    }
+    return true;
   }
 }

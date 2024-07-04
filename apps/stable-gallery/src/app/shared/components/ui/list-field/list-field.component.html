@@ -1,0 +1,18 @@
+<div class="ui-list-field">
+  <ui-label [text]="label"></ui-label>
+  <div class="ui-list-field-wrapper">
+    @for (item of ((control.value$ | async) ?? []); track item; let index = $index) {
+      <div>
+        <span [title]="item" class="overflow-hidden flex-auto text-ellipsis">{{ item }}</span>
+        <ui-icon class="text-error-600" icon="close" (onClick)="removeFromList(index)"></ui-icon>
+      </div>
+    } @empty {
+      <p class="opacity-30 p-3 select-none">The list is empty, add an item to display it here.</p>
+    }
+  </div>
+  <div class="flex items-center gap-4 flex-row-reverse">
+    @if (addButton) {
+      <ui-button (onClick)="onAddButtonClick()">{{ addButton }}</ui-button>
+    }
+  </div>
+</div>

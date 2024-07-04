@@ -1,0 +1,13 @@
+<div class="absolute inset-0 flex flex-col items-center justify-center bg-neutral-50">
+  <div class="flex flex-col items-center bg-neutral-200 rounded-1 p-12 pt-18">
+    <p class="text-center font-semibold text-5xl">WELCOME</p>
+    <p class="text-center font-semibold text-3xl">To Stable Gallery</p>
+    <hr class="w-full mt-12 mb-6 opacity-30" />
+    <p class="text-base opacity-70">Please complete the below settings in order to continue using your gallery...</p>
+    <div class="mt-16"></div>
+    <feature-settings-form #SettingsForm></feature-settings-form>
+    <div class="flex items-center flex-row-reverse pt-12">
+      <ui-button class="text-black bg-primary-500 px-6 py-1" (onClick)="onSave()">CONTINUE</ui-button>
+    </div>
+  </div>
+</div>

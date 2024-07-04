@@ -6,6 +6,7 @@ import { filter, map, Observable, take } from 'rxjs';
 
 export interface DialogExtended<T, R> {
   ref: MatDialogRef<T, R>;
+  close: () => void;
   afterOpened: () => Observable<void>;
   afterClosed: () => Observable<R | undefined>;
   beforeClosed: () => Observable<R | undefined>;
@@ -39,6 +40,7 @@ export class DialogInvokerService {
     const componentIns = ref.componentInstance as BaseDialogComponent<D, R>;
     const extended: DialogExtended<T, R> = {
       ref,
+      close: () => ref.close(),
       afterOpened: () => ref.afterOpened(),
       afterClosed: () => ref.afterClosed(),
       beforeClosed: () => ref.beforeClosed(),
