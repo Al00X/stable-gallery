@@ -1,0 +1,14 @@
+<div class="flex gap-inherit">
+  @for (col of processedItems(); track col.index) {
+    <div class="flex-1 flex flex-col gap-inherit">
+      <ng-container *ngFor="let item of col.items; trackBy: trackBy">
+        @if(itemTemplate) {
+          <ng-template
+            [ngTemplateOutlet]="itemTemplate"
+            [ngTemplateOutletContext]="{ item }"
+          ></ng-template>
+        }
+      </ng-container>
+    </div>
+  }
+</div>

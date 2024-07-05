@@ -33,7 +33,10 @@ export class FieldComponent implements OnInit {
   onNumericButton(increase: boolean) {
     if (this.type !== 'number') return;
     const inc = increase ? 1 : -1;
-    const currentValue = parseInt(this.control.value);
+    let currentValue = parseInt(this.control.value);
+    if (isNaN(currentValue)) {
+      currentValue = (this.min ?? 0);
+    }
     if (
       (this.min !== undefined && currentValue + inc < this.min) ||
       (this.max !== undefined && currentValue + inc > this.max)

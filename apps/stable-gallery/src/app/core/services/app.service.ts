@@ -9,6 +9,7 @@ interface AppState {
     showNsfw: boolean;
     galleryItemPerRow: number;
     galleryItemAspectRatio: number;
+    galleryColumns: number;
     galleryViewStyle?: 'grid' | 'masonry';
   };
 }
@@ -21,6 +22,7 @@ const appStore = createStore(
       showNsfw: false,
       galleryItemPerRow: 4,
       galleryItemAspectRatio: 1,
+      galleryColumns: 4,
       galleryViewStyle: 'grid',
     },
   })

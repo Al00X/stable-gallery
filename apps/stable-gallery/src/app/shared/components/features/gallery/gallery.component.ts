@@ -3,8 +3,8 @@ import { formControl, ImageItem } from '../../../../core/helpers';
 import { DbService } from '../../../../core/db';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AppService, ScanService } from '../../../../core/services';
-import { AsyncPipe } from '@angular/common';
-import {ButtonGroupComponent, FieldComponent, SliderComponent} from '../../ui';
+import {AsyncPipe, NgIf} from '@angular/common';
+import {ButtonGroupComponent, FieldComponent, MasonryComponent, SliderComponent} from '../../ui';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageCardComponent } from '../image-card/image-card.component';
@@ -23,6 +23,8 @@ const SCROLL_THRESHOLD = 200;
     SliderComponent,
     ImageCardComponent,
     ButtonGroupComponent,
+    MasonryComponent,
+    NgIf,
   ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
@@ -40,10 +42,13 @@ export class GalleryComponent {
   currentCount = computed(() => this.items().length);
   allLoaded = signal(false);
 
-  viewStyleControl = formControl(this.app.state.settings.galleryViewStyle)
+  viewStyleControl = formControl(this.app.state.settings.galleryViewStyle);
   itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);
+  columnsControl = formControl(this.app.state.settings.galleryColumns);
   itemSizeControl = formControl(this.app.state.settings.galleryItemAspectRatio);
   searchControl = formControl('');
+
+  itemTrackBy = (_: number, item: ImageItem) => item.path;
 
   constructor() {
     this.db.initialized$.subscribe(() => {
@@ -84,11 +89,20 @@ export class GalleryComponent {
           galleryItemPerRow: v,
         });
       });
-    this.viewStyleControl.valueChanges.pipe(takeUntilDestroyed()).subscribe(v => {
-      this.app.setSettings({
-        galleryViewStyle: v,
+    this.viewStyleControl.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((v) => {
+        this.app.setSettings({
+          galleryViewStyle: v,
+        });
       });
-    })
+    this.columnsControl.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((v) => {
+        this.app.setSettings({
+          galleryColumns: v,
+        });
+      });
 
     this.searchControl.valueChanges
       .pipe(
