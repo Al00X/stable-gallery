@@ -1,4 +1,5 @@
 import {ImageEntry} from '../db';
+import {signal} from "@angular/core";
 
 const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
@@ -18,8 +19,9 @@ export class ImageItem {
   height!: number;
   createdAt!: Date;
   updatedAt?: Date;
-  nsfw = false;
-  favorite = false;
+
+  nsfw = signal(false);
+  favorite = signal(false);
 
   loaded = false;
 
@@ -39,8 +41,8 @@ export class ImageItem {
     item.height = entry.height ?? 0;
     item.createdAt = entry.createdAt;
     item.updatedAt = entry.updatedAt ?? undefined;
-    item.nsfw = entry.nsfw ?? false;
-    item.favorite = entry.favorite ?? false;
+    item.nsfw.set(entry.nsfw ?? false)
+    item.favorite.set(entry.favorite ?? false)
     return item;
   }
 
@@ -74,9 +76,18 @@ export class ImageItem {
       steps: this.steps,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-      nsfw: this.nsfw,
-      favorite: this.favorite,
+      nsfw: this.nsfw(),
+      favorite: this.favorite(),
     };
+  }
+
+  toggleNsfw() {
+    this.nsfw.set(!this.nsfw());
+    this.saveStatesToDb();
+  }
+  toggleFavorite() {
+    this.favorite.set(!this.favorite());
+    this.saveStatesToDb();
   }
 
   private async extractStat() {
@@ -151,7 +162,17 @@ export class ImageItem {
   }
 
   private extractPopulatedFields() {
-    this.nsfw = checkForNSFW(this.prompt);
+    this.nsfw.set(checkForNSFW(this.prompt))
+  }
+
+  private saveStateTimeout: any;
+  private saveStatesToDb() {
+    if (this.saveStateTimeout) {
+      clearTimeout(this.saveStateTimeout);
+    }
+    this.saveStateTimeout = setTimeout(() => {
+      return db$.update(this);
+    }, 1000);
   }
 }
 

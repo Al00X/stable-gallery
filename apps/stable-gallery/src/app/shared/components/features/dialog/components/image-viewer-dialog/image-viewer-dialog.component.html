@@ -1,4 +1,14 @@
-<div class="flex h-full max-h-inherit overflow-hidden">
+<div class="flex flex-col h-full max-h-inherit overflow-hidden">
+  <div class="flex-none flex items-center h-16 bg-neutral-100 gap-4 px-4">
+    <ui-button class="h-10" appearance="stroked" [theme]="data.image.nsfw() ? 'error' : 'primary'" (onClick)="data.image.toggleNsfw()">
+      <ui-nsfw-toggle [value]="data.image.nsfw()" class="pointer-events-none"></ui-nsfw-toggle>
+      {{ data.image.nsfw() ? 'NSFW' : 'SFW' }}
+    </ui-button>
+    <ui-button class="h-10" appearance="stroked" (onClick)="data.image.toggleFavorite()">
+      <ui-favorite-toggle [value]="data.image.favorite()" class="pointer-events-none"></ui-favorite-toggle>
+      {{ data.image.favorite() ? 'Favorited' : 'Favorite' }}
+    </ui-button>
+  </div>
   <pan-zoom
     [config]="panZoom"
     class="flex-auto"

@@ -8,7 +8,7 @@
       @apply text-secondary-400;
     }
     &.theme-error {
-      @apply text-error-400;
+      @apply text-error-600;
     }
   }
   &.filled {
@@ -52,7 +52,7 @@
   display: block;
   &.stroked {
     border: 1px solid currentColor;
-    @apply border-neutral-300;
+    //@apply border-neutral-300;
     &:hover:not(.disabled) {
       background-color: var(--hover) !important;
       filter: brightness(100%);

@@ -15,7 +15,7 @@
   >
     <div class="ui-button-content" [class.loading]="loading()">
       <ng-container *ngIf="iconPosition === 'prefix'" [ngTemplateOutlet]="Icon"></ng-container>
-      <div class="ui-button-content-portal inline-flex whitespace-nowrap mx-px hide-if-empty">
+      <div class="ui-button-content-portal inline-flex gap-2 items-center whitespace-nowrap mx-px hide-if-empty">
         <ng-content></ng-content>
       </div>
       <ng-container *ngIf="iconPosition === 'suffix'" [ngTemplateOutlet]="Icon"></ng-container>

@@ -20,7 +20,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { pipe, tap, UnaryFunction } from 'rxjs';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {startWithTap} from "../../../../core/helpers";
 

@@ -2,7 +2,6 @@ import {inject, Injectable} from '@angular/core';
 import {FilesService} from "./files.service";
 import {AppService} from "./app.service";
 import {ImageItem} from "../helpers";
-import {DbService} from "../db";
 import {BehaviorSubject, combineLatest, debounceTime, filter, map, Subject, Subscription} from "rxjs";
 import {CacheService} from "./cache.service";
 
@@ -13,7 +12,6 @@ export class ScanService {
   private readonly file = inject(FilesService);
   private readonly app = inject(AppService);
   private readonly cache = inject(CacheService);
-  private readonly dbService = inject(DbService);
 
   isScanning$ = new BehaviorSubject(false);
   currentScanningFile$ = new BehaviorSubject<string | undefined>(undefined);
@@ -38,7 +36,7 @@ export class ScanService {
       const exists = await this.file.exists(path);
       if (!exists) {
         this.cache.removeFromScanned(path);
-        this.dbService.remove(path);
+        db$.remove(path);
       }
     }
   }
@@ -67,7 +65,7 @@ export class ScanService {
       if (state.latest && state.latestAction === 'add' && !cacheState.scanned.includes(state.latest)) {
         this.addToWatchingCount(1);
         const image = new ImageItem(state.latest);
-        this.dbService.addImageEntry(image).then(() => {
+        db$.addImageEntry(image).then(() => {
           this.cache.addToScanned(state.latest!);
           cacheState.scanned.push(state.latest!);
           this.currentScanningFile$.next(state.latest)
@@ -83,7 +81,7 @@ export class ScanService {
         });
       } else if (state.latest && state.latestAction === 'remove' && cacheState.scanned.includes(state.latest)) {
         this.addToWatchingCount(-1);
-        this.dbService.remove(state.latest!).then(() => {
+        db$.remove(state.latest!).then(() => {
           this.cache.removeFromScanned(state.latest!);
           const index = cacheState.scanned.indexOf(state.latest!);
           index !== -1 ? cacheState.scanned.splice(index, 1) : null;

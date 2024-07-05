@@ -1,6 +1,5 @@
 import {Component, computed, inject, signal} from '@angular/core';
 import { formControl, ImageItem } from '../../../../core/helpers';
-import { DbService } from '../../../../core/db';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AppService, ScanService } from '../../../../core/services';
 import {AsyncPipe, NgIf} from '@angular/common';
@@ -30,7 +29,6 @@ const SCROLL_THRESHOLD = 200;
   styleUrl: './gallery.component.scss',
 })
 export class GalleryComponent {
-  private readonly db = inject(DbService);
   public readonly scan = inject(ScanService);
   public readonly app = inject(AppService);
 
@@ -51,7 +49,7 @@ export class GalleryComponent {
   itemTrackBy = (_: number, item: ImageItem) => item.path;
 
   constructor() {
-    this.db.initialized$.subscribe(() => {
+    db$.initialized$.subscribe(() => {
       this.get(true);
     });
     this.scan.itemAdded$.pipe(takeUntilDestroyed()).subscribe((image) => {
@@ -127,12 +125,12 @@ export class GalleryComponent {
   }
 
   private async get(reset?: boolean) {
-    if (!this.db.initialized$.value) return;
+    if (!db$.initialized$.value) return;
     const filters = this.filters();
     const perPage = 100;
 
     const fn = async () =>
-      await this.db.getImages({
+      await db$.getImages({
         page: this.page(),
         perPage,
         search: filters.search,

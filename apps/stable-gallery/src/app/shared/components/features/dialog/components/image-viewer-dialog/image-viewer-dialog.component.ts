@@ -4,6 +4,7 @@ import {BaseDialogComponent} from "../_base-dialog.component";
 import {PanZoomComponent, PanZoomConfig} from "ngx-panzoom";
 import {ItemRecord} from "../../../../../../core/interfaces";
 import {formatDate} from "@angular/common";
+import {ButtonComponent, FavoriteToggleComponent, NsfwToggleComponent} from "../../../../ui";
 
 export interface ImageViewerDialogData {
   image: ImageItem;
@@ -13,7 +14,12 @@ export type ImageViewerDialogResult = boolean;
 @Component({
   selector: 'feature-image-viewer-dialog',
   standalone: true,
-  imports: [PanZoomComponent],
+  imports: [
+    PanZoomComponent,
+    ButtonComponent,
+    FavoriteToggleComponent,
+    NsfwToggleComponent,
+  ],
   templateUrl: './image-viewer-dialog.component.html',
   styleUrl: './image-viewer-dialog.component.scss',
 })
@@ -33,11 +39,14 @@ export class ImageViewerDialogComponent
   private _mouseDownEvent?: MouseEvent;
 
   isDetailsOpen = signal(false);
-  detailsSection = signal<{
-    main: ItemRecord<string | number | undefined>[];
-    other: ItemRecord<string | number | undefined>[];
-    metadata: ItemRecord<string | number | undefined>[];
-  } | undefined>(undefined);
+  detailsSection = signal<
+    | {
+        main: ItemRecord<string | number | undefined>[];
+        other: ItemRecord<string | number | undefined>[];
+        metadata: ItemRecord<string | number | undefined>[];
+      }
+    | undefined
+  >(undefined);
 
   constructor() {
     super();
@@ -57,16 +66,23 @@ export class ImageViewerDialogComponent
       ],
       metadata: [
         { label: 'Size', value: `${image.width} x ${image.height}` },
-        { label: 'Created At', value: formatDate(image.createdAt, 'yyyy/MM/dd', 'en') },
-        { label: 'Updated At', value: image.updatedAt ? formatDate(image.updatedAt, 'yyyy/MM/dd', 'en') : undefined },
-      ]
-    })
+        {
+          label: 'Created At',
+          value: formatDate(image.createdAt, 'yyyy/MM/dd', 'en'),
+        },
+        {
+          label: 'Updated At',
+          value: image.updatedAt
+            ? formatDate(image.updatedAt, 'yyyy/MM/dd', 'en')
+            : undefined,
+        },
+      ],
+    });
   }
 
   override ngAfterViewInit() {
     super.ngAfterViewInit();
   }
-
 
   onMouseDown(e: MouseEvent) {
     this._mouseDownEvent = e;
