@@ -1,0 +1,19 @@
+.ui-button-group {
+  @apply flex items-center;
+
+  .ui-button-group-wrapper {
+    @apply flex items-center rounded-1 bg-neutral-50 p-0.5;
+    & > div {
+      @apply select-none cursor-pointer flex items-center justify-center flex-1 min-w-[3rem];
+      &.selected {
+        @apply bg-neutral-200 #{!important};
+      }
+      &:hover {
+        @apply bg-neutral-100;
+      }
+      &:hover:active {
+        @apply brightness-90;
+      }
+    }
+  }
+}

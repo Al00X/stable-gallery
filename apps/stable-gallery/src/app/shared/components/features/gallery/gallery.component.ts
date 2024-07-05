@@ -4,7 +4,7 @@ import { DbService } from '../../../../core/db';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AppService, ScanService } from '../../../../core/services';
 import { AsyncPipe } from '@angular/common';
-import { FieldComponent, SliderComponent } from '../../ui';
+import {ButtonGroupComponent, FieldComponent, SliderComponent} from '../../ui';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageCardComponent } from '../image-card/image-card.component';
@@ -21,7 +21,8 @@ const SCROLL_THRESHOLD = 200;
     MatSlider,
     MatSliderThumb,
     SliderComponent,
-    ImageCardComponent
+    ImageCardComponent,
+    ButtonGroupComponent,
   ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
@@ -39,6 +40,7 @@ export class GalleryComponent {
   currentCount = computed(() => this.items().length);
   allLoaded = signal(false);
 
+  viewStyleControl = formControl(this.app.state.settings.galleryViewStyle)
   itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);
   itemSizeControl = formControl(this.app.state.settings.galleryItemAspectRatio);
   searchControl = formControl('');
@@ -82,6 +84,12 @@ export class GalleryComponent {
           galleryItemPerRow: v,
         });
       });
+    this.viewStyleControl.valueChanges.pipe(takeUntilDestroyed()).subscribe(v => {
+      this.app.setSettings({
+        galleryViewStyle: v,
+      });
+    })
+
     this.searchControl.valueChanges
       .pipe(
         distinctUntilChanged(),

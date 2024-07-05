@@ -1,5 +1,11 @@
 <div class="flex flex-col relative h-full">
   <div class="flex-none flex items-center w-full bg-neutral-200 gap-6 px-4">
+    <ui-button-group
+      label="View"
+      [control]="viewStyleControl"
+      [items]="[{ label: 'G', value: 'grid' }, { label: 'M', value: 'masonry' }]"
+    ></ui-button-group>
+
     <ui-field
       [control]="itemPerRowControl"
       type="number"
