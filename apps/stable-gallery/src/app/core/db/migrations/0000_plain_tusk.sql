@@ -12,6 +12,7 @@ CREATE TABLE `entries` (
 	`height` integer,
 	`model_hash` text,
 	`model_name` text,
+	`added_at` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer
 );

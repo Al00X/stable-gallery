@@ -3,7 +3,7 @@
     <ui-button-group
       label="View"
       [control]="viewStyleControl"
-      [items]="[{ label: 'G', value: 'grid' }, { label: 'M', value: 'masonry' }]"
+      [items]="[{ icon: 'grid', value: 'grid', hint: 'Grid' }, { icon: 'masonry', value: 'masonry', hint: 'Masonry' }]"
     ></ui-button-group>
 
     @if(state.viewStyle === 'grid') {
@@ -40,29 +40,41 @@
 
     <ui-field [control]="searchControl" placeholder="Search..."></ui-field>
   </div>
-  <div class="flex-auto overflow-auto px-1" (scroll)="onScroll($event)">
-    @if(state.viewStyle === 'grid') {
-      <div
-        class="grid gap-1"
-        [style.grid-template-columns]="
+
+  <div class="flex-auto flex relative overflow-hidden">
+    <div class="flex-auto overflow-auto px-1" (scroll)="onScroll($event)">
+      @if(state.viewStyle === 'grid') {
+        <div
+          class="grid gap-1"
+          [style.grid-template-columns]="
         'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
       "
-      >
-        @for(item of items(); track item.path) {
-          <feature-image-card
-            [image]="item"
-            [style.aspect-ratio]="itemSizeControl.value$ | async"
-          ></feature-image-card>
-        }
-      </div>
-    } @else {
-      <ui-masonry [items]="items()" [cols]="(columnsControl.value$ | async) ?? 4" [trackBy]="itemTrackBy">
-        <ng-template let-item="item">
-          <feature-image-card
-            [image]="item"
-          ></feature-image-card>
-        </ng-template>
-      </ui-masonry>
-    }
+        >
+          @for(item of items(); track item.path) {
+            <feature-image-card
+              [image]="item"
+              [style.aspect-ratio]="itemSizeControl.value$ | async"
+              [isSelected]="item.path === selectedImage()?.path"
+              (onSelect)="selectedImage.set(item)"
+            ></feature-image-card>
+          }
+        </div>
+      } @else {
+        <ui-masonry [items]="items()" [cols]="(columnsControl.value$ | async) ?? 4" [trackBy]="itemTrackBy">
+          <ng-template let-item="item">
+            <feature-image-card
+              [image]="item"
+              [isSelected]="item.path === selectedImage()?.path"
+              (onSelect)="selectedImage.set(item)"
+            ></feature-image-card>
+          </ng-template>
+        </ui-masonry>
+      }
+    </div>
+    <feature-image-details-pane
+      class="flex-none"
+      [image]="selectedImage()"
+      [showImage]="true"
+    ></feature-image-details-pane>
   </div>
 </div>

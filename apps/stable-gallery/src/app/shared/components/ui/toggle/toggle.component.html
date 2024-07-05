@@ -1,8 +1,12 @@
-<div
-  class="ui-toggle"
-  [class.is-toggled]="control.value$ | async"
-  (mouseup)="onToggle()"
-  [matTooltip]="(control.value$ | async) ? activeTooltip! : inactiveTooltip!"
->
-  <span>{{ (control.value$ | async) ? activeText : inactiveText }}</span>
+<div class="ui-toggle">
+  <ui-label [text]="label"></ui-label>
+  <div
+    class="ui-toggle-wrapper"
+    [class.is-toggled]="control.value$ | async"
+    (mouseup)="onToggle()"
+    [matTooltip]="(control.value$ | async) ? activeTooltip! : inactiveTooltip!"
+  >
+    <span>{{ (control.value$ | async) ? activeText : inactiveText }}</span>
+  </div>
+
 </div>

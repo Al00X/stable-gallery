@@ -1,12 +1,12 @@
-import {Component, inject, ViewChild} from '@angular/core';
-import {ListFieldAddEvent, ListFieldComponent} from "../../ui";
+import {Component, inject, Input, ViewChild} from '@angular/core';
+import {ListFieldAddEvent, ListFieldComponent, ToggleComponent} from "../../ui";
 import {AppService, ElectronService} from "../../../../core/services";
-import {formControl} from "../../../../core/helpers";
+import {formControl, formGroup} from "../../../../core/helpers";
 
 @Component({
   selector: 'feature-settings-form',
   standalone: true,
-  imports: [ListFieldComponent],
+  imports: [ListFieldComponent, ToggleComponent],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss',
 })
@@ -17,12 +17,23 @@ export class SettingsFormComponent {
   @ViewChild('DirsListField')
   dirsListFieldComponent!: ListFieldComponent<string>;
 
+  @Input() showOptionals = false;
+
   private _isBrowsing = false;
 
-  dirsControl = formControl<string[]>();
+  settingsForm = formGroup({
+    dirs: formControl<string[]>(),
+    openDetailsInGalleryByDefault: formControl<boolean>(),
+    openDetailsInLightboxByDefault: formControl<boolean>()
+  })
 
   constructor() {
-    this.dirsControl.setValue(this.app.state.settings.dirs);
+    const settings = this.app.state.settings;
+    this.settingsForm.patchValue({
+      dirs: settings.dirs,
+      openDetailsInGalleryByDefault: settings.openDetailsTabInGalleryByDefault,
+      openDetailsInLightboxByDefault: settings.openDetailsTabInLightboxByDefault
+    })
   }
 
   onAddToDirs(e: ListFieldAddEvent<string>) {
@@ -37,9 +48,12 @@ export class SettingsFormComponent {
 
   // returns the validity of settings
   save() {
+    const values = this.settingsForm.value;
     this.app.setSettings({
-      dirs: this.dirsControl.value
-    })
+      dirs: values.dirs,
+      openDetailsTabInGalleryByDefault: values.openDetailsInGalleryByDefault,
+      openDetailsTabInLightboxByDefault: values.openDetailsInLightboxByDefault
+    });
 
     return this.app.isSettingsValid();
   }

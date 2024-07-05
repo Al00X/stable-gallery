@@ -80,6 +80,19 @@ export class FilesService {
       .catch(() => false);
   }
 
+  // Returns the path
+  copyDraft(path: string, dir: string) {
+    return this.path.join(dir, this.path.basename(path));
+  }
+
+  async copy(path: string, dir: string) {
+    return await this.fs.copyFile(path, this.copyDraft(path, dir));
+  }
+
+  async write(path: string, data: Promise<ArrayBuffer> | ArrayBuffer) {
+    return await this.fs.writeFile(path, Buffer.from(await data));
+  }
+
   private async isDir(dir: string) {
     const res = await this.fs.lstat(dir);
     return res.isDirectory();

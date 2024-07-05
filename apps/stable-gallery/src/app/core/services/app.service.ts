@@ -11,6 +11,8 @@ interface AppState {
     galleryItemAspectRatio: number;
     galleryColumns: number;
     galleryViewStyle?: 'grid' | 'masonry';
+    openDetailsTabInGalleryByDefault: boolean;
+    openDetailsTabInLightboxByDefault: boolean;
   };
 }
 
@@ -24,6 +26,8 @@ const appStore = createStore(
       galleryItemAspectRatio: 1,
       galleryColumns: 4,
       galleryViewStyle: 'grid',
+      openDetailsTabInGalleryByDefault: false,
+      openDetailsTabInLightboxByDefault: false,
     },
   })
 );

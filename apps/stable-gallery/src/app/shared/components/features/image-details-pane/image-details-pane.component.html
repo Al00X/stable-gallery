@@ -1,0 +1,44 @@
+<div class="image-details-panel" [class.open]="isOpen()" [class.is-absolute]="absolute">
+  <div class="image-details-panel-handle">
+    <div
+      (click)="isOpen.set(!isOpen())"
+    >
+      <span class="absolute rotate-90 font-medium">DETAILS</span>
+    </div>
+  </div>
+
+  <div class="details-panel-sections">
+    @if(detailsSection()) {
+      @if(showImage) {
+        <img [src]="image!.path" alt="" class="w-48" />
+      }
+      <div class="details-panel-generation">
+        <div class="flex flex-col gap-4">
+          @for (item of detailsSection()!.main; track item.label) {
+            <section class="col-span-full">
+              <label>{{ item.label }}</label>
+              <div>{{ item.value ?? '-' }}</div>
+            </section>
+          }
+        </div>
+        <div class="grid grid-cols-2 gap-4 pb-12">
+          @for(item of detailsSection()!.other; track item.label) {
+            <section>
+              <label>{{ item.label }}</label>
+              <div>{{ item.value !== undefined ? item.value : '-' }}</div>
+            </section>
+          }
+        </div>
+      </div>
+      <div class="details-panel-metadata">
+        @for(item of detailsSection()!.metadata; track item.label; let first =
+          $first) {
+          <section class="{{ first ? 'col-span-full' : '' }}">
+            <label>{{ item.label }}: </label>
+            <div>{{ item.value ?? '-' }}</div>
+          </section>
+        }
+      </div>
+    }
+  </div>
+</div>

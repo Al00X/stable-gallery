@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
-  Component,
+  Component, EventEmitter,
   inject,
-  Input,
+  Input, Output,
 } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { AppService } from '../../../../core/services';
@@ -30,9 +30,17 @@ export class ImageCardComponent {
   public readonly app = inject(AppService);
 
   @Input() image!: ImageItem;
+  @Input() isSelected?: boolean;
+
+  @Output() onSelect = new EventEmitter();
 
   onImageClick() {
+    this.onSelect.emit();
     console.log(this.image);
+  }
+
+  onImageDoubleClick() {
+    if (!this.isSelected) return;
     dialog$.imageViewer({image: this.image});
   }
 }

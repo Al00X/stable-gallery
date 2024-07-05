@@ -1,0 +1,10 @@
+@if (isDragging()) {
+  <div
+    class="fixed inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-10 pointer-events-none"
+  >
+    <p class="text-4xl font-bold max-w-[20rem] text-center leading-relaxed">
+      DRAG AND DROP TO VIEW IT
+    </p>
+  </div>
+}
+<ng-content></ng-content>

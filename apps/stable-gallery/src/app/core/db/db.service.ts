@@ -57,7 +57,10 @@ export class DbService {
         }
         const insetRes = await this.db
           .insert(imagesEntry)
-          .values(model)
+          .values({
+            ...model,
+            addedAt: new Date(),
+          })
           .returning({ id: imagesEntry.id });
         const id = insetRes.at(0)?.id;
         if (id) {

@@ -7,6 +7,7 @@ import {ButtonGroupComponent, FieldComponent, MasonryComponent, SliderComponent}
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageCardComponent } from '../image-card/image-card.component';
+import {ImageDetailsPaneComponent} from "../image-details-pane/image-details-pane.component";
 
 const SEARCH_DEBOUNCE = 150;
 const SCROLL_THRESHOLD = 200;
@@ -24,6 +25,7 @@ const SCROLL_THRESHOLD = 200;
     ButtonGroupComponent,
     MasonryComponent,
     NgIf,
+    ImageDetailsPaneComponent,
   ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
@@ -39,6 +41,7 @@ export class GalleryComponent {
   page = signal(0);
   currentCount = computed(() => this.items().length);
   allLoaded = signal(false);
+  selectedImage = signal<ImageItem | undefined>(undefined);
 
   viewStyleControl = formControl(this.app.state.settings.galleryViewStyle);
   itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);

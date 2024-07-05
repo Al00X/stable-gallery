@@ -1,14 +1,35 @@
 <div class="flex flex-col h-full max-h-inherit overflow-hidden">
-  <div class="flex-none flex items-center h-16 bg-neutral-100 gap-4 px-4">
-    <ui-button class="h-10" appearance="stroked" [theme]="data.image.nsfw() ? 'error' : 'primary'" (onClick)="data.image.toggleNsfw()">
-      <ui-nsfw-toggle [value]="data.image.nsfw()" class="pointer-events-none"></ui-nsfw-toggle>
+  <div
+    class="absolute left-0 right-0 top-0 flex items-center pt-4 gap-4 px-4 z-10"
+  >
+    <ui-button
+      class="h-10 {{
+        data.image.nsfw() ? 'text-error-600 bg-white' : 'bg-white'
+      }}"
+      theme="custom"
+      appearance="stroked"
+      (onClick)="data.image.toggleNsfw()"
+    >
+      <ui-nsfw-toggle
+        [value]="data.image.nsfw()"
+        class="pointer-events-none"
+      ></ui-nsfw-toggle>
       {{ data.image.nsfw() ? 'NSFW' : 'SFW' }}
     </ui-button>
-    <ui-button class="h-10" appearance="stroked" (onClick)="data.image.toggleFavorite()">
-      <ui-favorite-toggle [value]="data.image.favorite()" class="pointer-events-none"></ui-favorite-toggle>
+    <ui-button
+      class="h-10 bg-white"
+      theme="custom"
+      appearance="stroked"
+      (onClick)="data.image.toggleFavorite()"
+    >
+      <ui-favorite-toggle
+        [value]="data.image.favorite()"
+        class="pointer-events-none"
+      ></ui-favorite-toggle>
       {{ data.image.favorite() ? 'Favorited' : 'Favorite' }}
     </ui-button>
   </div>
+
   <pan-zoom
     [config]="panZoom"
     class="flex-auto"
@@ -18,52 +39,29 @@
     <div class="w-full h-full flex items-center justify-center">
       <img
         class="w-auto h-auto max-h-full cursor-grab select-none"
-        [src]="data.image.path"
+        [src]="path()"
         alt=""
       />
     </div>
   </pan-zoom>
-  <div class="details-panel {{ isDetailsOpen() ? 'open' : '' }}">
-    <div class="relative start-0 top-1/2 flex flex-col justify-center">
-      <div
-        class="absolute flex items-center justify-center transition-all bg-neutral-100 rounded-l-4 select-none cursor-pointer hover:bg-neutral-200 {{
-          isDetailsOpen() ? 'w-7 h-32 -ms-7' : 'w-9 h-48 -ms-9'
-        }}"
-        (click)="isDetailsOpen.set(!isDetailsOpen())"
-      >
-        <span class="absolute rotate-90 font-medium">DETAILS</span>
-      </div>
-    </div>
 
-    <div class="details-panel-sections">
-      <div class="details-panel-generation">
-        <div class="flex flex-col gap-4">
-          @for (item of detailsSection()!.main; track item.label) {
-            <section class="col-span-full">
-              <label>{{ item.label }}</label>
-              <div>{{ item.value ?? '-' }}</div>
-            </section>
-          }
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          @for(item of detailsSection()!.other; track item.label) {
-            <section>
-              <label>{{ item.label }}</label>
-              <div>{{ item.value !== undefined ? item.value : '-' }}</div>
-            </section>
-          }
-        </div>
-
-
-      </div>
-      <div class="details-panel-metadata">
-        @for(item of detailsSection()!.metadata; track item.label; let first = $first) {
-          <section class="{{ first ? 'col-span-full' : '' }}">
-            <label>{{ item.label }}: </label>
-            <div>{{ item.value ?? '-' }}</div>
-          </section>
-        }
-      </div>
-    </div>
+  @if (!data.image.id) {
+  <div
+    class="absolute left-0 bottom-0 right-0 flex px-4 items-center gap-4 pb-4 z-10"
+  >
+    <!--      <ui-button theme="custom" class="bg-primary-600 text-black h-12" (onClick)="onAddToGallery($event)">Add To Gallery</ui-button>-->
+    <ui-button
+      theme="custom"
+      class="bg-primary-600 text-black h-12"
+      (onClick)="onAddToGallery($event)"
+      >Add To Gallery & Save To Folder</ui-button
+    >
   </div>
+  }
+
+  <feature-image-details-pane
+    [image]="data.image"
+    [open]="isDetailsOpen()"
+    [absolute]="true"
+  ></feature-image-details-pane>
 </div>

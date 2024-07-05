@@ -3,11 +3,13 @@ import {formControl} from "../../../../core/helpers";
 import {ItemRecord} from "../../../../core/interfaces";
 import {AsyncPipe} from "@angular/common";
 import {LabelComponent} from "../label/label.component";
+import {MatIcon} from "@angular/material/icon";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'ui-button-group',
   standalone: true,
-  imports: [AsyncPipe, LabelComponent],
+  imports: [AsyncPipe, LabelComponent, MatIcon, MatTooltip],
   templateUrl: './button-group.component.html',
   styleUrl: './button-group.component.scss',
 })

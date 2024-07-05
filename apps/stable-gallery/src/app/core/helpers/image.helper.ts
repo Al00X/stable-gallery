@@ -24,6 +24,10 @@ export class ImageItem {
   favorite = signal(false);
 
   loaded = false;
+  path: string;
+
+  private _wrongFilePath: boolean;
+  private _fileInput?: File;
 
   static fromImageEntry(entry: ImageEntry): ImageItem {
     const item = new ImageItem(entry.path);
@@ -43,19 +47,33 @@ export class ImageItem {
     item.updatedAt = entry.updatedAt ?? undefined;
     item.nsfw.set(entry.nsfw ?? false)
     item.favorite.set(entry.favorite ?? false)
+
     return item;
   }
 
-  constructor(public path: string, load = false) {
+  // input as file or path
+  constructor(input: File | string, load = false) {
+    this.path = typeof input === 'string' ? input : (input.path && input.path.length ? input.path : input.name);
+    if (typeof input !== 'string') {
+      this._fileInput = input;
+    }
+    const ext = this.path.substring(this.path.lastIndexOf('.') + 1);
+    this._wrongFilePath = !['png', 'jpeg', 'jpg', 'bmp'].includes(ext);
     if (load) {
       this.load();
+    }
+
+    if (this._wrongFilePath) {
+      console.error('ImageItem: Wrong image file');
     }
   }
 
   async load(force?: boolean) {
+    if (this._wrongFilePath) throw new Error('ImageItem: Cannot load this file. It is unsupported.');
     if (!force && this.loaded) return;
     await this.extractStat();
     await this.extractMetadata();
+
     this.extractPopulatedFields();
     this.loaded = true;
   }
@@ -90,14 +108,32 @@ export class ImageItem {
     this.saveStatesToDb();
   }
 
+  isImageValid() {
+    return !this._wrongFilePath;
+  }
+
+  isInMemory() {
+    return this._fileInput && !this._fileInput.path.length;
+  }
+
+  async buffer() {
+    return this._fileInput ? await this._fileInput.arrayBuffer() : await fs.readFile(this.path);
+  }
+
+  blob() {
+    return this._fileInput;
+  }
+
   private async extractStat() {
+    if (this.isInMemory()) return;
+
     const stat = await fs.stat(this.path);
     this.createdAt = stat.birthtime;
     this.updatedAt = stat.mtime;
   }
 
   private async extractMetadata() {
-    const buffer = await fs.readFile(this.path);
+    const buffer = await this.buffer();
     const meta = await sharp(buffer).metadata();
     const exif = await exifr.parse(buffer, true);
 
@@ -167,6 +203,7 @@ export class ImageItem {
 
   private saveStateTimeout: any;
   private saveStatesToDb() {
+    if (!this.id) return;
     if (this.saveStateTimeout) {
       clearTimeout(this.saveStateTimeout);
     }

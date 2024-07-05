@@ -1,13 +1,15 @@
-import {AfterViewInit, Component, signal} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, inject, signal} from '@angular/core';
 import {ImageItem} from "../../../../../../core/helpers";
 import {BaseDialogComponent} from "../_base-dialog.component";
 import {PanZoomComponent, PanZoomConfig} from "ngx-panzoom";
-import {ItemRecord} from "../../../../../../core/interfaces";
-import {formatDate} from "@angular/common";
-import {ButtonComponent, FavoriteToggleComponent, NsfwToggleComponent} from "../../../../ui";
+import {ButtonClickEvent, ButtonComponent, FavoriteToggleComponent, NsfwToggleComponent} from "../../../../ui";
+import {CacheService} from "../../../../../../core/services/cache.service";
+import {AppService, FilesService, ScanService} from "../../../../../../core/services";
+import {ImageDetailsPaneComponent} from "../../../image-details-pane/image-details-pane.component";
 
 export interface ImageViewerDialogData {
   image: ImageItem;
+  loadFromBuffer?: boolean;
 }
 export type ImageViewerDialogResult = boolean;
 
@@ -19,6 +21,7 @@ export type ImageViewerDialogResult = boolean;
     ButtonComponent,
     FavoriteToggleComponent,
     NsfwToggleComponent,
+    ImageDetailsPaneComponent,
   ],
   templateUrl: './image-viewer-dialog.component.html',
   styleUrl: './image-viewer-dialog.component.scss',
@@ -27,6 +30,11 @@ export class ImageViewerDialogComponent
   extends BaseDialogComponent<ImageViewerDialogData, ImageViewerDialogResult>
   implements AfterViewInit
 {
+  private app = inject(AppService);
+  private cache = inject(CacheService);
+  private file = inject(FilesService);
+  private scan = inject(ScanService);
+
   panZoom = new PanZoomConfig({
     zoomLevels: 20,
     scalePerZoomLevel: 1.3,
@@ -39,49 +47,43 @@ export class ImageViewerDialogComponent
   private _mouseDownEvent?: MouseEvent;
 
   isDetailsOpen = signal(false);
-  detailsSection = signal<
-    | {
-        main: ItemRecord<string | number | undefined>[];
-        other: ItemRecord<string | number | undefined>[];
-        metadata: ItemRecord<string | number | undefined>[];
-      }
-    | undefined
-  >(undefined);
+  path = signal('');
 
   constructor() {
     super();
-    const image = this.data.image;
-    this.detailsSection.set({
-      main: [
-        { label: 'Prompt', value: image.prompt },
-        { label: 'Negative Prompt', value: image.negativePrompt },
-      ],
-      other: [
-        { label: 'Seed', value: image.seed },
-        { label: 'Sampler', value: image.sampler },
-        { label: 'Steps', value: image.steps },
-        { label: 'CFG', value: image.cfgScale },
-        { label: 'Clip Skip', value: image.clipSkip },
-        { label: 'Model Hash', value: image.modelHash },
-      ],
-      metadata: [
-        { label: 'Size', value: `${image.width} x ${image.height}` },
-        {
-          label: 'Created At',
-          value: formatDate(image.createdAt, 'yyyy/MM/dd', 'en'),
-        },
-        {
-          label: 'Updated At',
-          value: image.updatedAt
-            ? formatDate(image.updatedAt, 'yyyy/MM/dd', 'en')
-            : undefined,
-        },
-      ],
-    });
+
+    if (!this.data.image.id) {
+      this.isDetailsOpen.set(true);
+    }
+    if (this.data.loadFromBuffer) {
+      const blob = this.data.image.blob();
+      if (!blob) return;
+      this.path.set(URL.createObjectURL(blob))
+      // this.data.image.buffer().then(buffer => {
+      //   console.log(buffer)
+      //   this.path.set(URL.createObjectURL(buffer))
+      // })
+    } else {
+      this.path.set(this.data.image.path)
+    }
   }
 
   override ngAfterViewInit() {
     super.ngAfterViewInit();
+    if (this.isDetailsOpen()) {
+      const api = this.panZoom.api.value;
+      api.panDeltaAbsolute(
+        {
+          x: 200,
+          y: 0,
+        },
+        0.05
+      );
+    }
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    }, 100)
+
   }
 
   onMouseDown(e: MouseEvent) {
@@ -97,5 +99,28 @@ export class ImageViewerDialogComponent
     )
       return;
     this.close();
+  }
+
+  async onAddToGallery(e: ButtonClickEvent) {
+    e.setLoading(true);
+    try {
+      const filePath = this.data.image.path;
+      const dir = this.app.state.settings.dirs[0];
+      this.data.image.path = this.file.copyDraft(filePath, dir);
+      const image = await db$.addImageEntry(this.data.image);
+      if (!image) throw new Error('Image was undefined!? what?');
+      this.cache.addToScanned(image.path);
+      if (this.data.image.isInMemory()) {
+
+        await this.file.write(image.path, this.data.image.buffer())
+      } else {
+        await this.file.copy(filePath, dir);
+      }
+      this.scan.itemAdded$.next(image);
+      this.close(true);
+    } catch (error) {
+      e.setLoading(false);
+      console.error('Failed to add this image to gallery', error);
+    }
   }
 }

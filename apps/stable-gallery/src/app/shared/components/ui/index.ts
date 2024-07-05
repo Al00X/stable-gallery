@@ -9,3 +9,4 @@ export * from './icon/icon.component';
 export * from './list-field/list-field.component';
 export * from './button-group/button-group.component';
 export * from './masonry/masonry.component';
+export * from './drop-zone/drop-zone.component';

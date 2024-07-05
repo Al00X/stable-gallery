@@ -2,8 +2,13 @@
   <ui-label [text]="label"></ui-label>
   <div class="ui-button-group-wrapper">
     @for(item of items; track item.value) {
-      <div [class.selected]="(control.value$ | async) === item.value" (click)="onClick(item)">
-        {{ item.label }}
+      <div [class.selected]="(control.value$ | async) === item.value" (click)="onClick(item)" [matTooltip]="item.hint ?? ''">
+        @if (item.icon) {
+          <mat-icon [svgIcon]="item.icon"></mat-icon>
+        }
+        @if(item.label) {
+          {{ item.label }}
+        }
       </div>
     }
   </div>

@@ -15,6 +15,7 @@ export const imagesEntry = sqliteTable('entries', {
   height: integer('height'),
   modelHash: text('model_hash'),
   modelName: text('model_name'),
+  addedAt: integer('added_at', { mode: 'timestamp' }).notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
 });

@@ -1,12 +1,15 @@
 <div
   class="feature-image-card"
+  [class.selected]="isSelected"
   [class.is-nsfw]="(app.showNsfw$ | async) ? false : image.nsfw()"
 >
   <img
     [src]="image.path"
     alt=""
-    class="cursor-pointer"
+    class="cursor-pointer select-none"
+    style="-webkit-user-drag: none"
     (mouseup)="onImageClick()"
+    (dblclick)="onImageDoubleClick()"
   />
   <div class="feature-image-card-top-shadow"></div>
   @if(image.nsfw()) {

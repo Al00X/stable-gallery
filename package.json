@@ -28,6 +28,7 @@
     "chokidar": "^3.6.0",
     "drizzle-orm": "^0.31.2",
     "exifr": "^7.1.3",
+    "ngx-file-drop": "^16.0.0",
     "ngx-panzoom": "^17.0.0",
     "rxjs": "~7.8.0",
     "sharp": "^0.33.4",

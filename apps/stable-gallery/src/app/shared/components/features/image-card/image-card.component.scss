@@ -1,7 +1,15 @@
 .feature-image-card {
   @apply overflow-hidden w-full h-full relative;
+  box-sizing: content-box;
   img {
     @apply w-full h-full object-cover transition-all;
+  }
+
+  &::before {
+    @apply absolute inset-0 border-4 border-primary-600 pointer-events-none z-1;
+    transition: all 0.1s ease;
+    content: "";
+    opacity: 0;
   }
 
   &::after {
@@ -16,6 +24,12 @@
   &.is-nsfw {
     &::after {
       backdrop-filter: blur(38px);
+      opacity: 1;
+    }
+  }
+
+  &.selected {
+    &::before {
       opacity: 1;
     }
   }

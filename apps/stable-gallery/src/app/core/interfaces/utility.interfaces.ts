@@ -1,10 +1,12 @@
 import type { Observable } from 'rxjs';
 
 export interface ItemRecord<T, U = unknown> {
-  label: string;
+  label?: string;
   value: T;
   // Alt is used as an alternative to value. eg: item is refereed to as an index and name.
   alt?: U;
+  icon?: string;
+  hint?: string;
 }
 
 export type ItemRecords$<T, U = unknown> = Observable<ItemRecord<T, U>[] | undefined> | ItemRecord<T, U>[];
