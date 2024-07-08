@@ -1,5 +1,4 @@
 import {inject, Injectable} from '@angular/core';
-import {FilesService} from "./files.service";
 import {AppService} from "./app.service";
 import {ImageItem} from "../helpers";
 import {BehaviorSubject, combineLatest, debounceTime, filter, map, Subject, Subscription} from "rxjs";
@@ -9,7 +8,6 @@ import {CacheService} from "./cache.service";
   providedIn: 'root'
 })
 export class ScanService {
-  private readonly file = inject(FilesService);
   private readonly app = inject(AppService);
   private readonly cache = inject(CacheService);
 
@@ -33,7 +31,7 @@ export class ScanService {
   async checkExistence() {
     const cacheState = this.cache.state;
     for(const path of cacheState.scanned) {
-      const exists = await this.file.exists(path);
+      const exists = await fs$.exists(path);
       if (!exists) {
         this.cache.removeFromScanned(path);
         db$.remove(path);
@@ -58,7 +56,7 @@ export class ScanService {
 
     this.isScanning$.next(true);
 
-    const watcher = this.file.watch(appState.settings.dirs)
+    const watcher = fs$.watch(appState.settings.dirs)
     this.subs = new Subscription();
     this.subs.add(watcher.state.subscribe((state) => {
       if (!state.latest?.endsWith('.png') && !state.latest?.endsWith('.jpg') && !state.latest?.endsWith('.jpeg')) return;

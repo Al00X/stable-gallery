@@ -8,7 +8,7 @@
   <div class="relative flex-auto overflow-auto">
     <router-outlet></router-outlet>
   </div>
-  <div class="relative flex items-center flex-none h-8 px-6 gap-2">
+  <div class="relative flex items-center flex-none h-8 px-6 gap-2 bg-neutral-50 bg-opacity-50">
     @if(scan.progress$ | async; as progress) {
       @if(progress !== 0 && progress !== 1) {
         <mat-progress-bar class="absolute -top-0.5 left-0 right-0 h-1" [value]="progress * 100"></mat-progress-bar>

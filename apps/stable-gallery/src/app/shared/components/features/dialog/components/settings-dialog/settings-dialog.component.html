@@ -1,3 +1,7 @@
 <app-dialog-layout title="Settings" submitBtn="Save" (onSubmit)="onSave()">
   <feature-settings-form #SettingForm [showOptionals]="true"></feature-settings-form>
+
+  <ng-container slot="bottom">
+    <ui-button class="me-auto mt-auto" appearance="stroked" theme="error" (onClick)="onReset($event)">RESET</ui-button>
+  </ng-container>
 </app-dialog-layout>

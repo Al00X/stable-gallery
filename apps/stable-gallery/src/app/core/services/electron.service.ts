@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import type { ipcRenderer } from 'electron';
 import {BehaviorSubject, filter} from "rxjs";
+import type {environment} from "../../../../../stable-gallery-electron/src/environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class ElectronService {
   ipc: typeof ipcRenderer;
 
   userDataPath!: string;
+  environment!: typeof environment;
 
   private _initialized$ = new BehaviorSubject(false);
 
@@ -19,7 +21,7 @@ export class ElectronService {
     this.electron = window.require('electron');
     this.ipc = this.electron.ipcRenderer;
 
-    Promise.all([this.getUserDataPath()]).then(() => {
+    Promise.all([this.getUserDataPath(), this.getEnvironment()]).then(() => {
       this._initialized$.next(true);
     })
   }
@@ -30,5 +32,9 @@ export class ElectronService {
 
   private async getUserDataPath() {
     this.userDataPath = await this.ipc.invoke('get-user-data-path');
+  }
+
+  private async getEnvironment() {
+    this.environment = await this.ipc.invoke('get-environment');
   }
 }

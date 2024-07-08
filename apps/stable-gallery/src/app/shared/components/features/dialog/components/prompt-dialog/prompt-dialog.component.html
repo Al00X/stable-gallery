@@ -1,12 +1,12 @@
-<!--<feature-dialog-layout-->
-<!--  [title]="data.title"-->
-<!--  [submitBtn]="data.yesButtonText"-->
-<!--  [cancelBtn]="data.noButtonText"-->
-<!--  submitClass="h-10 rounded-2 {{ data.yesButtonClassList ?? '' }}"-->
-<!--  cancelClass="h-10 rounded-2 {{ data.noButtonClassList ?? '' }}"-->
-<!--  (onSubmit)="onYes($event)"-->
-<!--  (onCancel)="onNo()"-->
-<!--&gt;-->
-<!--  <p class="text-base mt-4 font-normal text-neutral-900">{{ data.message }}</p>-->
-<!--  <div class="h-4">&lt;!&ndash; Spacer &ndash;&gt;</div>-->
-<!--</feature-dialog-layout>-->
+<app-dialog-layout
+  [title]="data.title"
+  [submitBtn]="data.yesButtonText"
+  [cancelBtn]="data.noButtonText"
+  submitClass="{{ data.yesButtonClassList ?? '' }}"
+  cancelClass="{{ data.noButtonClassList ?? '' }}"
+  (onSubmit)="onYes($event)"
+  (onCancel)="onNo()"
+>
+  <p class="text-base mt-4 font-normal text-neutral-900">{{ data.message }}</p>
+  <div class="h-4"><!-- Spacer --></div>
+</app-dialog-layout>

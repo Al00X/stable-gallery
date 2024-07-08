@@ -93,6 +93,10 @@ export class FilesService {
     return await this.fs.writeFile(path, Buffer.from(await data));
   }
 
+  async delete(path: string) {
+    return await this.fs.unlink(path);
+  }
+
   private async isDir(dir: string) {
     const res = await this.fs.lstat(dir);
     return res.isDirectory();

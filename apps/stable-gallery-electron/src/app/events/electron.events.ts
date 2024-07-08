@@ -25,6 +25,10 @@ ipcMain.handle('get-user-data-path', () => {
   return dataPath;
 })
 
+ipcMain.handle('get-environment', () => {
+  return environment;
+})
+
 ipcMain.handle('open-directory-select-dialog', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog(App.mainWindow, {
     title: 'Choose a directory',

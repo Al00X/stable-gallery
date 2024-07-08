@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {GalleryComponent} from "../../shared/components/features";
-import {FilesService, ScanService} from "../../core/services";
+import {ScanService} from "../../core/services";
 import {NgxFileDropModule} from "ngx-file-drop";
 import {DropZoneComponent} from "../../shared/components/ui";
 import {ImageItem} from "../../core/helpers";
@@ -13,7 +13,6 @@ import {ImageItem} from "../../core/helpers";
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  private file = inject(FilesService);
   private scan = inject(ScanService);
 
   constructor() {

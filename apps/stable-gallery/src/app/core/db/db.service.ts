@@ -31,16 +31,7 @@ export class DbService {
     this.betterSqlite3 = window.require('better-sqlite3');
 
     this.electron.initialized$.pipe(takeUntilDestroyed()).subscribe(() => {
-      this.sqlite = new this.betterSqlite3(
-        `${this.electron.userDataPath}\\index.sqlite`
-      );
-      this.db = this.drizzle(this.sqlite, {
-        schema: schema,
-      });
-      this.runMigration();
-      setTimeout(() => {
-        this.initialized$.next(true);
-      }, 1);
+      this.setup();
     });
   }
 
@@ -153,6 +144,29 @@ export class DbService {
         ...t.stats,
       } as ImageEntry)
     });
+  }
+
+  async reset() {
+    this.initialized$.next(false);
+    this.sqlite.close();
+    await fs$.delete(this.getDatabasePath())
+    this.setup();
+  }
+
+  private getDatabasePath() {
+    const dbName = `index${!this.electron.environment.production ? '_dev' : ''}.sqlite`
+    return `${this.electron.userDataPath}\\${dbName}`
+  }
+
+  private setup() {
+    this.sqlite = new this.betterSqlite3(this.getDatabasePath());
+    this.db = this.drizzle(this.sqlite, {
+      schema: schema,
+    });
+    this.runMigration();
+    setTimeout(() => {
+      this.initialized$.next(true);
+    }, 1);
   }
 
   private runMigration() {
