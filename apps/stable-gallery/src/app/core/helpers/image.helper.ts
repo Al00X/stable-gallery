@@ -154,11 +154,11 @@ export class ImageItem {
         .map((t) => t.trim())
         .filter((t) => t.length);
 
-      prompt = (chunks.length > 0 ? chunks.slice(0, -2) : undefined)
+      prompt = (chunks.length === 2 ? chunks.slice(0, -1) : chunks.length > 0 ? chunks.slice(0, -2) : undefined)
         ?.join(' ')
         ?.trim();
       negative = (
-        chunks.length > 1 ? chunks.at(-2)!.substring(17) : undefined
+        chunks.length === 2 ? undefined : chunks.length > 1 ? chunks.at(-2)!.substring(17) : undefined
       )?.trim();
       const infoChunk =
         chunks.length > 2
@@ -217,7 +217,7 @@ export class ImageItem {
 const nsfwKeys = [
   'nsfw', 'pussy', 'nude', 'nudity', 'naked', 'breast', 'thigh', 'vagina', 'pubic',
   'porn', 'boobs', 'underboob', 'boobies', 'asshole', 'dick', 'penis',
-  'nipple', 'titties', 'tight',
+  'nipple', 'titties', 'tight', 'masturbation',
 
   // words that could be a part of a non-nsfw words (trailed by a space)
   ' ass ', ' butt ', ' boob ', ' tits ',
