@@ -10,7 +10,15 @@
   <div class="details-panel-sections">
     @if(detailsSection()) {
       @if(showImage) {
-        <img [src]="image!.path" alt="" class="w-48" />
+        <div class="relative transition-all flex flex-col {{ isImageExpanded() ? 'w-full' : 'w-48' }}">
+          <div class="absolute inset-0 transition-all opacity-0 hover:opacity-100 bg-white bg-opacity-30 flex items-center justify-center cursor-pointer" (click)="openImage()">
+            <mat-icon svgIcon="search"></mat-icon>
+          </div>
+          <img [src]="image!.path" alt="" class="w-full" />
+        </div>
+        <div class="w-full flex items-center justify-end px-8">
+          <ui-icon [icon]="isImageExpanded() ? 'shrink' : 'expand'" size="1.25rem" (onClick)="isImageExpanded.set(!isImageExpanded())"></ui-icon>
+        </div>
       }
       <div class="details-panel-generation">
         <div class="flex flex-col gap-4">

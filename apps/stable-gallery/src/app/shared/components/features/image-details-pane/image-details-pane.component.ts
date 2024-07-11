@@ -1,12 +1,14 @@
-import {Component, Input, OnChanges, OnInit, signal, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, Output, signal, SimpleChanges} from '@angular/core';
 import {ImageItem} from "../../../../core/helpers";
 import {formatDate} from "@angular/common";
 import {ItemRecord} from "../../../../core/interfaces";
+import {ButtonComponent, IconComponent} from "../../ui";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'feature-image-details-pane',
   standalone: true,
-  imports: [],
+  imports: [ButtonComponent, IconComponent, MatIcon],
   templateUrl: './image-details-pane.component.html',
   styleUrl: './image-details-pane.component.scss',
 })
@@ -17,6 +19,7 @@ export class ImageDetailsPaneComponent implements OnInit, OnChanges {
   @Input() showImage?: boolean;
 
   isOpen = signal(false);
+  isImageExpanded = signal(false);
   detailsSection = signal<
     | {
         main: ItemRecord<string | number | undefined>[];
@@ -34,6 +37,13 @@ export class ImageDetailsPaneComponent implements OnInit, OnChanges {
     if (changes['image']) {
       this.populateDetails();
     }
+  }
+
+  openImage() {
+    if (!this.image) return;
+    dialog$.imageViewer({
+      image: this.image
+    })
   }
 
   private populateDetails() {
@@ -60,7 +70,9 @@ export class ImageDetailsPaneComponent implements OnInit, OnChanges {
         { label: 'Size', value: `${image.width} x ${image.height}` },
         {
           label: 'Created At',
-          value: image.createdAt ? formatDate(image.createdAt, 'yyyy/MM/dd', 'en') : undefined,
+          value: image.createdAt
+            ? formatDate(image.createdAt, 'yyyy/MM/dd', 'en')
+            : undefined,
         },
         {
           label: 'Updated At',

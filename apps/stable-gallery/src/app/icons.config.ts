@@ -4,7 +4,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 
 // prettier-ignore
 const baseIcons = [
-  'star', 'star-outlined', 'settings', 'close', 'close-circle', 'grid', 'masonry'
+  'star', 'star-outlined', 'settings', 'close', 'close-circle', 'grid', 'masonry', 'search', 'expand', 'shrink'
 ];
 
 export function registerIcons() {

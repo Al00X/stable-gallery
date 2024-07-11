@@ -20,6 +20,9 @@ export class KeybindService {
     fromEvent<KeyboardEvent>(document, 'keyup').pipe(takeUntilDestroyed()).subscribe(e => {
       this.toggleKey(e.key, false);
     })
+    fromEvent<Event>(window, 'blur').pipe(takeUntilDestroyed()).subscribe(e => {
+      this.reset();
+    })
     this.app.state$.pipe(takeUntilDestroyed()).subscribe(() => {
       this.updateKeyBinds();
     })
@@ -36,6 +39,12 @@ export class KeybindService {
       const sig = this._keys[key];
       if (sig() === state) return;
       sig.set(state);
+    }
+  }
+
+  private reset() {
+    for(const sig of Object.values(this._keys)) {
+      sig.set(false)
     }
   }
 }
