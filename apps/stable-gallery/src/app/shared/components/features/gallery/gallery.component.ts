@@ -1,13 +1,22 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { formControl, ImageItem } from '../../../../core/helpers';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import {debounceTime, distinctUntilChanged, merge} from 'rxjs';
 import { AppService, ScanService } from '../../../../core/services';
-import {AsyncPipe, NgIf} from '@angular/common';
-import {ButtonGroupComponent, FieldComponent, MasonryComponent, SliderComponent} from '../../ui';
+import { AsyncPipe, NgIf } from '@angular/common';
+import {
+  ButtonGroupComponent,
+  FieldComponent,
+  MasonryComponent,
+  SliderComponent,
+} from '../../ui';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageCardComponent } from '../image-card/image-card.component';
-import {ImageDetailsPaneComponent} from "../image-details-pane/image-details-pane.component";
+import { ImageDetailsPaneComponent } from '../image-details-pane/image-details-pane.component';
+import { ItemRecord } from '../../../../core/interfaces';
+
+type SortByOptions = 'createdAt' | 'addedAt';
+type SortDirection = 'asc' | 'desc';
 
 const SEARCH_DEBOUNCE = 150;
 const SCROLL_THRESHOLD = 200;
@@ -37,22 +46,35 @@ export class GalleryComponent {
   items = signal<ImageItem[]>([]);
   filters = signal<{
     search?: string;
+    sortBy?: SortByOptions;
+    sortDirection?: SortDirection;
   }>({});
   page = signal(0);
   currentCount = computed(() => this.items().length);
   allLoaded = signal(false);
   selectedImage = signal<ImageItem | undefined>(undefined);
-  openDetails = signal(this.app.state.settings.openDetailsTabInGalleryByDefault);
+  openDetails = signal(
+    this.app.state.settings.openDetailsTabInGalleryByDefault
+  );
 
   viewStyleControl = formControl(this.app.state.settings.galleryViewStyle);
   itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);
   columnsControl = formControl(this.app.state.settings.galleryColumns);
   itemSizeControl = formControl(this.app.state.settings.galleryItemAspectRatio);
+  sortByControl = formControl<SortByOptions>(this.app.state.settings.gallerySortBy as any);
+  sortDirectionControl = formControl<SortDirection>(this.app.state.settings.gallerySortDirection as any);
   searchControl = formControl('');
+
+  sortByItems: ItemRecord<SortByOptions>[] = [
+    { label: 'Date Created', value: 'createdAt' },
+    { label: 'Date Added', value: 'addedAt' },
+  ];
 
   itemTrackBy = (_: number, item: ImageItem) => item.path;
 
   constructor() {
+    this.updateFilters();
+
     db$.initialized$.subscribe(() => {
       this.get(true);
     });
@@ -106,17 +128,17 @@ export class GalleryComponent {
         });
       });
 
-    this.searchControl.valueChanges
-      .pipe(
+    merge(
+      this.sortByControl.valueChanges.pipe(distinctUntilChanged()),
+      this.sortDirectionControl.valueChanges.pipe(distinctUntilChanged()),
+      this.searchControl.valueChanges.pipe(
         distinctUntilChanged(),
-        debounceTime(SEARCH_DEBOUNCE),
-        takeUntilDestroyed()
-      )
-      .subscribe((v) => {
-        this.filters.update((s) => ({
-          ...s,
-          search: v,
-        }));
+        debounceTime(SEARCH_DEBOUNCE)
+      ),
+    )
+      .pipe(debounceTime(5), takeUntilDestroyed())
+      .subscribe(() => {
+        this.updateFilters();
         this.get(true);
       });
   }
@@ -133,11 +155,18 @@ export class GalleryComponent {
     const filters = this.filters();
     const perPage = 100;
 
+    this.app.setSettings({
+      gallerySortBy: filters.sortBy,
+      gallerySortDirection: filters.sortDirection,
+    })
+
     const fn = async () =>
       await db$.getImages({
         page: this.page(),
         perPage,
         search: filters.search,
+        sortBy: filters.sortBy,
+        sortDirection: filters.sortDirection,
       });
     if (reset) {
       this.page.set(1);
@@ -151,5 +180,16 @@ export class GalleryComponent {
       }
       this.items.update((v) => v.concat(res));
     }
+  }
+
+  private updateFilters() {
+    const search = this.searchControl.value;
+    const sortBy = this.sortByControl.value;
+    const sortDir = this.sortDirectionControl.value;
+    this.filters.set({
+      sortBy,
+      search,
+      sortDirection: sortDir,
+    });
   }
 }

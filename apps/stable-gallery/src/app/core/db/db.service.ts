@@ -10,7 +10,7 @@ import type { MigrationMeta } from 'drizzle-orm/migrator';
 import { ImageItem } from '../helpers/image.helper';
 import { ImageEntry, imagesEntry, lower, statEntry } from '../db/schema';
 import { BehaviorSubject } from 'rxjs';
-import { desc, eq, like, or } from 'drizzle-orm';
+import { asc, desc, eq, like, or } from 'drizzle-orm';
 
 @Injectable({
   providedIn: 'root',
@@ -61,7 +61,7 @@ export class DbService {
             nsfw: model.nsfw,
           });
         }
-        return await this.getImage(id)
+        return await this.getImage(id);
       })
       .catch((err) => {
         console.error(err);
@@ -75,14 +75,19 @@ export class DbService {
       .load()
       .then(async () => {
         const model = image.getModel();
-        await this.db.update(imagesEntry).set(model).where(eq(imagesEntry.id, image.id!));
-        await this.db.update(statEntry).set(model).where(eq(statEntry.id, image.id!));
+        await this.db
+          .update(imagesEntry)
+          .set(model)
+          .where(eq(imagesEntry.id, image.id!));
+        await this.db
+          .update(statEntry)
+          .set(model)
+          .where(eq(statEntry.id, image.id!));
       })
       .catch((err) => {
         console.error(err);
         throw err;
       });
-
   }
 
   // q is used as id or path
@@ -104,13 +109,27 @@ export class DbService {
     page?: number;
     perPage?: number;
     search?: string;
+    sortBy?: 'createdAt' | 'addedAt';
+    sortDirection?: 'asc' | 'desc';
   }) {
     const fn = this.db
       .select()
       .from(imagesEntry)
       .limit(query?.perPage ?? 10)
       .offset((query?.perPage ?? 10) * (query?.page ? query.page - 1 : 0))
-      .orderBy(desc(imagesEntry.createdAt))
+      .orderBy(
+        (query?.sortDirection
+          ? query.sortDirection === 'desc'
+            ? desc
+            : asc
+          : desc)(
+          query?.sortBy
+            ? query.sortBy === 'createdAt'
+              ? imagesEntry.createdAt
+              : imagesEntry.addedAt
+            : imagesEntry.createdAt
+        )
+      )
       .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id));
     if (query?.search) {
       fn.where(
@@ -134,28 +153,36 @@ export class DbService {
 
   async getImage(q: string | number | undefined) {
     if (!q) return;
-    return this.db.select().from(imagesEntry).where(
-      typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q)
-    ).limit(1).leftJoin(statEntry, eq(imagesEntry.id, statEntry.id)).then((res) => {
-      const t = res.at(0);
-      if (!t) return undefined;
-      return ImageItem.fromImageEntry({
-        ...t.entries,
-        ...t.stats,
-      } as ImageEntry)
-    });
+    return this.db
+      .select()
+      .from(imagesEntry)
+      .where(
+        typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q)
+      )
+      .limit(1)
+      .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id))
+      .then((res) => {
+        const t = res.at(0);
+        if (!t) return undefined;
+        return ImageItem.fromImageEntry({
+          ...t.entries,
+          ...t.stats,
+        } as ImageEntry);
+      });
   }
 
   async reset() {
     this.initialized$.next(false);
     this.sqlite.close();
-    await fs$.delete(this.getDatabasePath())
+    await fs$.delete(this.getDatabasePath());
     this.setup();
   }
 
   private getDatabasePath() {
-    const dbName = `index${!this.electron.environment.production ? '_dev' : ''}.sqlite`
-    return `${this.electron.userDataPath}\\${dbName}`
+    const dbName = `index${
+      !this.electron.environment.production ? '_dev' : ''
+    }.sqlite`;
+    return `${this.electron.userDataPath}\\${dbName}`;
   }
 
   private setup() {

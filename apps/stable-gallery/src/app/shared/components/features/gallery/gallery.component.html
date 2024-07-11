@@ -37,8 +37,9 @@
     }
 
     <div class="flex-auto"><!-- Spacer --></div>
-
-    <ui-field [control]="searchControl" placeholder="Search..."></ui-field>
+    <ui-field [control]="sortByControl" controlType="select" label="Sort By" placeholder="Sort by..." [items]="sortByItems" width="8rem"></ui-field>
+    <ui-button-group class="-ms-8" [control]="sortDirectionControl" [items]="[{ icon: 'asc', value: 'asc', hint: 'Ascending' }, { icon: 'desc', value: 'desc', hint: 'Descending' }]"></ui-button-group>
+    <ui-field [control]="searchControl" icon="search" placeholder="Search..."></ui-field>
   </div>
 
   <div class="flex-auto flex relative overflow-hidden">

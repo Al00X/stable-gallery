@@ -11,6 +11,8 @@ interface AppState {
     galleryItemAspectRatio: number;
     galleryColumns: number;
     galleryViewStyle?: 'grid' | 'masonry';
+    gallerySortBy?: string;
+    gallerySortDirection?: string;
     openDetailsTabInGalleryByDefault: boolean;
     openDetailsTabInLightboxByDefault: boolean;
     detailsTabImageExpanded: boolean;
