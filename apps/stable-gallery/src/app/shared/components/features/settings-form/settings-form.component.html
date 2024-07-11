@@ -1,11 +1,13 @@
 <ui-list-field
   #DirsListField
   [control]="settingsForm.controls.dirs"
-  label="Generated Images Directory"
+  label="Images Directory"
   addButton="Browse"
   (onAdd)="onAddToDirs($event)"
 ></ui-list-field>
 
-<ui-toggle label="Open details panel in gallery by default" [control]="settingsForm.controls.openDetailsInGalleryByDefault"></ui-toggle>
+@if(showOptionals) {
+  <ui-toggle label="Open details panel in gallery by default" [control]="settingsForm.controls.openDetailsInGalleryByDefault"></ui-toggle>
 
-<ui-toggle label="Open details panel in lightbox by default" [control]="settingsForm.controls.openDetailsInLightboxByDefault"></ui-toggle>
+  <ui-toggle label="Open details panel in lightbox by default" [control]="settingsForm.controls.openDetailsInLightboxByDefault"></ui-toggle>
+}
