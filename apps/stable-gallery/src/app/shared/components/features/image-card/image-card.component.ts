@@ -5,7 +5,7 @@ import {
   Input, Output,
 } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { AppService } from '../../../../core/services';
+import {AppService, KeybindService} from '../../../../core/services';
 import { ImageItem } from '../../../../core/helpers';
 import {
   ButtonComponent,
@@ -28,6 +28,7 @@ import {
 })
 export class ImageCardComponent {
   public readonly app = inject(AppService);
+  public keybind = inject(KeybindService);
 
   @Input() image!: ImageItem;
   @Input() isSelected?: boolean;

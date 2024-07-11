@@ -1,7 +1,7 @@
 <div
   class="feature-image-card"
   [class.selected]="isSelected"
-  [class.is-nsfw]="(app.showNsfw$ | async) ? false : image.nsfw()"
+  [class.is-nsfw]="keybind.peakNsfw() || (app.showNsfw$ | async) ? false : image.nsfw()"
 >
   <img
     [src]="image.path"

@@ -37,9 +37,23 @@ export class SettingsDialogComponent extends BaseDialogComponent<
     this.close(this.settingForm.save());
   }
 
-  onReset(e: ButtonClickEvent) {
+  onResetSettings() {
     dialog$.prompt({
-      title: 'You are going to reset!',
+      title: 'You are going to reset your settings!',
+      message:
+        'Resetting will set the customized settings the default values.\nAre you sure you want to continue?',
+      yesButtonClassList: 'bg-transparent border border-error-600 text-error-600',
+      yesButtonText: 'Reset',
+      noButtonText: 'Nope',
+    }).afterSubmit().subscribe(() => {
+      this.resetSettings();
+      this.close();
+    })
+  }
+
+  onResetAll(e: ButtonClickEvent) {
+    dialog$.prompt({
+      title: 'You are going to reset everything!',
       message:
         'Resetting will delete index database (indexed images), cache and customized setting and you will redirected back to the welcome page.\nAre you sure you want to continue?',
       yesButtonClassList: 'bg-transparent border border-error-600 text-error-600',
@@ -48,14 +62,18 @@ export class SettingsDialogComponent extends BaseDialogComponent<
     }).afterSubmit().subscribe(async () => {
       e.setLoading(true);
       await db$.reset();
-      const dirs = this.app.state.settings.dirs;
-      this.app.reset();
-      this.app.setSettings({
-        dirs
-      })
+      this.resetSettings();
       this.cache.reset();
       this.router.navigate(['/welcome']);
       this.close();
     });
+  }
+
+  private resetSettings() {
+    const dirs = this.app.state.settings.dirs;
+    this.app.reset();
+    this.app.setSettings({
+      dirs
+    })
   }
 }

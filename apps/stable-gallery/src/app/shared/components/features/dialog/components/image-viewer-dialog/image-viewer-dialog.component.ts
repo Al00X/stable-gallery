@@ -1,9 +1,9 @@
-import {AfterViewInit, ChangeDetectorRef, Component, inject, signal} from '@angular/core';
+import {AfterViewInit, Component, inject, signal} from '@angular/core';
 import {ImageItem} from "../../../../../../core/helpers";
 import {BaseDialogComponent} from "../_base-dialog.component";
 import {PanZoomComponent, PanZoomConfig} from "ngx-panzoom";
 import {ButtonClickEvent, ButtonComponent, FavoriteToggleComponent, NsfwToggleComponent} from "../../../../ui";
-import {CacheService} from "../../../../../../core/services/cache.service";
+import {CacheService} from "../../../../../../core/services";
 import {AppService, FilesService, ScanService} from "../../../../../../core/services";
 import {ImageDetailsPaneComponent} from "../../../image-details-pane/image-details-pane.component";
 
@@ -46,7 +46,7 @@ export class ImageViewerDialogComponent
 
   private _mouseDownEvent?: MouseEvent;
 
-  isDetailsOpen = signal(false);
+  isDetailsOpen = signal(this.app.state.settings.openDetailsTabInLightboxByDefault);
   path = signal('');
 
   constructor() {

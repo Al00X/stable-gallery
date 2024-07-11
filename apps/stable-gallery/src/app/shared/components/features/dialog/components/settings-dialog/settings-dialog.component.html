@@ -2,6 +2,9 @@
   <feature-settings-form #SettingForm [showOptionals]="true"></feature-settings-form>
 
   <ng-container slot="bottom">
-    <ui-button class="me-auto mt-auto" appearance="stroked" theme="error" (onClick)="onReset($event)">RESET</ui-button>
+    <div class="flex items-center gap-4 me-auto mt-auto">
+      <ui-button appearance="stroked" theme="error" (onClick)="onResetSettings()">RESET Settings</ui-button>
+      <ui-button appearance="stroked" theme="error" (onClick)="onResetAll($event)">RESET ALL</ui-button>
+    </div>
   </ng-container>
 </app-dialog-layout>

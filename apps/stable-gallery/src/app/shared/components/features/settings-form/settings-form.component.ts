@@ -24,7 +24,8 @@ export class SettingsFormComponent {
   settingsForm = formGroup({
     dirs: formControl<string[]>(),
     openDetailsInGalleryByDefault: formControl<boolean>(),
-    openDetailsInLightboxByDefault: formControl<boolean>()
+    openDetailsInLightboxByDefault: formControl<boolean>(),
+    peakNsfw: formControl<boolean>(),
   })
 
   constructor() {
@@ -32,7 +33,8 @@ export class SettingsFormComponent {
     this.settingsForm.patchValue({
       dirs: settings.dirs,
       openDetailsInGalleryByDefault: settings.openDetailsTabInGalleryByDefault,
-      openDetailsInLightboxByDefault: settings.openDetailsTabInLightboxByDefault
+      openDetailsInLightboxByDefault: settings.openDetailsTabInLightboxByDefault,
+      peakNsfw: !!settings.peakNsfwWithKeybinding
     })
   }
 
@@ -52,7 +54,8 @@ export class SettingsFormComponent {
     this.app.setSettings({
       dirs: values.dirs,
       openDetailsTabInGalleryByDefault: values.openDetailsInGalleryByDefault,
-      openDetailsTabInLightboxByDefault: values.openDetailsInLightboxByDefault
+      openDetailsTabInLightboxByDefault: values.openDetailsInLightboxByDefault,
+      peakNsfwWithKeybinding: values.peakNsfw ? 'Alt' : undefined,
     });
 
     return this.app.isSettingsValid();

@@ -13,6 +13,7 @@ interface AppState {
     galleryViewStyle?: 'grid' | 'masonry';
     openDetailsTabInGalleryByDefault: boolean;
     openDetailsTabInLightboxByDefault: boolean;
+    peakNsfwWithKeybinding?: string;
   };
 }
 
@@ -28,6 +29,7 @@ const appStore = createStore(
       galleryViewStyle: 'grid',
       openDetailsTabInGalleryByDefault: false,
       openDetailsTabInLightboxByDefault: false,
+      peakNsfwWithKeybinding: 'Alt'
     },
   })
 );

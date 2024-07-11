@@ -42,6 +42,7 @@ export class GalleryComponent {
   currentCount = computed(() => this.items().length);
   allLoaded = signal(false);
   selectedImage = signal<ImageItem | undefined>(undefined);
+  openDetails = signal(this.app.state.settings.openDetailsTabInGalleryByDefault);
 
   viewStyleControl = formControl(this.app.state.settings.galleryViewStyle);
   itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);

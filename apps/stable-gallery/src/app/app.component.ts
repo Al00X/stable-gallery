@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {AsyncPipe} from "@angular/common";
 import {registerIcons} from "./icons.config";
 import {setupGlobalServices} from "./globawls";
+import {KeybindService} from "./core/services";
 
 @Component({
   standalone: true,
@@ -16,5 +17,7 @@ export class AppComponent {
   constructor() {
     setupGlobalServices();
     registerIcons();
+
+    inject(KeybindService);
   }
 }
