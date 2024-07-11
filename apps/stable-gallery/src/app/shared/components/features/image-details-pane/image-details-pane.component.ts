@@ -1,9 +1,10 @@
-import {Component, Input, OnChanges, OnInit, Output, signal, SimpleChanges} from '@angular/core';
+import {Component, inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges} from '@angular/core';
 import {ImageItem} from "../../../../core/helpers";
 import {formatDate} from "@angular/common";
 import {ItemRecord} from "../../../../core/interfaces";
 import {ButtonComponent, IconComponent} from "../../ui";
 import {MatIcon} from "@angular/material/icon";
+import {AppService} from "../../../../core/services";
 
 @Component({
   selector: 'feature-image-details-pane',
@@ -13,13 +14,15 @@ import {MatIcon} from "@angular/material/icon";
   styleUrl: './image-details-pane.component.scss',
 })
 export class ImageDetailsPaneComponent implements OnInit, OnChanges {
+  private app = inject(AppService)
+
   @Input() open = false;
   @Input() image?: ImageItem;
   @Input() absolute?: boolean;
   @Input() showImage?: boolean;
 
   isOpen = signal(false);
-  isImageExpanded = signal(false);
+  isImageExpanded = signal(this.app.state.settings.detailsTabImageExpanded);
   detailsSection = signal<
     | {
         main: ItemRecord<string | number | undefined>[];
@@ -43,6 +46,13 @@ export class ImageDetailsPaneComponent implements OnInit, OnChanges {
     if (!this.image) return;
     dialog$.imageViewer({
       image: this.image
+    })
+  }
+
+  toggleExpand() {
+    this.isImageExpanded.set(!this.isImageExpanded())
+    this.app.setSettings({
+      detailsTabImageExpanded: this.isImageExpanded()
     })
   }
 
