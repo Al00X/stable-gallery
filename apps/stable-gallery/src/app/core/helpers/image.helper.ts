@@ -99,12 +99,12 @@ export class ImageItem {
     };
   }
 
-  toggleNsfw() {
-    this.nsfw.set(!this.nsfw());
+  toggleNsfw(value?: boolean) {
+    this.nsfw.set(value === undefined ? !this.nsfw() : value);
     this.saveStatesToDb();
   }
-  toggleFavorite() {
-    this.favorite.set(!this.favorite());
+  toggleFavorite(value?: boolean) {
+    this.favorite.set(value === undefined ? !this.favorite() : value);
     this.saveStatesToDb();
   }
 

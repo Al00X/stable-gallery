@@ -8,7 +8,8 @@
     alt=""
     class="cursor-pointer select-none"
     style="-webkit-user-drag: none"
-    (mouseup)="onImageClick()"
+    (mousedown)="onImageMouseDown($event)"
+    (mouseup)="onImageMouseUp($event)"
     (dblclick)="onImageDoubleClick()"
   />
   <div class="feature-image-card-top-shadow"></div>

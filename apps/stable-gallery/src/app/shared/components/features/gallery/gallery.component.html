@@ -51,12 +51,14 @@
         'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
       "
         >
-          @for(item of items(); track item.path) {
+          @for(item of items(); track item.path; let index = $index) {
             <feature-image-card
               [image]="item"
               [style.aspect-ratio]="itemSizeControl.value$ | async"
-              [isSelected]="item.path === selectedImage()?.path"
-              (onSelect)="selectedImage.set(item)"
+              [isSelected]="selectionModel.selectedIds()[item.path]"
+              (mousedown)="onImageMouseDown(index, item)"
+              (mousemove)="onImageMouseMove(index, item)"
+              (mouseup)="onImageMouseUp(index, item)"
             ></feature-image-card>
           }
         </div>
@@ -65,18 +67,23 @@
           <ng-template let-item="item">
             <feature-image-card
               [image]="item"
-              [isSelected]="item.path === selectedImage()?.path"
-              (onSelect)="selectedImage.set(item)"
+              [isSelected]="selectionModel.selectedIds()[item.path]"
+              (onMouseUp)="selectionModel.set(item)"
             ></feature-image-card>
           </ng-template>
         </ui-masonry>
       }
     </div>
     <feature-image-details-pane
-      class="flex-none"
+      class="flex-none z-[2] transform-gpu"
       [open]="openDetails()"
-      [image]="selectedImage()"
+      [image]="firstHighlightedImage()"
       [showImage]="true"
     ></feature-image-details-pane>
+
+    <div class="absolute z-1 bottom-0 left-0 right-0 flex-none flex items-center w-full overflow-hidden bg-neutral-200 gap-6 px-4 transition-all {{ selectionModel.selectedCount() > 1 ? 'h-16' : 'h-0' }}">
+      <span class="font-medium">Selected Images: {{ selectionModel.selectedCount() }}</span>
+      <feature-image-actions [images]="selectionModel.selected()"></feature-image-actions>
+    </div>
   </div>
 </div>

@@ -6,6 +6,7 @@ import {ButtonClickEvent, ButtonComponent, FavoriteToggleComponent, NsfwToggleCo
 import {CacheService} from "../../../../../../core/services";
 import {AppService, FilesService, ScanService} from "../../../../../../core/services";
 import {ImageDetailsPaneComponent} from "../../../image-details-pane/image-details-pane.component";
+import {ImageActionsComponent} from "../../../image-actions/image-actions.component";
 
 export interface ImageViewerDialogData {
   image: ImageItem;
@@ -22,6 +23,7 @@ export type ImageViewerDialogResult = boolean;
     FavoriteToggleComponent,
     NsfwToggleComponent,
     ImageDetailsPaneComponent,
+    ImageActionsComponent,
   ],
   templateUrl: './image-viewer-dialog.component.html',
   styleUrl: './image-viewer-dialog.component.scss',
@@ -46,7 +48,9 @@ export class ImageViewerDialogComponent
 
   private _mouseDownEvent?: MouseEvent;
 
-  isDetailsOpen = signal(this.app.state.settings.openDetailsTabInLightboxByDefault);
+  isDetailsOpen = signal(
+    this.app.state.settings.openDetailsTabInLightboxByDefault
+  );
   path = signal('');
 
   constructor() {
@@ -58,13 +62,13 @@ export class ImageViewerDialogComponent
     if (this.data.loadFromBuffer) {
       const blob = this.data.image.blob();
       if (!blob) return;
-      this.path.set(URL.createObjectURL(blob))
+      this.path.set(URL.createObjectURL(blob));
       // this.data.image.buffer().then(buffer => {
       //   console.log(buffer)
       //   this.path.set(URL.createObjectURL(buffer))
       // })
     } else {
-      this.path.set(this.data.image.path)
+      this.path.set(this.data.image.path);
     }
   }
 
@@ -82,8 +86,7 @@ export class ImageViewerDialogComponent
     }
     setTimeout(() => {
       this.cdr.detectChanges();
-    }, 100)
-
+    }, 100);
   }
 
   onMouseDown(e: MouseEvent) {
@@ -111,8 +114,7 @@ export class ImageViewerDialogComponent
       if (!image) throw new Error('Image was undefined!? what?');
       this.cache.addToScanned(image.path);
       if (this.data.image.isInMemory()) {
-
-        await this.file.write(image.path, this.data.image.buffer())
+        await this.file.write(image.path, this.data.image.buffer());
       } else {
         await this.file.copy(filePath, dir);
       }

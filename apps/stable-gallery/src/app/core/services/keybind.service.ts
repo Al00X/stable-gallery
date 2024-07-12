@@ -10,14 +10,20 @@ export class KeybindService {
   private app = inject(AppService)
 
   peakNsfw = signal(false);
+  ctrl = signal(false);
+  shift = signal(false);
 
   private _keys: {[key: string]: WritableSignal<boolean>} = {};
 
   constructor() {
     fromEvent<KeyboardEvent>(document, 'keydown').pipe(takeUntilDestroyed()).subscribe(e => {
+      this.shift.set(e.shiftKey);
+      this.ctrl.set(e.ctrlKey);
       this.toggleKey(e.key, true);
     })
     fromEvent<KeyboardEvent>(document, 'keyup').pipe(takeUntilDestroyed()).subscribe(e => {
+      this.shift.set(e.shiftKey);
+      this.ctrl.set(e.ctrlKey);
       this.toggleKey(e.key, false);
     })
     fromEvent<Event>(window, 'blur').pipe(takeUntilDestroyed()).subscribe(e => {

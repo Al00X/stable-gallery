@@ -1,6 +1,7 @@
 .feature-image-card {
   @apply overflow-hidden w-full h-full relative;
   box-sizing: content-box;
+  user-select: none;
   img {
     @apply w-full h-full object-cover transition-all;
   }

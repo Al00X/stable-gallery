@@ -1,0 +1,26 @@
+<ui-button
+  class="w-24 h-10 {{
+        image ? image.nsfw() : nsfw() ? 'text-error-600 bg-white' : 'bg-white'
+      }}"
+  theme="custom"
+  appearance="stroked"
+  (onClick)="toggleNsfw()"
+>
+  <ui-nsfw-toggle
+    [value]="image ? image.nsfw() : nsfw()"
+    class="pointer-events-none"
+  ></ui-nsfw-toggle>
+  {{ image ? image.nsfw() : nsfw() ? 'NSFW' : 'SFW' }}
+</ui-button>
+<ui-button
+  class="w-32 h-10 bg-white"
+  theme="custom"
+  appearance="stroked"
+  (onClick)="toggleFavorite()"
+>
+  <ui-favorite-toggle
+    [value]="image ? image.favorite() : favorite()"
+    class="pointer-events-none"
+  ></ui-favorite-toggle>
+  {{ image ? image.favorite() : favorite() ? 'Favorited' : 'Favorite' }}
+</ui-button>

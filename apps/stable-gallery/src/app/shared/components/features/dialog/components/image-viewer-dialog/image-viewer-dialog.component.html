@@ -2,32 +2,7 @@
   <div
     class="absolute left-0 right-0 top-0 flex items-center pt-4 gap-4 px-4 z-10"
   >
-    <ui-button
-      class="h-10 {{
-        data.image.nsfw() ? 'text-error-600 bg-white' : 'bg-white'
-      }}"
-      theme="custom"
-      appearance="stroked"
-      (onClick)="data.image.toggleNsfw()"
-    >
-      <ui-nsfw-toggle
-        [value]="data.image.nsfw()"
-        class="pointer-events-none"
-      ></ui-nsfw-toggle>
-      {{ data.image.nsfw() ? 'NSFW' : 'SFW' }}
-    </ui-button>
-    <ui-button
-      class="h-10 bg-white"
-      theme="custom"
-      appearance="stroked"
-      (onClick)="data.image.toggleFavorite()"
-    >
-      <ui-favorite-toggle
-        [value]="data.image.favorite()"
-        class="pointer-events-none"
-      ></ui-favorite-toggle>
-      {{ data.image.favorite() ? 'Favorited' : 'Favorite' }}
-    </ui-button>
+    <feature-image-actions [image]="data.image"></feature-image-actions>
   </div>
 
   <pan-zoom

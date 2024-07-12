@@ -33,10 +33,15 @@ export class ImageCardComponent {
   @Input() image!: ImageItem;
   @Input() isSelected?: boolean;
 
-  @Output() onSelect = new EventEmitter();
+  @Output() onMouseDown = new EventEmitter<MouseEvent>();
+  @Output() onMouseUp = new EventEmitter<MouseEvent>();
 
-  onImageClick() {
-    this.onSelect.emit();
+  onImageMouseDown(e: MouseEvent) {
+    this.onMouseDown.emit(e);
+  }
+
+  onImageMouseUp(e: MouseEvent) {
+    this.onMouseUp.emit(e);
     console.log(this.image);
   }
 
