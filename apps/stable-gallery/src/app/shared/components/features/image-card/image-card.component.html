@@ -15,18 +15,23 @@
   <div class="feature-image-card-top-shadow"></div>
   @if(image.nsfw()) {
   <div
-    class="text-2xs font-medium inline-block absolute top-2 start-2 rounded-full bg-error-400 text-black px-1 py-px pointer-events-none z-1"
+    class="text-2xs font-medium inline-block absolute top-1 start-1 rounded-0 bg-error-400 text-black px-1 py-px pointer-events-none z-1"
   >
     NSFW
   </div>
   }
-  <ui-favorite-toggle
-    class="absolute top-2 end-2 z-1"
-    [value]="image.favorite()"
-    (click)="$event.stopPropagation()"
-    (onToggle)="image.toggleFavorite()"
-  ></ui-favorite-toggle>
+  @if(image.favorite()) {
+    <div class="flex items-center justify-center bg-blue-950 absolute top-1 end-1 p-1 w-fit h-fit">
+      <mat-icon svgIcon="star" class="text-yellow-500 w-3 h-3"></mat-icon>
+    </div>
+  }
   <div class="feature-image-card-tools z-1" (click)="$event.stopPropagation()">
+    <ui-favorite-toggle
+      class=""
+      [value]="image.favorite()"
+      (click)="$event.stopPropagation()"
+      (onToggle)="image.toggleFavorite()"
+    ></ui-favorite-toggle>
     <ui-nsfw-toggle
       [value]="image.nsfw()"
       (onToggle)="image.toggleNsfw()"

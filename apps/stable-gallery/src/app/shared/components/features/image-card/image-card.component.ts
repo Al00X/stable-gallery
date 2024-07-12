@@ -12,6 +12,7 @@ import {
   FavoriteToggleComponent,
   NsfwToggleComponent,
 } from '../../ui';
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'feature-image-card',
@@ -21,6 +22,7 @@ import {
     ButtonComponent,
     NsfwToggleComponent,
     FavoriteToggleComponent,
+    MatIcon,
   ],
   templateUrl: './image-card.component.html',
   styleUrl: './image-card.component.scss',
@@ -47,6 +49,6 @@ export class ImageCardComponent {
 
   onImageDoubleClick() {
     if (!this.isSelected) return;
-    dialog$.imageViewer({image: this.image});
+    dialog$.imageViewer({ image: this.image });
   }
 }
