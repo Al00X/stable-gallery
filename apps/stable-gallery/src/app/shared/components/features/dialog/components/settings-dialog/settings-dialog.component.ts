@@ -4,7 +4,7 @@ import { DialogLayoutComponent } from '../../../../layouts';
 import {ButtonClickEvent, ButtonComponent, ListFieldComponent} from '../../../../ui';
 import { SettingsFormComponent } from '../../../settings-form/settings-form.component';
 import {AppService} from "../../../../../../core/services";
-import {CacheService} from "../../../../../../core/services/cache.service";
+import {CacheService} from "../../../../../../core/services";
 import {Router} from "@angular/router";
 
 export type SettingsDialogData = {} | undefined;
@@ -51,6 +51,21 @@ export class SettingsDialogComponent extends BaseDialogComponent<
     })
   }
 
+  onResetData(e: ButtonClickEvent) {
+    dialog$.prompt({
+      title: 'You are going to reset your data!',
+      message:
+        'Resetting will delete index database (indexed images) and cache.\nAre you sure you want to continue?',
+      yesButtonClassList: 'bg-transparent border border-error-600 text-error-600',
+      yesButtonText: 'Reset',
+      noButtonText: 'Nope',
+    }).afterSubmit().subscribe(async () => {
+      e.setLoading(true);
+      await this.resetData();
+      this.close();
+    })
+  }
+
   onResetAll(e: ButtonClickEvent) {
     dialog$.prompt({
       title: 'You are going to reset everything!',
@@ -61,12 +76,16 @@ export class SettingsDialogComponent extends BaseDialogComponent<
       noButtonText: 'Nope',
     }).afterSubmit().subscribe(async () => {
       e.setLoading(true);
-      await db$.reset();
+      await this.resetData();
       this.resetSettings();
-      this.cache.reset();
       this.router.navigate(['/welcome']);
       this.close();
     });
+  }
+
+  private async resetData() {
+    await db$.reset();
+    this.cache.reset();
   }
 
   private resetSettings() {
