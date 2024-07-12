@@ -16,3 +16,10 @@ mat-progress-bar {
   }
 }
 
+.mat-mdc-menu-panel {
+  @apply bg-neutral-300 #{!important};
+  max-width: 800px !important;
+  & > * {
+    padding: 1rem !important;
+  }
+}

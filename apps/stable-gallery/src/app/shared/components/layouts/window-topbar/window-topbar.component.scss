@@ -1,0 +1,26 @@
+.draggable {
+  -webkit-app-region: drag;
+  & > * {
+    -webkit-app-region: no-drag;
+  }
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+:host ::ng-deep .settings-icon {
+  &:hover {
+    mat-icon {
+      animation: rotate 5s linear infinite;
+    }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

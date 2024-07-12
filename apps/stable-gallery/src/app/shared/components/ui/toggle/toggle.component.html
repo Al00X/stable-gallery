@@ -2,6 +2,7 @@
   <ui-label [text]="label"></ui-label>
   <div
     class="ui-toggle-wrapper"
+    [style.padding]="padding"
     [class.is-toggled]="control.value$ | async"
     (mouseup)="onToggle()"
     [matTooltip]="(control.value$ | async) ? activeTooltip! : inactiveTooltip!"

@@ -4,10 +4,11 @@ import {AsyncPipe} from "@angular/common";
 import {registerIcons} from "./icons.config";
 import {setupGlobalServices} from "./globawls";
 import {KeybindService} from "./core/services";
+import {WindowTopbarComponent} from "./shared/components/layouts/window-topbar/window-topbar.component";
 
 @Component({
   standalone: true,
-  imports: [RouterModule, AsyncPipe],
+  imports: [RouterModule, AsyncPipe, WindowTopbarComponent],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

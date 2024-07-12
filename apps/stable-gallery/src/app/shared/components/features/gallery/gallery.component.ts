@@ -5,7 +5,7 @@ import {AppService, KeybindService, ScanService} from '../../../../core/services
 import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ButtonGroupComponent,
-  FieldComponent,
+  FieldComponent, IconComponent,
   MasonryComponent,
   SliderComponent,
 } from '../../ui';
@@ -14,7 +14,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageCardComponent } from '../image-card/image-card.component';
 import { ImageDetailsPaneComponent } from '../image-details-pane/image-details-pane.component';
 import { ItemRecord } from '../../../../core/interfaces';
-import {ImageActionEvent, ImageActionsComponent} from "../image-actions/image-actions.component";
+import { ImageActionsComponent } from "../image-actions/image-actions.component";
+import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
+import {MatTooltip} from "@angular/material/tooltip";
 
 type SortByOptions = 'createdAt' | 'addedAt';
 type SortDirection = 'asc' | 'desc';
@@ -37,6 +39,10 @@ const SCROLL_THRESHOLD = 200;
     NgIf,
     ImageDetailsPaneComponent,
     ImageActionsComponent,
+    IconComponent,
+    MatMenu,
+    MatMenuTrigger,
+    MatTooltip,
   ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
@@ -75,6 +81,7 @@ export class GalleryComponent {
   itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);
   columnsControl = formControl(this.app.state.settings.galleryColumns);
   itemSizeControl = formControl(this.app.state.settings.galleryItemAspectRatio);
+  itemGapControl = formControl(this.app.state.settings.galleryItemGap);
   sortByControl = formControl<SortByOptions>(
     this.app.state.settings.gallerySortBy as any
   );
@@ -143,6 +150,13 @@ export class GalleryComponent {
       .subscribe((v) => {
         this.app.setSettings({
           galleryColumns: v,
+        });
+      });
+    this.itemGapControl.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((v) => {
+        this.app.setSettings({
+          galleryItemGap: v,
         });
       });
 

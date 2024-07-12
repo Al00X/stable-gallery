@@ -72,6 +72,7 @@ export default class App {
       width: width,
       height: height,
       show: false,
+      titleBarStyle: 'hidden',
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInSubFrames: true,

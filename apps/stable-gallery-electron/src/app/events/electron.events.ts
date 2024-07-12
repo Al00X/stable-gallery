@@ -12,6 +12,9 @@ import {join} from "path";
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
+    App.mainWindow.on('resize', () => {
+      App.mainWindow.webContents.send('window', App.mainWindow.isMaximized())
+    })
     return ipcMain;
   }
 }
@@ -46,6 +49,20 @@ ipcMain.handle('open-directory-select-dialog', async () => {
     return filePaths[0]
   }
 })
+
+ipcMain.handle('window', (e, message) => {
+  switch (message) {
+    case 'close':
+      App.mainWindow.close();
+      break;
+    case 'maximize':
+      App.mainWindow.isMaximized() ? App.mainWindow.unmaximize() : App.mainWindow.maximize();
+      break;
+    case 'minimize':
+      App.mainWindow.minimize();
+      break;
+  }
+});
 
 // Handle App termination
 ipcMain.on('quit', (event, code) => {

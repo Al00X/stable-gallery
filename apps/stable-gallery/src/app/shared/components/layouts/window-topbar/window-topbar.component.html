@@ -1,0 +1,50 @@
+<div
+  class="flex items-center flex-none ps-6 h-10 overflow-hidden gap-5 select-none draggable"
+>
+  <p
+    class="tracking-widest font-medium cursor-pointer"
+    (click)="openChangelog()"
+  >
+    STABLE GALLERY <span class="text-2xs">{{ electron.version }}</span>
+  </p>
+
+  <div class="flex-auto"></div>
+  <ui-toggle
+    [control]="nsfwControl"
+    activeText="NSFW"
+    inactiveText="SFW"
+    activeTooltip="Turn off NSFW mode"
+    inactiveTooltip="Switch to NSFW mode"
+    class="min-w-[4rem]"
+    padding="0.125rem 0.5rem"
+  ></ui-toggle>
+  <ui-icon
+    icon="settings"
+    class="settings-icon"
+    size="1.25rem"
+    (onClick)="openSettings()"
+  ></ui-icon>
+
+  <div class="flex items-center h-full ms-4">
+    <ui-button
+      (onClick)="onWindowState('minimize')"
+      theme="custom"
+      class="text-black bg-transparent h-full rounded-0"
+      icon="minimize"
+      iconSize="1rem"
+    ></ui-button>
+    <ui-button
+      (onClick)="onWindowState('maximize')"
+      theme="custom"
+      class="text-black bg-transparent h-full rounded-0"
+      [icon]="electron.isMaximized() ? 'unmaximize' : 'maximize'"
+      iconSize="0.875rem"
+    ></ui-button>
+    <ui-button
+      (onClick)="onWindowState('close')"
+      theme="custom"
+      class="text-black bg-transparent h-full rounded-0"
+      icon="close"
+    ></ui-button>
+  </div>
+</div>

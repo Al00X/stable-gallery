@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 import type { ipcRenderer } from 'electron';
 import {BehaviorSubject, filter} from "rxjs";
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -16,6 +16,8 @@ export class ElectronService {
   changelogMd!: string;
   version!: string
 
+  isMaximized = signal(false);
+
   private _initialized$ = new BehaviorSubject(false);
 
   initialized$ = this._initialized$.pipe(filter(t => t))
@@ -27,10 +29,18 @@ export class ElectronService {
     Promise.all([this.getUserDataPath(), this.getEnvironment(), this.getChangelog()]).then(() => {
       this._initialized$.next(true);
     })
+
+    this.ipc.on('window', (e, message) => {
+      this.isMaximized.set(message);
+    })
   }
 
   async openDirectorySelectDialog() {
     return await this.ipc.invoke('open-directory-select-dialog')
+  }
+
+  setWindow(state: 'close' | 'maximize' | 'minimize') {
+    this.ipc.invoke('window', state);
   }
 
   private async getUserDataPath() {

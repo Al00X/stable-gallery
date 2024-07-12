@@ -18,6 +18,7 @@ export class ToggleComponent implements OnInit {
   @Input() inactiveText = 'Off';
   @Input() activeTooltip?: string;
   @Input() inactiveTooltip?: string;
+  @Input() padding = '0.25rem 0.5rem'
 
   ngOnInit() {
     this.activeTooltip ??= `Toggle to ${this.inactiveText}`;

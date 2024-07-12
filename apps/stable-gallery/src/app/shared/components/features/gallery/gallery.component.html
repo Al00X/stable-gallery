@@ -1,77 +1,128 @@
-<div class="flex flex-col relative h-full" *ngIf="{ viewStyle: viewStyleControl.value$ | async } as state">
-  <div class="flex-none flex items-center w-full bg-neutral-200 gap-6 px-4 h-12">
-    <ui-button-group
-      label="View"
-      [control]="viewStyleControl"
-      [items]="[{ icon: 'grid', value: 'grid', hint: 'Grid' }, { icon: 'masonry', value: 'masonry', hint: 'Masonry' }]"
-    ></ui-button-group>
+<div
+  class="flex flex-col relative h-full"
+  *ngIf="{ viewStyle: viewStyleControl.value$ | async } as state"
+>
+  <div
+    class="flex-none flex items-center w-full bg-neutral-200 gap-6 px-12 h-12"
+  >
+    <ui-icon [matMenuTriggerFor]="ViewMenu" icon="view" matTooltip="View Options"></ui-icon>
+    <mat-menu #ViewMenu>
+      <div class="grid grid-cols-2 gap-4 justify-items-start" (click)="$event.stopPropagation()">
+        <ui-button-group
+          label="View"
+          [control]="viewStyleControl"
+          [items]="[
+        { icon: 'grid', value: 'grid', hint: 'Grid' },
+        { icon: 'masonry', value: 'masonry', hint: 'Masonry' }
+      ]"
+        ></ui-button-group>
 
-    @if(state.viewStyle === 'grid') {
-      <ui-field
-        [control]="itemPerRowControl"
-        type="number"
-        label="Items Per Row"
-        [min]="2"
-        [max]="12"
-        width="2.5rem"
-        class="text-center"
-      ></ui-field>
+        @if(state.viewStyle === 'grid') {
+          <ui-field
+            [control]="itemPerRowControl"
+            type="number"
+            label="Items Per Row"
+            [min]="2"
+            [max]="12"
+            width="2.5rem"
+            class="text-center"
+          ></ui-field>
 
-      <ui-slider
-        [control]="itemSizeControl"
-        label="Items Aspect Ratio"
-        [min]="0.3"
-        [max]="1.7"
-        [step]="0.05"
-      ></ui-slider>
-    } @else {
-      <ui-field
-        [control]="columnsControl"
-        type="number"
-        label="Columns"
-        [min]="3"
-        [max]="12"
-        width="2.5rem"
-        class="text-center"
-      ></ui-field>
-    }
+          <ui-slider
+            [control]="itemSizeControl"
+            label="Items Aspect Ratio"
+            [min]="0.3"
+            [max]="1.7"
+            [step]="0.05"
+          ></ui-slider>
+        } @else {
+          <ui-field
+            [control]="columnsControl"
+            type="number"
+            label="Columns"
+            [min]="3"
+            [max]="12"
+            width="2.5rem"
+            class="text-center"
+          ></ui-field>
+        }
+
+        <ui-slider
+          [control]="itemGapControl"
+          label="Items Gap"
+          [min]="0"
+          [max]="32"
+          [step]="1"
+        ></ui-slider>
+
+      </div>
+    </mat-menu>
 
     <div class="flex-auto"><!-- Spacer --></div>
-    <ui-field [control]="sortByControl" controlType="select" label="Sort By" placeholder="Sort by..." [items]="sortByItems" width="8rem"></ui-field>
-    <ui-button-group class="-ms-8" [control]="sortDirectionControl" [items]="[{ icon: 'asc', value: 'asc', hint: 'Ascending' }, { icon: 'desc', value: 'desc', hint: 'Descending' }]"></ui-button-group>
-    <ui-field [control]="searchControl" icon="search" placeholder="Search..."></ui-field>
+    <ui-field
+      [control]="sortByControl"
+      controlType="select"
+      label="Sort By"
+      placeholder="Sort by..."
+      [items]="sortByItems"
+      width="8rem"
+    ></ui-field>
+    <ui-button-group
+      class="-ms-8"
+      [control]="sortDirectionControl"
+      [items]="[
+        { icon: 'asc', value: 'asc', hint: 'Ascending' },
+        { icon: 'desc', value: 'desc', hint: 'Descending' }
+      ]"
+    ></ui-button-group>
+    <ui-field
+      [control]="searchControl"
+      icon="search"
+      placeholder="Search..."
+    ></ui-field>
   </div>
 
   <div class="flex-auto flex relative overflow-hidden">
     <div class="flex-auto overflow-auto px-1" (scroll)="onScroll($event)">
       @if(state.viewStyle === 'grid') {
-        <div
-          class="grid gap-1"
-          [style.grid-template-columns]="
-        'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
-      "
-        >
-          @for(item of items(); track item.path; let index = $index) {
-            <feature-image-card
-              [image]="item"
-              [style.aspect-ratio]="itemSizeControl.value$ | async"
-              [isSelected]="selectionModel.selectedIds()[item.path]"
-              (mousedown)="onImageMouseDown(index, item)"
-              (mousemove)="onImageMouseMove(index, item)"
-              (mouseup)="onImageMouseUp(index, item)"
-            ></feature-image-card>
-          }
-        </div>
+      <div
+        class="grid"
+        [style.gap.px]="itemGapControl.value$ | async"
+        [style.grid-template-columns]="
+          'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
+        "
+      >
+        @for(item of items(); track item.path; let index = $index) {
+        <feature-image-card
+          [image]="item"
+          class="border-2 {{
+            selectionModel.selectedIds()[item.path]
+              ? 'border-primary-600'
+              : 'border-transparent'
+          }}"
+          [style.aspect-ratio]="itemSizeControl.value$ | async"
+          [isSelected]="selectionModel.selectedIds()[item.path]"
+          (mousedown)="onImageMouseDown(index, item)"
+          (mousemove)="onImageMouseMove(index, item)"
+          (mouseup)="onImageMouseUp(index, item)"
+        ></feature-image-card>
+        }
+      </div>
       } @else {
-        <ui-masonry [items]="items()" [cols]="(columnsControl.value$ | async) ?? 4" [trackBy]="itemTrackBy">
-          <ng-template let-item="item">
-            <feature-image-card
-              [image]="item"
-              [isSelected]="selectionModel.selectedIds()[item.path]"
-              (onMouseUp)="selectionModel.set(item)"
-            ></feature-image-card>
-          </ng-template>
-        </ui-masonry>
+      <ui-masonry
+        [items]="items()"
+        [cols]="(columnsControl.value$ | async) ?? 4"
+        [trackBy]="itemTrackBy"
+        [style.gap.px]="itemGapControl.value$ | async"
+      >
+        <ng-template let-item="item">
+          <feature-image-card
+            [image]="item"
+            [isSelected]="selectionModel.selectedIds()[item.path]"
+            (onMouseUp)="selectionModel.set(item)"
+          ></feature-image-card>
+        </ng-template>
+      </ui-masonry>
       }
     </div>
     <feature-image-details-pane
@@ -81,9 +132,17 @@
       [showImage]="true"
     ></feature-image-details-pane>
 
-    <div class="absolute z-1 bottom-0 left-0 right-0 flex-none flex items-center w-full overflow-hidden bg-neutral-200 gap-6 px-4 transition-all {{ selectionModel.selectedCount() > 1 ? 'h-16' : 'h-0' }}">
-      <span class="font-medium">Selected Images: {{ selectionModel.selectedCount() }}</span>
-      <feature-image-actions [images]="selectionModel.selected()"></feature-image-actions>
+    <div
+      class="absolute z-1 bottom-0 left-0 right-0 flex-none flex items-center w-full overflow-hidden bg-neutral-200 gap-6 px-4 transition-all {{
+        selectionModel.selectedCount() > 1 ? 'h-16' : 'h-0'
+      }}"
+    >
+      <span class="font-medium"
+        >Selected Images: {{ selectionModel.selectedCount() }}</span
+      >
+      <feature-image-actions
+        [images]="selectionModel.selected()"
+      ></feature-image-actions>
     </div>
   </div>
 </div>

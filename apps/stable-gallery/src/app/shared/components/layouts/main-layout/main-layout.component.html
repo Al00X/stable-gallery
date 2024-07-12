@@ -1,11 +1,4 @@
 <main class="flex flex-col h-full bg-neutral-100">
-  <div class="flex items-center flex-none px-6 h-14 overflow-hidden gap-5">
-    <p class="tracking-widest font-medium cursor-pointer" (click)="openChangelog()">STABLE GALLERY <span class="text-2xs">{{ electron.version }}</span></p>
-
-    <div class="flex-auto"></div>
-    <ui-toggle [control]="nsfwControl" activeText="NSFW" inactiveText="SFW" activeTooltip="Turn off NSFW mode" inactiveTooltip="Switch to NSFW mode" class="min-w-[4rem]"></ui-toggle>
-    <ui-icon icon="settings" class="settings-icon" size="1.625rem" (onClick)="openSettings()"></ui-icon>
-  </div>
   <div class="relative flex-auto overflow-auto">
     <router-outlet></router-outlet>
   </div>

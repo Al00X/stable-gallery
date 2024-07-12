@@ -7,7 +7,7 @@
     @apply border border-black;
     @apply cursor-pointer select-none;
     @apply text-xs font-semibold tracking-widest;
-    padding: 0.25rem 0.5rem;
+    flex: auto;
 
     & > * {
       z-index: 1;
