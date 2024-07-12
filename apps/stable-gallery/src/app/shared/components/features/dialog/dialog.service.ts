@@ -15,6 +15,7 @@ import {
   SettingsDialogResult
 } from "./components/settings-dialog/settings-dialog.component";
 import {ScanProgressDialogComponent} from "./components/scan-progress-dialog/scan-progress-dialog.component";
+import {ChangelogDialogComponent} from "./components/changelog-dialog/changelog-dialog.component";
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +52,13 @@ export class DialogService {
     return this.dialog.open(ScanProgressDialogComponent, undefined, {
       width: '600px',
       disableClose: true,
+    });
+  }
+
+  changelog() {
+    return this.dialog.open(ChangelogDialogComponent, undefined, {
+      minWidth: '300px',
+      minHeight: '300px'
     });
   }
 }

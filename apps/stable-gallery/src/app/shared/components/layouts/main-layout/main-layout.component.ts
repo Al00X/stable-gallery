@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterOutlet} from "@angular/router";
-import {AppService, ScanService} from "../../../../core/services";
+import {AppService, ElectronService, ScanService} from "../../../../core/services";
 import {IconComponent, ToggleComponent} from "../../ui";
 import {formControl} from "../../../../core/helpers";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
@@ -23,6 +23,7 @@ import {MatProgressBar} from "@angular/material/progress-bar";
 })
 export class MainLayoutComponent {
   public readonly scan = inject(ScanService);
+  public readonly electron = inject(ElectronService);
   private readonly app = inject(AppService);
 
   nsfwControl = formControl(this.app.state.settings.showNsfw);
@@ -33,6 +34,10 @@ export class MainLayoutComponent {
         showNsfw: v,
       });
     });
+  }
+
+  openChangelog() {
+    dialog$.changelog();
   }
 
   openSettings() {

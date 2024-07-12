@@ -1,6 +1,6 @@
 {
   "name": "@stable-gallery/source",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "start": "npm-run-all -p s:frontend s:backend",
@@ -28,6 +28,7 @@
     "chokidar": "^3.6.0",
     "drizzle-orm": "^0.31.2",
     "exifr": "^7.1.3",
+    "marked": "^13.0.2",
     "ngx-file-drop": "^16.0.0",
     "ngx-panzoom": "^17.0.0",
     "rxjs": "~7.8.0",

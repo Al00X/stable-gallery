@@ -7,6 +7,8 @@ import {app, dialog, ipcMain} from 'electron';
 import { environment } from '../../environments/environment';
 import {dataPath} from "../constants";
 import App from "../app";
+import * as fs from 'fs/promises';
+import {join} from "path";
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
@@ -27,6 +29,10 @@ ipcMain.handle('get-user-data-path', () => {
 
 ipcMain.handle('get-environment', () => {
   return environment;
+})
+
+ipcMain.handle('get-changelog', async () => {
+  return (await fs.readFile(join(__dirname, '../../..', 'CHANGELOG.md'))).toString();
 })
 
 ipcMain.handle('open-directory-select-dialog', async () => {
