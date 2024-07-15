@@ -38,6 +38,10 @@ ipcMain.handle('get-changelog', async () => {
   return (await fs.readFile(join(__dirname, '../../..', 'CHANGELOG.md'))).toString();
 })
 
+ipcMain.handle('is-window-maximized', () => {
+  return App.mainWindow.isMaximized();
+})
+
 ipcMain.handle('open-directory-select-dialog', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog(App.mainWindow, {
     title: 'Choose a directory',
