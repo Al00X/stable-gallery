@@ -26,6 +26,7 @@ export class SettingsFormComponent {
     openDetailsInGalleryByDefault: formControl<boolean>(),
     openDetailsInLightboxByDefault: formControl<boolean>(),
     peakNsfw: formControl<boolean>(),
+    showSampler: formControl<boolean>(),
   })
 
   constructor() {
@@ -34,7 +35,8 @@ export class SettingsFormComponent {
       dirs: settings.dirs,
       openDetailsInGalleryByDefault: settings.openDetailsTabInGalleryByDefault,
       openDetailsInLightboxByDefault: settings.openDetailsTabInLightboxByDefault,
-      peakNsfw: !!settings.peakNsfwWithKeybinding
+      peakNsfw: !!settings.peakNsfwWithKeybinding,
+      showSampler: !!settings.showSamplerInGallery
     })
   }
 
@@ -56,6 +58,7 @@ export class SettingsFormComponent {
       openDetailsTabInGalleryByDefault: values.openDetailsInGalleryByDefault,
       openDetailsTabInLightboxByDefault: values.openDetailsInLightboxByDefault,
       peakNsfwWithKeybinding: values.peakNsfw ? 'Alt' : undefined,
+      showSamplerInGallery: values.showSampler
     });
 
     return this.app.isSettingsValid();

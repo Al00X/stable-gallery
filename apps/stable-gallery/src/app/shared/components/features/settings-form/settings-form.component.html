@@ -7,6 +7,8 @@
 ></ui-list-field>
 
 @if(showOptionals) {
+  <ui-toggle label="Show sampler on images in gallery" [control]="settingsForm.controls.showSampler"></ui-toggle>
+
   <ui-toggle label="Open details panel in gallery by default" [control]="settingsForm.controls.openDetailsInGalleryByDefault"></ui-toggle>
 
   <ui-toggle label="Open details panel in lightbox by default" [control]="settingsForm.controls.openDetailsInLightboxByDefault"></ui-toggle>

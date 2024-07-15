@@ -14,6 +14,7 @@ interface AppState {
     galleryViewStyle?: 'grid' | 'masonry';
     gallerySortBy?: string;
     gallerySortDirection?: string;
+    showSamplerInGallery?: boolean;
     openDetailsTabInGalleryByDefault: boolean;
     openDetailsTabInLightboxByDefault: boolean;
     detailsTabImageExpanded: boolean;
@@ -34,6 +35,7 @@ const appStore = createStore(
       galleryViewStyle: 'grid',
       openDetailsTabInGalleryByDefault: false,
       openDetailsTabInLightboxByDefault: false,
+      showSamplerInGallery: false,
       detailsTabImageExpanded: false,
       peakNsfwWithKeybinding: 'Alt'
     },
@@ -50,6 +52,7 @@ persistState(appStore, {
 export class AppService {
   state$ = appStore.pipe();
   showNsfw$ = this.state$.pipe(map(t => t.settings.showNsfw));
+  showSampler$ = this.state$.pipe(map(t => t.settings.showSamplerInGallery));
 
   get state() {
     return appStore.state;
