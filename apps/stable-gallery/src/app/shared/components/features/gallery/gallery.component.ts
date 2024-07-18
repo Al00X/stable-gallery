@@ -17,6 +17,7 @@ import { ItemRecord } from '../../../../core/interfaces';
 import { ImageActionsComponent } from "../image-actions/image-actions.component";
 import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
 import {MatTooltip} from "@angular/material/tooltip";
+import {ViewOptionsFormComponent} from "../view-options-form/view-options-form.component";
 
 type SortByOptions = 'createdAt' | 'addedAt';
 type SortDirection = 'asc' | 'desc';
@@ -43,6 +44,7 @@ const SCROLL_THRESHOLD = 200;
     MatMenu,
     MatMenuTrigger,
     MatTooltip,
+    ViewOptionsFormComponent,
   ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
@@ -77,11 +79,6 @@ export class GalleryComponent {
   private _lastMouseMove?: number;
   private _lastSelectionRange?: { l: number; h: number };
 
-  viewStyleControl = formControl(this.app.state.settings.galleryViewStyle);
-  itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);
-  columnsControl = formControl(this.app.state.settings.galleryColumns);
-  itemSizeControl = formControl(this.app.state.settings.galleryItemAspectRatio);
-  itemGapControl = formControl(this.app.state.settings.galleryItemGap);
   sortByControl = formControl<SortByOptions>(
     this.app.state.settings.gallerySortBy as any
   );
@@ -123,42 +120,6 @@ export class GalleryComponent {
     //   .subscribe(async () => {
     //     this.get(true);
     //   });
-
-    this.itemSizeControl.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe((v) => {
-        this.app.setSettings({
-          galleryItemAspectRatio: v,
-        });
-      });
-    this.itemPerRowControl.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe((v) => {
-        this.app.setSettings({
-          galleryItemPerRow: v,
-        });
-      });
-    this.viewStyleControl.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe((v) => {
-        this.app.setSettings({
-          galleryViewStyle: v,
-        });
-      });
-    this.columnsControl.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe((v) => {
-        this.app.setSettings({
-          galleryColumns: v,
-        });
-      });
-    this.itemGapControl.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe((v) => {
-        this.app.setSettings({
-          galleryItemGap: v,
-        });
-      });
 
     merge(
       this.sortByControl.valueChanges.pipe(distinctUntilChanged()),

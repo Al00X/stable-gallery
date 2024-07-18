@@ -7,7 +7,7 @@
   .image-details-panel-handle {
     @apply flex flex-col justify-center;
     & > div {
-      @apply flex items-center justify-center transition-all bg-neutral-100 rounded-l-4 select-none cursor-pointer hover:bg-neutral-200;
+      @apply flex items-center justify-center transition-all select-none cursor-pointer;
     }
   }
 
@@ -17,6 +17,7 @@
       @apply relative start-0 top-1/2;
       & > div {
         @apply absolute;
+        @apply bg-neutral-100 hover:bg-neutral-200 rounded-l-4;
         &.open {
           @apply w-7 h-32 -ms-7;
         }
@@ -34,6 +35,10 @@
     .image-details-panel-handle {
       flex: none;
       width: 2rem;
+      & > div {
+        @apply h-full;
+        @apply hover:bg-primary-100 hover:bg-opacity-20;
+      }
     }
   }
 

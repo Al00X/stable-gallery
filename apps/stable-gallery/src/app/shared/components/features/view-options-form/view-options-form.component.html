@@ -1,0 +1,48 @@
+<ng-container *ngIf="{ viewStyle: viewStyleControl.value$ | async } as state">
+  <ui-button-group
+    label="View"
+    [control]="viewStyleControl"
+    [items]="[
+      { icon: 'grid', value: 'grid', hint: 'Grid' },
+      { icon: 'masonry', value: 'masonry', hint: 'Masonry' }
+    ]"
+  ></ui-button-group>
+
+  @if(state.viewStyle === 'grid') {
+  <ui-field
+    [control]="itemPerRowControl"
+    type="number"
+    label="Items Per Row"
+    [min]="2"
+    [max]="12"
+    width="2.5rem"
+    class="text-center"
+  ></ui-field>
+
+  <ui-slider
+    [control]="itemSizeControl"
+    label="Items Aspect Ratio"
+    [min]="0.3"
+    [max]="1.7"
+    [step]="0.05"
+  ></ui-slider>
+  } @else {
+  <ui-field
+    [control]="columnsControl"
+    type="number"
+    label="Columns"
+    [min]="3"
+    [max]="12"
+    width="2.5rem"
+    class="text-center"
+  ></ui-field>
+  }
+
+  <ui-slider
+    [control]="itemGapControl"
+    label="Items Gap"
+    [min]="0"
+    [max]="32"
+    [step]="1"
+  ></ui-slider>
+</ng-container>
