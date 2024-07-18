@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { enableElfProdMode } from '@ngneat/elf';
-import {DialogService} from "./shared/components/features";
-import {DbService} from "./core/db";
-import {FilesService} from "./core/services";
+import { DialogService } from './shared/components/features';
+import { DbService } from './core/db';
+import { FilesService } from './core/services';
 
 export function setupGlobalServices() {
   (globalThis as any).dialog$ = inject(DialogService);

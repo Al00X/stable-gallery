@@ -1,10 +1,14 @@
-import {Component, inject} from '@angular/core';
-import {ButtonGroupComponent, FieldComponent, SliderComponent} from "../../ui";
-import {formControl} from "../../../../core/helpers";
-import {AppService} from "../../../../core/services";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {combineLatest} from "rxjs";
-import {AsyncPipe, NgIf} from "@angular/common";
+import { Component, inject } from '@angular/core';
+import {
+  ButtonGroupComponent,
+  FieldComponent,
+  SliderComponent,
+} from '../../ui';
+import { formControl } from '../../../../core/helpers';
+import { AppService } from '../../../../core/services';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { combineLatest } from 'rxjs';
+import { AsyncPipe, NgIf } from '@angular/common';
 
 @Component({
   selector: 'feature-view-options-form',

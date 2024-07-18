@@ -1,5 +1,8 @@
 # Add files here to ignore them from prettier formatting
 /dist
 /coverage
-/.nx/cache
+/.nx
 .angular
+/apps/stable-gallery/src/app/core/db/migrations
+/.vscode
+/.idea

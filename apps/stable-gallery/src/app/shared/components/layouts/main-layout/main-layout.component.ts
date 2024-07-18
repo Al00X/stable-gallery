@@ -1,9 +1,9 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RouterOutlet} from "@angular/router";
-import {ScanService} from "../../../../core/services";
-import {IconComponent, ToggleComponent} from "../../ui";
-import {MatProgressBar} from "@angular/material/progress-bar";
+import { RouterOutlet } from '@angular/router';
+import { ScanService } from '../../../../core/services';
+import { IconComponent, ToggleComponent } from '../../ui';
+import { MatProgressBar } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-main-layout',

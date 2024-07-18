@@ -13,6 +13,9 @@ export function registerIcons() {
   const iconRegistry = inject(MatIconRegistry);
 
   for (const icon of baseIcons) {
-    iconRegistry.addSvgIcon(icon, sanitizer.bypassSecurityTrustResourceUrl(`./assets/icons/${icon}.svg`));
+    iconRegistry.addSvgIcon(
+      icon,
+      sanitizer.bypassSecurityTrustResourceUrl(`./assets/icons/${icon}.svg`),
+    );
   }
 }

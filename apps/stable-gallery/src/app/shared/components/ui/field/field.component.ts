@@ -1,14 +1,26 @@
-import {Component, DestroyRef, inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {formControl} from "../../../../core/helpers";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {LabelComponent} from "../label/label.component";
-import {MatIcon} from "@angular/material/icon";
-import {MatOption, MatSelect} from "@angular/material/select";
-import {ItemRecord, ItemRecords$} from "../../../../core/interfaces";
-import {BehaviorSubject, Observable, Subscription} from "rxjs";
-import {AsyncPipe} from "@angular/common";
-import {OptionsTriggerDirective, SelectOptionsComponent} from "../select-options";
+import {
+  Component,
+  DestroyRef,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import { formControl } from '../../../../core/helpers';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LabelComponent } from '../label/label.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { ItemRecord, ItemRecords$ } from '../../../../core/interfaces';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+import {
+  OptionsTriggerDirective,
+  SelectOptionsComponent,
+} from '../select-options';
 
 @Component({
   selector: 'ui-field',

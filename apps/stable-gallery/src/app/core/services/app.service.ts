@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
-import {map} from 'rxjs';
+import { map } from 'rxjs';
 
 interface AppState {
   settings: {
@@ -37,9 +37,9 @@ const appStore = createStore(
       openDetailsTabInLightboxByDefault: false,
       showSamplerInGallery: false,
       detailsTabImageExpanded: false,
-      peakNsfwWithKeybinding: 'Alt'
+      peakNsfwWithKeybinding: 'Alt',
     },
-  })
+  }),
 );
 
 persistState(appStore, {
@@ -51,8 +51,8 @@ persistState(appStore, {
 })
 export class AppService {
   state$ = appStore.pipe();
-  showNsfw$ = this.state$.pipe(map(t => t.settings.showNsfw));
-  showSampler$ = this.state$.pipe(map(t => t.settings.showSamplerInGallery));
+  showNsfw$ = this.state$.pipe(map((t) => t.settings.showNsfw));
+  showSampler$ = this.state$.pipe(map((t) => t.settings.showSamplerInGallery));
 
   get state() {
     return appStore.state;

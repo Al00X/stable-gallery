@@ -1,6 +1,18 @@
-import {Component, EventEmitter, Input, OnChanges, Output, signal, SimpleChanges} from '@angular/core';
-import {ButtonComponent, FavoriteToggleComponent, NsfwToggleComponent} from "../../ui";
-import {ImageItem} from "../../../../core/helpers";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  ButtonComponent,
+  FavoriteToggleComponent,
+  NsfwToggleComponent,
+} from '../../ui';
+import { ImageItem } from '../../../../core/helpers';
 
 export type ImageActionEvent = 'nsfw' | 'favorite';
 
@@ -22,8 +34,8 @@ export class ImageActionsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['images'] && this.images) {
-      this.nsfw.set(this.images.every(t => t.nsfw()))
-      this.favorite.set(this.images.every(t => t.favorite()))
+      this.nsfw.set(this.images.every((t) => t.nsfw()));
+      this.favorite.set(this.images.every((t) => t.favorite()));
     }
   }
 
@@ -31,8 +43,8 @@ export class ImageActionsComponent implements OnChanges {
     if (this.image) {
       this.image.toggleNsfw();
     } else {
-      this.nsfw.set(!this.nsfw())
-      this.images?.forEach(t => t.toggleNsfw(this.nsfw()));
+      this.nsfw.set(!this.nsfw());
+      this.images?.forEach((t) => t.toggleNsfw(this.nsfw()));
     }
   }
 
@@ -40,8 +52,8 @@ export class ImageActionsComponent implements OnChanges {
     if (this.image) {
       this.image.toggleFavorite();
     } else {
-      this.favorite.set(!this.favorite())
-      this.images?.forEach(t => t.toggleFavorite(this.favorite()));
+      this.favorite.set(!this.favorite());
+      this.images?.forEach((t) => t.toggleFavorite(this.favorite()));
     }
   }
 }

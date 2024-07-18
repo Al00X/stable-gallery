@@ -1,6 +1,8 @@
 <div
   role="presentation"
-  class="ui-icon relative {{ disabled ? 'disabled' : '' }} w-full h-full {{ wrapperClass }}"
+  class="ui-icon relative {{ disabled ? 'disabled' : '' }} w-full h-full {{
+    wrapperClass
+  }}"
   [class.is-clickable]="isClickable() || true"
   (click)="onClickEvent($event)"
 >

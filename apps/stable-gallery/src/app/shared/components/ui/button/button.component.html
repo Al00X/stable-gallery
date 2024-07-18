@@ -1,6 +1,4 @@
-<div
-  class="ui-inherit-parent"
->
+<div class="ui-inherit-parent">
   <button
     #Button
     class="ui-inherit-parent ui-button"
@@ -14,11 +12,19 @@
     [class.content-align-end]="align === 'end'"
   >
     <div class="ui-button-content" [class.loading]="loading()">
-      <ng-container *ngIf="iconPosition === 'prefix'" [ngTemplateOutlet]="Icon"></ng-container>
-      <div class="ui-button-content-portal inline-flex gap-2 items-center whitespace-nowrap mx-px hide-if-empty">
+      <ng-container
+        *ngIf="iconPosition === 'prefix'"
+        [ngTemplateOutlet]="Icon"
+      ></ng-container>
+      <div
+        class="ui-button-content-portal inline-flex gap-2 items-center whitespace-nowrap mx-px hide-if-empty"
+      >
         <ng-content></ng-content>
       </div>
-      <ng-container *ngIf="iconPosition === 'suffix'" [ngTemplateOutlet]="Icon"></ng-container>
+      <ng-container
+        *ngIf="iconPosition === 'suffix'"
+        [ngTemplateOutlet]="Icon"
+      ></ng-container>
       <div *ngIf="loading()" class="ui-button-loading-spinner">
         <mat-spinner color="primary" diameter="16" class="mx-px"></mat-spinner>
       </div>

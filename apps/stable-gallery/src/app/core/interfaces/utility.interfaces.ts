@@ -9,7 +9,9 @@ export interface ItemRecord<T, U = unknown> {
   hint?: string;
 }
 
-export type ItemRecords$<T, U = unknown> = Observable<ItemRecord<T, U>[] | undefined> | ItemRecord<T, U>[];
+export type ItemRecords$<T, U = unknown> =
+  | Observable<ItemRecord<T, U>[] | undefined>
+  | ItemRecord<T, U>[];
 
 export type ItemToId<T> = (item: T) => string | number;
 
@@ -19,4 +21,3 @@ export type Class = { new (...args: any[]): any };
 export type Singleton<T> = T extends any[] ? T[number] : T;
 
 export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
-

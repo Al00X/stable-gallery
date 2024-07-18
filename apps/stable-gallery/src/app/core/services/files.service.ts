@@ -1,11 +1,11 @@
-import {inject, Injectable, NgZone} from '@angular/core';
+import { inject, Injectable, NgZone } from '@angular/core';
 import type FS from 'fs/promises';
 import type PATH from 'path';
 import type CHOKIDAR from 'chokidar';
-import {BehaviorSubject} from "rxjs";
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FilesService {
   private readonly ngZone = inject(NgZone);
@@ -22,10 +22,10 @@ export class FilesService {
 
   async scan(dir: string) {
     const result: string[] = [];
-    for(const item of await this.fs.readdir(dir)) {
+    for (const item of await this.fs.readdir(dir)) {
       const path = this.path.join(dir, item);
       if (await this.isDir(path)) {
-        result.push(...await this.scan(path))
+        result.push(...(await this.scan(path)));
       } else {
         result.push(path);
       }
@@ -41,36 +41,37 @@ export class FilesService {
     }>({
       memory: [],
     });
-    const watcher = this.chokidar.watch(dir).on('all', async (e, path, stats) => {
-      this.ngZone.run(() => {
-        if (e === 'add') {
-          const memo = state.value.memory;
-          memo.push(path);
-          state.next({
-            memory: memo,
-            latest: path,
-            latestAction: 'add',
-          })
-        } else if (e === 'unlink') {
-          const memo = state.value.memory;
-          const index = memo.indexOf(path);
-          if (index !== -1) {
-            memo.splice(index, 1);
+    const watcher = this.chokidar
+      .watch(dir)
+      .on('all', async (e, path, stats) => {
+        this.ngZone.run(() => {
+          if (e === 'add') {
+            const memo = state.value.memory;
+            memo.push(path);
             state.next({
               memory: memo,
               latest: path,
-              latestAction: 'remove'
+              latestAction: 'add',
             });
+          } else if (e === 'unlink') {
+            const memo = state.value.memory;
+            const index = memo.indexOf(path);
+            if (index !== -1) {
+              memo.splice(index, 1);
+              state.next({
+                memory: memo,
+                latest: path,
+                latestAction: 'remove',
+              });
+            }
           }
-        }
-
-      })
-    })
+        });
+      });
 
     return {
       state,
-      unwatch: () => watcher.close()
-    }
+      unwatch: () => watcher.close(),
+    };
   }
 
   async exists(path: string) {

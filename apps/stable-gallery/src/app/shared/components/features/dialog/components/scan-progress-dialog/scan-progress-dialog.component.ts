@@ -1,8 +1,8 @@
-import {Component, inject} from '@angular/core';
-import {DialogLayoutComponent} from "../../../../layouts";
-import {AsyncPipe} from "@angular/common";
-import {MatProgressBar} from "@angular/material/progress-bar";
-import {ScanService} from "../../../../../../core/services";
+import { Component, inject } from '@angular/core';
+import { DialogLayoutComponent } from '../../../../layouts';
+import { AsyncPipe } from '@angular/common';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { ScanService } from '../../../../../../core/services';
 
 @Component({
   selector: 'feature-scan-progress-dialog',

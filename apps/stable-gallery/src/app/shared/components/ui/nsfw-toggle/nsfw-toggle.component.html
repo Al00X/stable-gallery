@@ -1,4 +1,19 @@
-<div class="ui-nsfw" [class.toggled]="value" [matTooltip]="value ? 'Set as SFW' : 'Set as NSFW'" (mouseup)="onToggle.emit(!value)">
-  <span class="absolute text-inherit start-[3px] tracking-[-1px] {{ value ? '' : '' }}">18</span>
-  <span class="absolute text-inherit {{ value ? 'top-0 end-px' : 'top-0 end-[3px]' }}">{{ value ? '+' : '-' }}</span>
+<div
+  class="ui-nsfw"
+  [class.toggled]="value"
+  [matTooltip]="value ? 'Set as SFW' : 'Set as NSFW'"
+  (mouseup)="onToggle.emit(!value)"
+>
+  <span
+    class="absolute text-inherit start-[3px] tracking-[-1px] {{
+      value ? '' : ''
+    }}"
+    >18</span
+  >
+  <span
+    class="absolute text-inherit {{
+      value ? 'top-0 end-px' : 'top-0 end-[3px]'
+    }}"
+    >{{ value ? '+' : '-' }}</span
+  >
 </div>

@@ -8,10 +8,9 @@ describe('FavoriteToggleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FavoriteToggleComponent]
-    })
-    .compileComponents();
-    
+      imports: [FavoriteToggleComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(FavoriteToggleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

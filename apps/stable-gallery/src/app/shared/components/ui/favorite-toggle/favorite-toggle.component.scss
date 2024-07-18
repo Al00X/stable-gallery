@@ -1,5 +1,5 @@
 .ui-star {
-  transition: all 0.5s cubic-bezier(.16,.7,.16,1.41);
+  transition: all 0.5s cubic-bezier(0.16, 0.7, 0.16, 1.41);
   @apply flex flex-col h-fit;
   @apply text-black;
   @apply cursor-pointer;

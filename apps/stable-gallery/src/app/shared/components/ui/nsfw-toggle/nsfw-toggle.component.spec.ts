@@ -8,10 +8,9 @@ describe('NsfwToggleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NsfwToggleComponent]
-    })
-    .compileComponents();
-    
+      imports: [NsfwToggleComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(NsfwToggleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

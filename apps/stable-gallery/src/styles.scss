@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "theme/design-system";
-@import "theme/material";
-@import "assets/fonts/avenir";
+@import 'theme/design-system';
+@import 'theme/material';
+@import 'assets/fonts/avenir';
 
 html,
 body {
@@ -23,17 +23,17 @@ body {
   margin: 0;
 }
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   width: 10px;
 }
-::-webkit-scrollbar-track-piece{
+::-webkit-scrollbar-track-piece {
   background-color: #222222;
 }
-::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb {
   background-color: #a3a3a3;
   outline: 2px solid #222222;
   outline-offset: -2px;
 }
-::-webkit-scrollbar-thumb:hover{
+::-webkit-scrollbar-thumb:hover {
   background-color: #909090;
 }

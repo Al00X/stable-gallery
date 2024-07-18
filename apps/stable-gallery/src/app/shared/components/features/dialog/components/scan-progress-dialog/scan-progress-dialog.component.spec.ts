@@ -8,10 +8,9 @@ describe('ScanProgressDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScanProgressDialogComponent]
-    })
-    .compileComponents();
-    
+      imports: [ScanProgressDialogComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ScanProgressDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

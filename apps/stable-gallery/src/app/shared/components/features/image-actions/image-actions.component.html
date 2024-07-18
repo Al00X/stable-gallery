@@ -1,7 +1,7 @@
 <ui-button
   class="w-24 h-10 {{
-        (image ? image.nsfw() : nsfw()) ? 'text-error-600 bg-white' : 'bg-white'
-      }}"
+    (image ? image.nsfw() : nsfw()) ? 'text-error-600 bg-white' : 'bg-white'
+  }}"
   theme="custom"
   appearance="stroked"
   (onClick)="toggleNsfw()"

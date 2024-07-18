@@ -1,5 +1,5 @@
-import {ImageEntry} from '../db';
-import {signal} from "@angular/core";
+import { ImageEntry } from '../db';
+import { signal } from '@angular/core';
 
 const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
@@ -45,15 +45,20 @@ export class ImageItem {
     item.height = entry.height ?? 0;
     item.createdAt = entry.createdAt;
     item.updatedAt = entry.updatedAt ?? undefined;
-    item.nsfw.set(entry.nsfw ?? false)
-    item.favorite.set(entry.favorite ?? false)
+    item.nsfw.set(entry.nsfw ?? false);
+    item.favorite.set(entry.favorite ?? false);
 
     return item;
   }
 
   // input as file or path
   constructor(input: File | string, load = false) {
-    this.path = typeof input === 'string' ? input : (input.path && input.path.length ? input.path : input.name);
+    this.path =
+      typeof input === 'string'
+        ? input
+        : input.path && input.path.length
+          ? input.path
+          : input.name;
     if (typeof input !== 'string') {
       this._fileInput = input;
     }
@@ -69,7 +74,8 @@ export class ImageItem {
   }
 
   async load(force?: boolean) {
-    if (this._wrongFilePath) throw new Error('ImageItem: Cannot load this file. It is unsupported.');
+    if (this._wrongFilePath)
+      throw new Error('ImageItem: Cannot load this file. It is unsupported.');
     if (!force && this.loaded) return;
     await this.extractStat();
     await this.extractMetadata();
@@ -117,7 +123,9 @@ export class ImageItem {
   }
 
   async buffer() {
-    return this._fileInput ? await this._fileInput.arrayBuffer() : await fs.readFile(this.path);
+    return this._fileInput
+      ? await this._fileInput.arrayBuffer()
+      : await fs.readFile(this.path);
   }
 
   blob() {
@@ -154,11 +162,21 @@ export class ImageItem {
         .map((t) => t.trim())
         .filter((t) => t.length);
 
-      prompt = (chunks.length === 2 ? chunks.slice(0, -1) : chunks.length > 0 ? chunks.slice(0, -2) : undefined)
+      prompt = (
+        chunks.length === 2
+          ? chunks.slice(0, -1)
+          : chunks.length > 0
+            ? chunks.slice(0, -2)
+            : undefined
+      )
         ?.join(' ')
         ?.trim();
       negative = (
-        chunks.length === 2 ? undefined : chunks.length > 1 ? chunks.at(-2)!.substring(17) : undefined
+        chunks.length === 2
+          ? undefined
+          : chunks.length > 1
+            ? chunks.at(-2)!.substring(17)
+            : undefined
       )?.trim();
       const infoChunk =
         chunks.length > 2
@@ -181,7 +199,7 @@ export class ImageItem {
         cfg = infoChunk['CFG scale'];
         seed = infoChunk.Seed;
         sampler = infoChunk.Sampler;
-        clipSkip = infoChunk['Clip skip']
+        clipSkip = infoChunk['Clip skip'];
       }
     }
 
@@ -198,7 +216,7 @@ export class ImageItem {
   }
 
   private extractPopulatedFields() {
-    this.nsfw.set(checkForNSFW(this.prompt))
+    this.nsfw.set(checkForNSFW(this.prompt));
   }
 
   private saveStateTimeout: any;

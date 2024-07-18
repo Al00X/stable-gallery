@@ -8,10 +8,9 @@ describe('DropZoneComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DropZoneComponent]
-    })
-    .compileComponents();
-    
+      imports: [DropZoneComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(DropZoneComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

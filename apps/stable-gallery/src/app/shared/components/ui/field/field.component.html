@@ -1,9 +1,15 @@
 <div class="ui-field" (click)="onFieldClick()">
   <ui-label class="ui-field-label" [text]="label"></ui-label>
   <div class="ui-field-input" [style.width]="width ?? '100%'">
-    @if(icon) { <mat-icon [svgIcon]="icon" class="w-4 text-neutral-600"></mat-icon> }
-    @if(controlType === 'textbox') {
-      <input [formControl]="control" [placeholder]="placeholder ?? ''" [readOnly]="type === 'number'" />
+    @if (icon) {
+      <mat-icon [svgIcon]="icon" class="w-4 text-neutral-600"></mat-icon>
+    }
+    @if (controlType === 'textbox') {
+      <input
+        [formControl]="control"
+        [placeholder]="placeholder ?? ''"
+        [readOnly]="type === 'number'"
+      />
     } @else if (controlType === 'select') {
       <input
         #SelectElement
@@ -24,14 +30,19 @@
         [showIcons]="false"
       ></ui-select-options>
     }
-
   </div>
-  @if(type === 'number') {
+  @if (type === 'number') {
     <div class="flex flex-col items-center w-4 h-7 gap-px ms-px">
-      <span class="flex items-center justify-center w-full flex-auto bg-neutral-50 hover:bg-neutral-100" (mouseup)="onNumericButton(true)">
+      <span
+        class="flex items-center justify-center w-full flex-auto bg-neutral-50 hover:bg-neutral-100"
+        (mouseup)="onNumericButton(true)"
+      >
         <mat-icon class="absolute w-2" svgIcon="up"></mat-icon>
       </span>
-      <span class="flex items-center justify-center w-full flex-auto bg-neutral-50 hover:bg-neutral-100" (mouseup)="onNumericButton(false)">
+      <span
+        class="flex items-center justify-center w-full flex-auto bg-neutral-50 hover:bg-neutral-100"
+        (mouseup)="onNumericButton(false)"
+      >
         <mat-icon class="absolute w-2" svgIcon="down"></mat-icon>
       </span>
     </div>

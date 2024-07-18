@@ -41,7 +41,8 @@ import { ItemRecord, ItemRecords$ } from '../../../../core/interfaces';
 import {
   arraysEqual,
   formControl,
-  FormControlExtended, isFormControlExtended,
+  FormControlExtended,
+  isFormControlExtended,
   SelectionModel,
 } from '../../../../core/helpers';
 
@@ -101,7 +102,7 @@ export class SelectOptionsComponent<T>
 
   originalItems$ = new BehaviorSubject<ItemRecord<T>[] | undefined>(undefined);
   categories$ = new BehaviorSubject<ItemRecord<string | number>[] | undefined>(
-    undefined
+    undefined,
   );
   filteredItems$ = new BehaviorSubject<SelectItem<T>[] | undefined>(undefined);
   itemsUpdateSub = new Subscription();
@@ -110,7 +111,7 @@ export class SelectOptionsComponent<T>
   customInputSub = new Subscription();
 
   public currentItemControl = formControl<SelectItem<T> | null | undefined>(
-    undefined
+    undefined,
   );
   public filterControl = formControl('');
   public categoryControl = formControl<string | number | undefined>(undefined);
@@ -133,7 +134,7 @@ export class SelectOptionsComponent<T>
       // if (typeof val === 'boolean') return val ? BOOLEAN_TRUE : BOOLEAN_FALSE;
       // else if (val === null) return NULL_VALUE;
       // return val;
-    }
+    },
   );
 
   currentFocusIndex = signal(-1);
@@ -145,7 +146,7 @@ export class SelectOptionsComponent<T>
       .subscribe((item) => {
         if (this.multiple) {
           this.control.setDisplayText(
-            (item as any)?.map((t: ItemRecord<T>) => t.label)?.join(', ') ?? ''
+            (item as any)?.map((t: ItemRecord<T>) => t.label)?.join(', ') ?? '',
           );
           this.control.setSelectedItems((item as any) ?? []);
         } else {
@@ -163,22 +164,22 @@ export class SelectOptionsComponent<T>
             ? timer(
                 this._instanceOfItems === 'observable'
                   ? FILTER_DEBOUNCE_MAX
-                  : FILTER_DEBOUNCE_MIN
+                  : FILTER_DEBOUNCE_MIN,
               )
-            : of(v)
-        )
+            : of(v),
+        ),
       ),
       this.categoryControl.valueChanges.pipe(
         distinctUntilChanged(),
-        debounceTime(FILTER_DEBOUNCE_MIN)
-      )
+        debounceTime(FILTER_DEBOUNCE_MIN),
+      ),
     )
       .pipe(
         takeUntilDestroyed(),
         debounceTime(10),
         map(() => {
           const originalItems = this.originalItems$.value;
-          let items = originalItems
+          let items = originalItems;
           items = items?.concat(this._recentOptionalItems);
           // if (
           //   this.categoryControl.value !== undefined &&
@@ -205,14 +206,15 @@ export class SelectOptionsComponent<T>
             result = items.filter((t) => {
               const label = t.label?.toLowerCase();
               if (!label) return false;
-              return this.filterStrategy === 'includes' ? label.includes(term) : label.startsWith(term)
+              return this.filterStrategy === 'includes'
+                ? label.includes(term)
+                : label.startsWith(term);
               // const additional = t.additionalData?.toLowerCase();
               // return this.filterStrategy === 'includes'
               //   ? label.includes(term) ||
               //       (additional && additional.includes(term))
               //   : label.startsWith(term) ||
               //       (additional && additional.startsWith(term));
-
             });
           }
 
@@ -240,7 +242,7 @@ export class SelectOptionsComponent<T>
           }
 
           return result;
-        })
+        }),
       )
       .subscribe((list) => {
         if (this.isClosing) return;
@@ -290,10 +292,10 @@ export class SelectOptionsComponent<T>
               if (result instanceof Array) {
                 this.originalItems$.next(result);
                 this.setCurrentItemByValue(
-                  this._initialValue ?? this.control.value
+                  this._initialValue ?? this.control.value,
                 );
               }
-            })
+            }),
           )
         : undefined;
 
@@ -327,7 +329,7 @@ export class SelectOptionsComponent<T>
             this.filterControl.setValidators(null);
           }
           this.filterControl.updateValueAndValidity();
-        })
+        }),
       );
     }
     if (changes['categories']) {
@@ -345,7 +347,7 @@ export class SelectOptionsComponent<T>
               if (result instanceof Array) {
                 this.categories$.next(result);
               }
-            })
+            }),
           )
         : undefined;
 
@@ -425,9 +427,8 @@ export class SelectOptionsComponent<T>
 
     // @ts-ignore
     const menuOverlayElement = this.trigger._overlayRef._pane as HTMLElement;
-    (
-      menuOverlayElement.children.item(0)! as HTMLElement
-    ).style.width = `${this.wrapperEl.nativeElement.offsetWidth}px`;
+    (menuOverlayElement.children.item(0)! as HTMLElement).style.width =
+      `${this.wrapperEl.nativeElement.offsetWidth}px`;
 
     setTimeout(() => {
       this.scrollToFocusedIndex();
@@ -499,14 +500,14 @@ export class SelectOptionsComponent<T>
     this.customInputSub.add(
       fromEvent<KeyboardEvent>(el, 'keydown').subscribe((e) => {
         this.onFilterKeyDown(e);
-      })
+      }),
     );
     this.customInputSub.add(
       fromEvent(el, 'input').subscribe(() => {
         const value =
           'actualValue' in el ? (el.actualValue as string) : el.value;
         this.filterControl.setValue(value);
-      })
+      }),
     );
   }
 
@@ -525,7 +526,7 @@ export class SelectOptionsComponent<T>
     const container = this.containerEl.nativeElement;
     const childrenCount = container.children.length;
     const focusedEl = container.children.item(
-      this.currentFocusIndex()
+      this.currentFocusIndex(),
     ) as HTMLDivElement;
     if (this.currentFocusIndex() >= childrenCount) {
       container.scrollTop = container.scrollHeight;
@@ -601,8 +602,8 @@ export class SelectOptionsComponent<T>
       currentValue = this.multiple
         ? value
         : value.length
-        ? value[0]
-        : undefined;
+          ? value[0]
+          : undefined;
     } else {
       currentValue = this.multiple && value !== undefined ? [value] : value;
     }

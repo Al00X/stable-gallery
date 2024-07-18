@@ -1,24 +1,37 @@
-<div class="image-details-panel" [class.open]="isOpen()" [class.is-absolute]="absolute">
+<div
+  class="image-details-panel"
+  [class.open]="isOpen()"
+  [class.is-absolute]="absolute"
+>
   <div class="image-details-panel-handle">
-    <div
-      (click)="isOpen.set(!isOpen())"
-    >
+    <div (click)="isOpen.set(!isOpen())">
       <span class="absolute rotate-90 font-medium">DETAILS</span>
     </div>
   </div>
 
   <div class="details-panel-sections">
-    @if(detailsSection()) {
-      @if(showImage) {
+    @if (detailsSection()) {
+      @if (showImage) {
         <div class="flex flex-col gap-2">
-          <div class="relative transition-all flex flex-col {{ isImageExpanded() ? 'w-80' : 'w-48' }}">
-            <div class="absolute inset-0 transition-all opacity-0 hover:opacity-100 bg-white bg-opacity-30 flex items-center justify-center cursor-pointer" (click)="openImage()">
+          <div
+            class="relative transition-all flex flex-col {{
+              isImageExpanded() ? 'w-80' : 'w-48'
+            }}"
+          >
+            <div
+              class="absolute inset-0 transition-all opacity-0 hover:opacity-100 bg-white bg-opacity-30 flex items-center justify-center cursor-pointer"
+              (click)="openImage()"
+            >
               <mat-icon svgIcon="search"></mat-icon>
             </div>
             <img [src]="image!.path" alt="" class="w-full" />
           </div>
           <div class="w-full flex items-center justify-end px-8">
-            <ui-icon [icon]="isImageExpanded() ? 'shrink' : 'expand'" size="1.25rem" (onClick)="toggleExpand()"></ui-icon>
+            <ui-icon
+              [icon]="isImageExpanded() ? 'shrink' : 'expand'"
+              size="1.25rem"
+              (onClick)="toggleExpand()"
+            ></ui-icon>
           </div>
         </div>
       }
@@ -32,7 +45,7 @@
           }
         </div>
         <div class="grid grid-cols-2 gap-4 pb-12">
-          @for(item of detailsSection()!.other; track item.label) {
+          @for (item of detailsSection()!.other; track item.label) {
             <section>
               <label>{{ item.label }}</label>
               <div>{{ item.value !== undefined ? item.value : '-' }}</div>
@@ -41,8 +54,11 @@
         </div>
       </div>
       <div class="details-panel-metadata">
-        @for(item of detailsSection()!.metadata; track item.label; let first =
-          $first) {
+        @for (
+          item of detailsSection()!.metadata;
+          track item.label;
+          let first = $first
+        ) {
           <section class="{{ first ? 'col-span-full' : '' }}">
             <label>{{ item.label }}: </label>
             <div>{{ item.value ?? '-' }}</div>
@@ -50,7 +66,9 @@
         }
       </div>
     } @else {
-      <p class="m-auto text-center opacity-80">Select an image to show its details here...</p>
+      <p class="m-auto text-center opacity-80">
+        Select an image to show its details here...
+      </p>
     }
   </div>
 </div>

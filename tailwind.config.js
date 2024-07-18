@@ -1,11 +1,9 @@
-import {COLORS, DARKCOLORS, VARIABLES} from "./tailwind.theme";
-import {colorVariable} from "@mertasan/tailwindcss-variables/src/helpers";
+import { COLORS, DARKCOLORS, VARIABLES } from './tailwind.theme';
+import { colorVariable } from '@mertasan/tailwindcss-variables/src/helpers';
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./apps/stable-gallery/src/**/*.{html,ts}",
-  ],
+  content: ['./apps/stable-gallery/src/**/*.{html,ts}'],
   important: true,
   darkMode: 'class',
   theme: {
@@ -47,7 +45,7 @@ module.exports = {
         xs: '2px',
       },
       fontSize: {
-        'xs': '0.75rem',
+        xs: '0.75rem',
         '2xs': '0.625rem',
       },
       spacing: {
@@ -75,7 +73,7 @@ module.exports = {
           white: '#f1eeee',
           black: '#101010',
           ...COLORS,
-        }
+        },
       },
     },
     darkVariables: {
@@ -84,14 +82,13 @@ module.exports = {
           white: '#101010',
           black: '#f1eeee',
           ...DARKCOLORS,
-        }
-      }
-    }
+        },
+      },
+    },
   },
   plugins: [
     require('@mertasan/tailwindcss-variables')({
       colorVariables: true,
-    })
+    }),
   ],
-}
-
+};

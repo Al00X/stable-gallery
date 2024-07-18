@@ -18,8 +18,8 @@
     }
 
     &::before {
-      transition: all 0.35s cubic-bezier(.03,.93,.89,.99);
-      content: "";
+      transition: all 0.35s cubic-bezier(0.03, 0.93, 0.89, 0.99);
+      content: '';
       position: absolute;
       width: 0;
       height: 100%;
@@ -49,5 +49,4 @@
       @apply bg-neutral-50 brightness-90;
     }
   }
-
 }

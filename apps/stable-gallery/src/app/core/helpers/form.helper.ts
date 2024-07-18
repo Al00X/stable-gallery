@@ -6,10 +6,19 @@ import {
   FormGroup,
   ValidatorFn,
 } from '@angular/forms';
-import { BehaviorSubject, debounceTime, map, Observable, startWith, Subject, merge } from 'rxjs';
+import {
+  BehaviorSubject,
+  debounceTime,
+  map,
+  Observable,
+  startWith,
+  Subject,
+  merge,
+} from 'rxjs';
 import { ItemRecord, Singleton } from '../interfaces';
 
-export interface FormControlExtended<TValue = any, Data = any> extends FormControl<TValue> {
+export interface FormControlExtended<TValue = any, Data = any>
+  extends FormControl<TValue> {
   extended: true;
 
   status$: Observable<FormControlStatus>;
@@ -39,8 +48,12 @@ export interface FormControlExtended<TValue = any, Data = any> extends FormContr
   setReadonly: (value: boolean) => FormControlExtended<TValue, Data>;
   // if value is typeof string or number, it will be set in the display text, otherwise, undefined
   setDisplayText: (value: any | undefined) => FormControlExtended<TValue>;
-  setSelectedItems: (value: ItemRecord<Singleton<TValue>>[] | undefined) => FormControlExtended<TValue, Data>;
-  setCustomError: (value: string | undefined) => FormControlExtended<TValue, Data>;
+  setSelectedItems: (
+    value: ItemRecord<Singleton<TValue>>[] | undefined,
+  ) => FormControlExtended<TValue, Data>;
+  setCustomError: (
+    value: string | undefined,
+  ) => FormControlExtended<TValue, Data>;
   setDisabled: (value: boolean) => FormControlExtended<TValue, Data>;
   // get value if valid, else, return null
   getValue: () => TValue | null;
@@ -67,11 +80,15 @@ export function formControl<T, D = any>(
 
   control.extended = true;
 
-  control.status$ = merge(control.statusChanges, statusTrigger).pipe(startWith(control.status));
+  control.status$ = merge(control.statusChanges, statusTrigger).pipe(
+    startWith(control.status),
+  );
   control.invalid$ = control.status$.pipe(map((t) => t === 'INVALID'));
   control.valid$ = control.status$.pipe(map((t) => t === 'VALID'));
   control.value$ = valueSubject.pipe();
-  control.hasValue$ = valueSubject.pipe(map((v) => v !== undefined && v !== null && v !== ''));
+  control.hasValue$ = valueSubject.pipe(
+    map((v) => v !== undefined && v !== null && v !== ''),
+  );
 
   control.selectedItems$ = new BehaviorSubject<any>(undefined);
   control.selectedItems = undefined;
@@ -179,7 +196,11 @@ export function formControl<T, D = any>(
   };
   control.reset = function (value, options) {
     reset.apply(this, [value, options]);
-    valueSubject.next(value && typeof value === 'object' && 'value' in value ? value.value : value);
+    valueSubject.next(
+      value && typeof value === 'object' && 'value' in value
+        ? value.value
+        : value,
+    );
   };
   // control.markAsTouched = function (opts) {
   //   markAsTouched.apply(this, [opts]);
@@ -207,18 +228,24 @@ export function isFormControlExtended(
 /// Form Group
 ///
 
-export interface FormGroupExtended<TValue extends { [K in keyof TValue]: AbstractControl<any, any> } = any>
-  extends FormGroup<TValue> {
+export interface FormGroupExtended<
+  TValue extends { [K in keyof TValue]: AbstractControl<any, any> } = any,
+> extends FormGroup<TValue> {
   extended: true;
 
   status$: Observable<FormControlStatus>;
   invalid$: Observable<boolean>;
   valid$: Observable<boolean>;
 
-  setReadonly: (value: boolean, ...keys: (keyof TValue)[]) => FormGroupExtended<TValue>;
+  setReadonly: (
+    value: boolean,
+    ...keys: (keyof TValue)[]
+  ) => FormGroupExtended<TValue>;
 }
 
-export function formGroup<T extends { [K in keyof T]: AbstractControl<any, any> }>(inputs: T) {
+export function formGroup<
+  T extends { [K in keyof T]: AbstractControl<any, any> },
+>(inputs: T) {
   const group = new FormGroup<T>(inputs) as FormGroupExtended<T>;
 
   group.extended = true;
@@ -226,13 +253,20 @@ export function formGroup<T extends { [K in keyof T]: AbstractControl<any, any> 
   group.invalid$ = group.status$.pipe(map((t) => t === 'INVALID'));
   group.valid$ = group.status$.pipe(map((t) => t === 'VALID'));
 
-  const forEachControl = (fn: (key: keyof T, control: AbstractControl) => void) => {
-    Object.entries(group.controls).forEach(([key, control]) => fn(key as never, control));
+  const forEachControl = (
+    fn: (key: keyof T, control: AbstractControl) => void,
+  ) => {
+    Object.entries(group.controls).forEach(([key, control]) =>
+      fn(key as never, control),
+    );
   };
 
   group.setReadonly = (value, ...keys) => {
     forEachControl((key, control) => {
-      if (isFormControlExtended(control) && (keys?.length ? keys.includes(key) : true)) {
+      if (
+        isFormControlExtended(control) &&
+        (keys?.length ? keys.includes(key) : true)
+      ) {
         control.setReadonly(value);
       }
     });
@@ -242,6 +276,8 @@ export function formGroup<T extends { [K in keyof T]: AbstractControl<any, any> 
   return group;
 }
 
-export function isFormGroupExtended(group: FormGroup | FormGroupExtended): group is FormGroupExtended {
+export function isFormGroupExtended(
+  group: FormGroup | FormGroupExtended,
+): group is FormGroupExtended {
   return 'extended' in group;
 }

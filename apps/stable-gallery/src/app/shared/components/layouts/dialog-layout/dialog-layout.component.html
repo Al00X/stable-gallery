@@ -18,21 +18,24 @@
     <ng-content></ng-content>
   </div>
   <div class="flex flex-row-reverse gap-4 pt-6">
-    @if(!hideControls) { @if(submitBtn) {
-    <ui-button
-      theme="custom"
-      class="dialog-default-btn submit-btn {{ submitClass ?? '' }}"
-      (onClick)="onSubmit.emit($event)"
-      >{{ submitBtn }}</ui-button
-    >
-    } @if(cancelBtn) {
-    <ui-button
-      class="dialog-default-btn {{ cancelClass ?? '' }}"
-      appearance="stroked"
-      (onClick)="onCancelClick()"
-      >{{ cancelBtn }}</ui-button
-    >
-    } }
+    @if (!hideControls) {
+      @if (submitBtn) {
+        <ui-button
+          theme="custom"
+          class="dialog-default-btn submit-btn {{ submitClass ?? '' }}"
+          (onClick)="onSubmit.emit($event)"
+          >{{ submitBtn }}</ui-button
+        >
+      }
+      @if (cancelBtn) {
+        <ui-button
+          class="dialog-default-btn {{ cancelClass ?? '' }}"
+          appearance="stroked"
+          (onClick)="onCancelClick()"
+          >{{ cancelBtn }}</ui-button
+        >
+      }
+    }
     <ng-content select="[slot=bottom]"></ng-content>
   </div>
 </div>

@@ -8,10 +8,9 @@ describe('WindowTopbarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WindowTopbarComponent]
-    })
-    .compileComponents();
-    
+      imports: [WindowTopbarComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(WindowTopbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

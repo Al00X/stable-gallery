@@ -1,6 +1,9 @@
 import { Class } from '../interfaces';
 
-export async function lazyLoad<T extends object>(component: Promise<T>, selector?: (o: T) => Class): Promise<Class> {
+export async function lazyLoad<T extends object>(
+  component: Promise<T>,
+  selector?: (o: T) => Class,
+): Promise<Class> {
   const entry = await component;
   if (selector) return selector(entry);
   const props = Object.values(entry);

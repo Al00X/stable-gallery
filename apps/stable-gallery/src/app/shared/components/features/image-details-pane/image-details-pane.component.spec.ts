@@ -8,10 +8,9 @@ describe('ImageDetailsPaneComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImageDetailsPaneComponent]
-    })
-    .compileComponents();
-    
+      imports: [ImageDetailsPaneComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ImageDetailsPaneComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

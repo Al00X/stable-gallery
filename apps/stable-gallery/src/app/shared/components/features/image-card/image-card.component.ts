@@ -1,18 +1,20 @@
 import {
   ChangeDetectionStrategy,
-  Component, EventEmitter,
+  Component,
+  EventEmitter,
   inject,
-  Input, Output,
+  Input,
+  Output,
 } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import {AppService, KeybindService} from '../../../../core/services';
+import { AppService, KeybindService } from '../../../../core/services';
 import { ImageItem } from '../../../../core/helpers';
 import {
   ButtonComponent,
   FavoriteToggleComponent,
   NsfwToggleComponent,
 } from '../../ui';
-import {MatIcon} from "@angular/material/icon";
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'feature-image-card',

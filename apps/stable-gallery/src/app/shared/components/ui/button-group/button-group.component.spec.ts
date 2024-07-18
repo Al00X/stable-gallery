@@ -8,10 +8,9 @@ describe('ButtonGroupComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ButtonGroupComponent]
-    })
-    .compileComponents();
-    
+      imports: [ButtonGroupComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ButtonGroupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

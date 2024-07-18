@@ -1,9 +1,20 @@
-import { distinctUntilChanged, filter, map, MonoTypeOperatorFunction, Observable, of, pipe, tap } from 'rxjs';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  MonoTypeOperatorFunction,
+  Observable,
+  of,
+  pipe,
+  tap,
+} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ItemRecord, ItemRecords$ } from '../interfaces';
 import { DestroyRef } from '@angular/core';
 
-export function getItemRecordObservable<T, U>(items: ItemRecords$<T, U>): Observable<ItemRecord<T, U>[] | undefined> {
+export function getItemRecordObservable<T, U>(
+  items: ItemRecords$<T, U>,
+): Observable<ItemRecord<T, U>[] | undefined> {
   return items instanceof Observable ? items : of(items);
 }
 
@@ -34,7 +45,9 @@ export function distinctUntilChangedWithTimeout<T>(
     map((t) => ({ value: t, date: new Date() })),
     distinctUntilChanged(
       (pre, cur) =>
-        (compare ? compare(pre?.value, cur?.value) : pre?.value === cur?.value) &&
+        (compare
+          ? compare(pre?.value, cur?.value)
+          : pre?.value === cur?.value) &&
         pre.date.getTime() > cur.date.getTime() - timeout,
     ),
     map((t) => t.value),

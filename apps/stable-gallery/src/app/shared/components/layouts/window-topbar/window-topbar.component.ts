@@ -1,8 +1,8 @@
-import {Component, inject} from '@angular/core';
-import {ButtonComponent, IconComponent, ToggleComponent} from "../../ui";
-import {AppService, ElectronService} from "../../../../core/services";
-import {formControl} from "../../../../core/helpers";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import { Component, inject } from '@angular/core';
+import { ButtonComponent, IconComponent, ToggleComponent } from '../../ui';
+import { AppService, ElectronService } from '../../../../core/services';
+import { formControl } from '../../../../core/helpers';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-window-topbar',

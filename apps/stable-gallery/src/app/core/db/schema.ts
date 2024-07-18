@@ -1,5 +1,10 @@
-import {AnySQLiteColumn, integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
-import {SQL, sql} from "drizzle-orm";
+import {
+  AnySQLiteColumn,
+  integer,
+  sqliteTable,
+  text,
+} from 'drizzle-orm/sqlite-core';
+import { SQL, sql } from 'drizzle-orm';
 
 export const imagesEntry = sqliteTable('entries', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -22,12 +27,13 @@ export const imagesEntry = sqliteTable('entries', {
 export type ImagePartialEntry = typeof imagesEntry.$inferSelect;
 export type ImagePartialEntryInsert = typeof imagesEntry.$inferInsert;
 
-
 export const statEntry = sqliteTable('stats', {
-  id: integer('id').primaryKey().references(() => imagesEntry.id, { onDelete: 'cascade' }),
+  id: integer('id')
+    .primaryKey()
+    .references(() => imagesEntry.id, { onDelete: 'cascade' }),
   favorite: integer('favorite', { mode: 'boolean' }).default(false),
-  nsfw: integer('nsfw', { mode: 'boolean'}).default(false)
-})
+  nsfw: integer('nsfw', { mode: 'boolean' }).default(false),
+});
 export type StatsEntry = typeof statEntry.$inferSelect;
 export type StatsEntryInsert = typeof statEntry.$inferInsert;
 

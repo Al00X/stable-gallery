@@ -1,4 +1,12 @@
-import { AfterViewInit, DestroyRef, Directive, ElementRef, inject, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  DestroyRef,
+  Directive,
+  ElementRef,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { SelectOptionsComponent } from './select-options.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
@@ -62,17 +70,20 @@ export class OptionsTriggerDirective implements OnInit, AfterViewInit {
         }
       });
 
-    this.uiOptionsTriggerFor.menuClosed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.preventOpenTemporary();
-      this._selectorEl!.focus();
-    });
+    this.uiOptionsTriggerFor.menuClosed
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.preventOpenTemporary();
+        this._selectorEl!.focus();
+      });
   }
 
   private getSelectorEl() {
     const host = this.host?.nativeElement;
     if (!host) return;
     if (this.selector === 'input') {
-      const nearestInput = 'value' in host ? host : (host as HTMLElement).querySelector('input');
+      const nearestInput =
+        'value' in host ? host : (host as HTMLElement).querySelector('input');
       this._selectorEl = nearestInput ?? undefined;
     } else {
       this._selectorEl = host;
@@ -82,7 +93,8 @@ export class OptionsTriggerDirective implements OnInit, AfterViewInit {
   private openMenu() {
     if (!this.uiOptionsTriggerFor) return;
 
-    if (this.preventMenuOpen || this.uiOptionsTriggerFor.trigger.menuOpen) return;
+    if (this.preventMenuOpen || this.uiOptionsTriggerFor.trigger.menuOpen)
+      return;
     this.preventCloseTemporary();
     this.uiOptionsTriggerFor.open();
   }

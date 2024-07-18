@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {formControl} from "../../../../core/helpers";
-import {AsyncPipe} from "@angular/common";
-import {MatTooltip} from "@angular/material/tooltip";
-import {LabelComponent} from "../label/label.component";
+import { Component, Input, OnInit } from '@angular/core';
+import { formControl } from '../../../../core/helpers';
+import { AsyncPipe } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
+import { LabelComponent } from '../label/label.component';
 
 @Component({
   selector: 'ui-toggle',
@@ -18,7 +18,7 @@ export class ToggleComponent implements OnInit {
   @Input() inactiveText = 'Off';
   @Input() activeTooltip?: string;
   @Input() inactiveTooltip?: string;
-  @Input() padding = '0.25rem 0.5rem'
+  @Input() padding = '0.25rem 0.5rem';
 
   ngOnInit() {
     this.activeTooltip ??= `Toggle to ${this.inactiveText}`;

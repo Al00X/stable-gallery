@@ -8,10 +8,9 @@ describe('ImageViewerDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImageViewerDialogComponent]
-    })
-    .compileComponents();
-    
+      imports: [ImageViewerDialogComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ImageViewerDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

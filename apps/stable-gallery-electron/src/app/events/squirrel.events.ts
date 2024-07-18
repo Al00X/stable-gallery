@@ -14,14 +14,14 @@ export default class SquirrelEvents {
   private static appFolder = resolve(process.execPath, '..');
   private static appRootFolder = resolve(SquirrelEvents.appFolder, '..');
   private static updateExe = resolve(
-    join(SquirrelEvents.appRootFolder, 'Update.exe')
+    join(SquirrelEvents.appRootFolder, 'Update.exe'),
   );
   private static exeName = resolve(
     join(
       SquirrelEvents.appRootFolder,
       'app-' + environment.version,
-      basename(process.execPath)
-    )
+      basename(process.execPath),
+    ),
   );
 
   static handleEvents(): boolean {
@@ -64,7 +64,7 @@ export default class SquirrelEvents {
     try {
       spawn(SquirrelEvents.updateExe, args, { detached: true }).on(
         'close',
-        () => setTimeout(app.quit, 1000)
+        () => setTimeout(app.quit, 1000),
       );
     } catch (error) {
       setTimeout(app.quit, 1000);

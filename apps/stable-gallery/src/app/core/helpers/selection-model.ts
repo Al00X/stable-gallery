@@ -1,5 +1,5 @@
 import { computed, signal } from '@angular/core';
-import {ItemToId} from "../interfaces";
+import { ItemToId } from '../interfaces';
 
 export class SelectionModel<T extends object> {
   private _totalCount = 0;
@@ -18,11 +18,17 @@ export class SelectionModel<T extends object> {
   public selectedCount = computed(() => this.selected()?.length ?? 0);
   public hasSelection = computed(() => this.selectedCount() !== 0);
 
-  constructor(itemsCount?: number, multiple?: boolean, initial?: T[], itemToId?: ItemToId<T>) {
+  constructor(
+    itemsCount?: number,
+    multiple?: boolean,
+    initial?: T[],
+    itemToId?: ItemToId<T>,
+  ) {
     this.id = crypto.randomUUID();
     this._totalCount = itemsCount ?? 0;
     this._multiple = multiple ?? true;
-    this._itemToId = itemToId ?? (((t) => ('id' in t ? t.id : t)) as ItemToId<T>);
+    this._itemToId =
+      itemToId ?? (((t) => ('id' in t ? t.id : t)) as ItemToId<T>);
     initial ? this.select(...initial) : null;
   }
 
@@ -37,7 +43,9 @@ export class SelectionModel<T extends object> {
 
   public deselect(...items: T[]) {
     const itemsId = items.map(this._itemToId);
-    this.set(...this.selected().filter((t) => !itemsId.includes(this._itemToId(t))));
+    this.set(
+      ...this.selected().filter((t) => !itemsId.includes(this._itemToId(t))),
+    );
   }
 
   public toggle(...items: T[]) {
@@ -45,7 +53,9 @@ export class SelectionModel<T extends object> {
     let newItems: T[] = [...selected];
     if (newItems.length > 0) {
       for (const item of items) {
-        const index = selected.findIndex((t) => this._itemToId(t) === this._itemToId(item));
+        const index = selected.findIndex(
+          (t) => this._itemToId(t) === this._itemToId(item),
+        );
         if (index !== -1) {
           newItems.splice(index, 1);
         } else {
@@ -131,7 +141,9 @@ export class SelectionModel<T extends object> {
       this.indeterminate.set(false);
       this.allSelected.set(true);
     } else {
-      this.indeterminate.set(selectedViewItemsCount !== this._currentViewItems.length);
+      this.indeterminate.set(
+        selectedViewItemsCount !== this._currentViewItems.length,
+      );
       this.allSelected.set(!this.indeterminate());
     }
   }

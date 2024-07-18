@@ -1,9 +1,9 @@
-import {Component, inject, ViewChild} from '@angular/core';
-import {SettingsFormComponent} from "../../shared/components/features/settings-form/settings-form.component";
-import {ButtonComponent} from "../../shared/components/ui";
-import {Router} from "@angular/router";
-import {ScanService} from "../../core/services";
-import {take} from "rxjs";
+import { Component, inject, ViewChild } from '@angular/core';
+import { SettingsFormComponent } from '../../shared/components/features/settings-form/settings-form.component';
+import { ButtonComponent } from '../../shared/components/ui';
+import { Router } from '@angular/router';
+import { ScanService } from '../../core/services';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-welcome',

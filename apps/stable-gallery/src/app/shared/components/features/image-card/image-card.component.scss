@@ -9,14 +9,14 @@
   &::before {
     @apply absolute inset-0 border-4 border-primary-600 pointer-events-none z-1;
     transition: all 0.1s ease;
-    content: "";
+    content: '';
     opacity: 0;
   }
 
   &::after {
     @apply absolute -inset-px;
     transition: opacity 0.2s ease;
-    content: "";
+    content: '';
     opacity: 0;
     backdrop-filter: none;
     pointer-events: none;
@@ -35,7 +35,7 @@
     }
   }
 
-  ui-favorite-toggle:not([ng-reflect-value="true"]) {
+  ui-favorite-toggle:not([ng-reflect-value='true']) {
     transition: opacity 0.15s ease;
     opacity: 0;
   }
@@ -44,7 +44,11 @@
     @apply absolute inset-0 z-1;
     transition: opacity 0.15s ease;
     opacity: 0;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0) 81%, rgba(0, 0, 0, 0.3) 100%);
+    background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0) 81%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
     pointer-events: none;
   }
 
@@ -53,7 +57,7 @@
     @apply flex items-center gap-3;
     transition: all 0.15s ease;
     opacity: 0;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
   }
   &:hover {
     .feature-image-card-tools {

@@ -1,7 +1,15 @@
-import {Component, ContentChild, Input, OnChanges, signal, SimpleChanges, TemplateRef} from '@angular/core';
-import {NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
+import {
+  Component,
+  ContentChild,
+  Input,
+  OnChanges,
+  signal,
+  SimpleChanges,
+  TemplateRef,
+} from '@angular/core';
+import { NgForOf, NgIf, NgTemplateOutlet } from '@angular/common';
 
-type ProcessedItem<T> = { index: number, items: T[] };
+type ProcessedItem<T> = { index: number; items: T[] };
 
 @Component({
   selector: 'ui-masonry',

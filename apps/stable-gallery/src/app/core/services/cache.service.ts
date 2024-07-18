@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
-import {debounceTime} from 'rxjs';
+import { debounceTime } from 'rxjs';
 
 interface CacheState {
   scanned: string[];
@@ -11,7 +11,7 @@ const cacheStore = createStore(
   { name: 'cache' },
   withProps<CacheState>({
     scanned: [],
-  })
+  }),
 );
 
 persistState(cacheStore, {

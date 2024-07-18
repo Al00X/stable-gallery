@@ -1,10 +1,10 @@
-import {Component, Input} from '@angular/core';
-import {formControl} from "../../../../core/helpers";
-import {ItemRecord} from "../../../../core/interfaces";
-import {AsyncPipe} from "@angular/common";
-import {LabelComponent} from "../label/label.component";
-import {MatIcon} from "@angular/material/icon";
-import {MatTooltip} from "@angular/material/tooltip";
+import { Component, Input } from '@angular/core';
+import { formControl } from '../../../../core/helpers';
+import { ItemRecord } from '../../../../core/interfaces';
+import { AsyncPipe } from '@angular/common';
+import { LabelComponent } from '../label/label.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'ui-button-group',

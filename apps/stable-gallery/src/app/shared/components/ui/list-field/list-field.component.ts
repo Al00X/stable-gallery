@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {formControl} from "../../../../core/helpers";
-import {LabelComponent} from "../label/label.component";
-import {AsyncPipe} from "@angular/common";
-import {IconComponent} from "../icon/icon.component";
-import {ButtonComponent} from "../button/button.component";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { formControl } from '../../../../core/helpers';
+import { LabelComponent } from '../label/label.component';
+import { AsyncPipe } from '@angular/common';
+import { IconComponent } from '../icon/icon.component';
+import { ButtonComponent } from '../button/button.component';
 
 export interface ListFieldAddEvent<T> {
   addToList(item: T): void;

@@ -49,9 +49,9 @@ export default class App {
       App.loadMainWindow();
     }
     protocol.handle('atom', (request) => {
-      const filePath = request.url.slice('atom://'.length)
-      return net.fetch(url.pathToFileURL(join(__dirname, filePath)).toString())
-    })
+      const filePath = request.url.slice('atom://'.length);
+      return net.fetch(url.pathToFileURL(join(__dirname, filePath)).toString());
+    });
   }
 
   private static onActivate() {
@@ -122,7 +122,7 @@ export default class App {
           pathname: join(__dirname, '..', rendererAppName, 'index.html'),
           protocol: 'file:',
           slashes: true,
-        })
+        }),
       );
     }
   }

@@ -10,7 +10,7 @@ const THEME = {
     700: '#004a77',
     800: '#003354',
     900: '#001d33',
-    950: '#01101c'
+    950: '#01101c',
   },
   secondary: {
     50: '#ffeed8',
@@ -23,7 +23,7 @@ const THEME = {
     700: '#5e4200',
     800: '#422d00',
     900: '#271900',
-    950: '#120c00'
+    950: '#120c00',
   },
   neutral: {
     50: '#fafafa',
@@ -36,7 +36,7 @@ const THEME = {
     700: '#404040',
     800: '#262626',
     900: '#171717',
-    950: '#0a0a0a'
+    950: '#0a0a0a',
   },
   error: {
     50: '#ffe9e9',
@@ -49,9 +49,9 @@ const THEME = {
     700: '#990000',
     800: '#660000',
     900: '#330000',
-    950: '#1d0000'
-  }
-}
+    950: '#1d0000',
+  },
+};
 
 const DARK_THEME = {
   primary: {
@@ -65,7 +65,7 @@ const DARK_THEME = {
     700: '#00b8ff',
     800: '#00d0ff',
     900: '#00e7ff',
-    950: '#bdf3f3'
+    950: '#bdf3f3',
   },
   secondary: {
     50: '#271900',
@@ -78,7 +78,7 @@ const DARK_THEME = {
     700: '#fabc41',
     800: '#ffdea8',
     900: '#ffeed8',
-    950: '#fffbf0'
+    950: '#fffbf0',
   },
   neutral: {
     50: '#0a0a0a',
@@ -91,7 +91,7 @@ const DARK_THEME = {
     700: '#d4d4d4',
     800: '#e5e5e5',
     900: '#f5f5f5',
-    950: '#fafafa'
+    950: '#fafafa',
   },
   error: {
     50: '#1d0000',
@@ -104,8 +104,8 @@ const DARK_THEME = {
     700: '#ff7373',
     800: '#ff9999',
     900: '#ffc7c7',
-    950: '#ffe9e9'
-  }
+    950: '#ffe9e9',
+  },
 } satisfies typeof THEME;
 
 // // // // // // // // // // // // //
@@ -114,33 +114,35 @@ const DARK_THEME = {
 //
 // // // // // // // // // // // // //
 
-const colors: any = {}
+const colors: any = {};
 const darkColors: any = {};
 const variables: any = {};
 
-for(const themeKey in THEME) {
+for (const themeKey in THEME) {
   colors[themeKey] = {};
   darkColors[themeKey] = {};
   variables[themeKey] = {};
-  for(const colorKey in THEME[themeKey]) {
+  for (const colorKey in THEME[themeKey]) {
     colors[themeKey][colorKey] = THEME[themeKey][colorKey];
     colors[themeKey][colorKey] = DARK_THEME[themeKey][colorKey];
     const variable = `--colors-${themeKey}-${colorKey}-rgb`;
     variables[themeKey][colorKey] = ({ opacityVariable, opacityValue }) => {
       if (opacityValue !== undefined) {
-        return `rgba(var(${variable}), ${opacityValue})`
+        return `rgba(var(${variable}), ${opacityValue})`;
       }
       if (opacityVariable !== undefined) {
-        return `rgba(var(${variable}), var(${opacityVariable}, 1))`
+        return `rgba(var(${variable}), var(${opacityVariable}, 1))`;
       }
-      return `rgb(var(${variable}))`
-    }
+      return `rgb(var(${variable}))`;
+    };
   }
 }
 
 function hexToRgb(hex: string) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : null;
+  return result
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : null;
 }
 
 export const COLORS = colors;

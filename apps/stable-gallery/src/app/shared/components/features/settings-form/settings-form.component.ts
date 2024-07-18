@@ -1,7 +1,11 @@
-import {Component, inject, Input, ViewChild} from '@angular/core';
-import {ListFieldAddEvent, ListFieldComponent, ToggleComponent} from "../../ui";
-import {AppService, ElectronService} from "../../../../core/services";
-import {formControl, formGroup} from "../../../../core/helpers";
+import { Component, inject, Input, ViewChild } from '@angular/core';
+import {
+  ListFieldAddEvent,
+  ListFieldComponent,
+  ToggleComponent,
+} from '../../ui';
+import { AppService, ElectronService } from '../../../../core/services';
+import { formControl, formGroup } from '../../../../core/helpers';
 
 @Component({
   selector: 'feature-settings-form',
@@ -27,17 +31,18 @@ export class SettingsFormComponent {
     openDetailsInLightboxByDefault: formControl<boolean>(),
     peakNsfw: formControl<boolean>(),
     showSampler: formControl<boolean>(),
-  })
+  });
 
   constructor() {
     const settings = this.app.state.settings;
     this.settingsForm.patchValue({
       dirs: settings.dirs,
       openDetailsInGalleryByDefault: settings.openDetailsTabInGalleryByDefault,
-      openDetailsInLightboxByDefault: settings.openDetailsTabInLightboxByDefault,
+      openDetailsInLightboxByDefault:
+        settings.openDetailsTabInLightboxByDefault,
       peakNsfw: !!settings.peakNsfwWithKeybinding,
-      showSampler: !!settings.showSamplerInGallery
-    })
+      showSampler: !!settings.showSamplerInGallery,
+    });
   }
 
   onAddToDirs(e: ListFieldAddEvent<string>) {
@@ -58,7 +63,7 @@ export class SettingsFormComponent {
       openDetailsTabInGalleryByDefault: values.openDetailsInGalleryByDefault,
       openDetailsTabInLightboxByDefault: values.openDetailsInLightboxByDefault,
       peakNsfwWithKeybinding: values.peakNsfw ? 'Alt' : undefined,
-      showSamplerInGallery: values.showSampler
+      showSamplerInGallery: values.showSampler,
     });
 
     return this.app.isSettingsValid();

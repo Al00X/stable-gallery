@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Input, Output, signal} from '@angular/core';
-import {AbstractControl} from "@angular/forms";
-import {ButtonClickEvent, ButtonComponent, IconComponent} from "../../ui";
-import {MatDialogRef} from "@angular/material/dialog";
-import {NgIf} from "@angular/common";
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
+import { ButtonClickEvent, ButtonComponent, IconComponent } from '../../ui';
+import { MatDialogRef } from '@angular/material/dialog';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-dialog-layout',

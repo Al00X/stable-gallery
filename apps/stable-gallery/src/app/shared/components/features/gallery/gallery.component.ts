@@ -1,11 +1,20 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import {formControl, ImageItem, SelectionModel} from '../../../../core/helpers';
-import {debounceTime, distinctUntilChanged, merge} from 'rxjs';
-import {AppService, KeybindService, ScanService} from '../../../../core/services';
+import {
+  formControl,
+  ImageItem,
+  SelectionModel,
+} from '../../../../core/helpers';
+import { debounceTime, distinctUntilChanged, merge } from 'rxjs';
+import {
+  AppService,
+  KeybindService,
+  ScanService,
+} from '../../../../core/services';
 import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ButtonGroupComponent,
-  FieldComponent, IconComponent,
+  FieldComponent,
+  IconComponent,
   MasonryComponent,
   SliderComponent,
 } from '../../ui';
@@ -14,10 +23,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageCardComponent } from '../image-card/image-card.component';
 import { ImageDetailsPaneComponent } from '../image-details-pane/image-details-pane.component';
 import { ItemRecord } from '../../../../core/interfaces';
-import { ImageActionsComponent } from "../image-actions/image-actions.component";
-import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
-import {MatTooltip} from "@angular/material/tooltip";
-import {ViewOptionsFormComponent} from "../view-options-form/view-options-form.component";
+import { ImageActionsComponent } from '../image-actions/image-actions.component';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ViewOptionsFormComponent } from '../view-options-form/view-options-form.component';
 
 type SortByOptions = 'createdAt' | 'addedAt';
 type SortDirection = 'asc' | 'desc';
@@ -66,7 +75,7 @@ export class GalleryComponent {
   currentCount = computed(() => this.items().length);
   allLoaded = signal(false);
   openDetails = signal(
-    this.app.state.settings.openDetailsTabInGalleryByDefault
+    this.app.state.settings.openDetailsTabInGalleryByDefault,
   );
 
   firstHighlightedImage = computed(() => this.selectionModel.selected().at(0));
@@ -80,10 +89,10 @@ export class GalleryComponent {
   private _lastSelectionRange?: { l: number; h: number };
 
   sortByControl = formControl<SortByOptions>(
-    this.app.state.settings.gallerySortBy as any
+    this.app.state.settings.gallerySortBy as any,
   );
   sortDirectionControl = formControl<SortDirection>(
-    this.app.state.settings.gallerySortDirection as any
+    this.app.state.settings.gallerySortDirection as any,
   );
   searchControl = formControl('');
 
@@ -126,8 +135,8 @@ export class GalleryComponent {
       this.sortDirectionControl.valueChanges.pipe(distinctUntilChanged()),
       this.searchControl.valueChanges.pipe(
         distinctUntilChanged(),
-        debounceTime(SEARCH_DEBOUNCE)
-      )
+        debounceTime(SEARCH_DEBOUNCE),
+      ),
     )
       .pipe(debounceTime(5), takeUntilDestroyed())
       .subscribe(() => {
@@ -162,7 +171,7 @@ export class GalleryComponent {
     this.highlightImageRange(
       this._mouseDownState.index,
       index,
-      this._mouseDownState.isSelected
+      this._mouseDownState.isSelected,
     );
   }
   onImageMouseUp(index: number, item: ImageItem) {
@@ -197,11 +206,11 @@ export class GalleryComponent {
     ) {
       if (deselect) {
         this.selectionModel.select(
-          ...this.items().slice(h, this._lastSelectionRange.h + 1)
+          ...this.items().slice(h, this._lastSelectionRange.h + 1),
         );
       } else {
         this.selectionModel.deselect(
-          ...this.items().slice(h, this._lastSelectionRange.h + 1)
+          ...this.items().slice(h, this._lastSelectionRange.h + 1),
         );
       }
     }
@@ -211,11 +220,11 @@ export class GalleryComponent {
     ) {
       if (deselect) {
         this.selectionModel.select(
-          ...this.items().slice(this._lastSelectionRange.l, l)
+          ...this.items().slice(this._lastSelectionRange.l, l),
         );
       } else {
         this.selectionModel.deselect(
-          ...this.items().slice(this._lastSelectionRange.l, l)
+          ...this.items().slice(this._lastSelectionRange.l, l),
         );
       }
     }

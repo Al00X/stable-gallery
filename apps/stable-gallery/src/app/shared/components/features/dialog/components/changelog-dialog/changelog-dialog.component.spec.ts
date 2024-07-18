@@ -8,10 +8,9 @@ describe('ChangelogDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChangelogDialogComponent]
-    })
-    .compileComponents();
-    
+      imports: [ChangelogDialogComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ChangelogDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,7 +1,12 @@
 import { ItemRecord } from '../interfaces';
 
-export function getFromItemRecord<T, U>(items: ItemRecord<T, U>[], value: T | U | undefined | null) {
-  return items.find((t) => t.value === value || (t.alt !== undefined && t.alt === value));
+export function getFromItemRecord<T, U>(
+  items: ItemRecord<T, U>[],
+  value: T | U | undefined | null,
+) {
+  return items.find(
+    (t) => t.value === value || (t.alt !== undefined && t.alt === value),
+  );
 }
 
 export function flatten<T>(array: T[][]): T[] {
@@ -16,7 +21,10 @@ export function includes<T>(array: T[], terms: T | T[]) {
   return false;
 }
 
-export function arraySafeAt<T>(array: T[], index: number | undefined | null): T | null {
+export function arraySafeAt<T>(
+  array: T[],
+  index: number | undefined | null,
+): T | null {
   if (index === null || index === undefined) return null;
   return array.at(index) ?? null;
 }
@@ -26,7 +34,9 @@ export function dedupe<T>(array: T[]) {
 }
 
 export function dedupeObj<T extends object>(array: T[], key: keyof T) {
-  return array.filter((value, index) => index === array.findIndex((t) => t[key] === value[key]));
+  return array.filter(
+    (value, index) => index === array.findIndex((t) => t[key] === value[key]),
+  );
 }
 
 export function subset<T>(array: T[], sub: T[]) {

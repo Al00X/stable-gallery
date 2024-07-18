@@ -1,12 +1,21 @@
-import {AfterViewInit, Component, inject, signal} from '@angular/core';
-import {ImageItem} from "../../../../../../core/helpers";
-import {BaseDialogComponent} from "../_base-dialog.component";
-import {PanZoomComponent, PanZoomConfig} from "ngx-panzoom";
-import {ButtonClickEvent, ButtonComponent, FavoriteToggleComponent, NsfwToggleComponent} from "../../../../ui";
-import {CacheService} from "../../../../../../core/services";
-import {AppService, FilesService, ScanService} from "../../../../../../core/services";
-import {ImageDetailsPaneComponent} from "../../../image-details-pane/image-details-pane.component";
-import {ImageActionsComponent} from "../../../image-actions/image-actions.component";
+import { AfterViewInit, Component, inject, signal } from '@angular/core';
+import { ImageItem } from '../../../../../../core/helpers';
+import { BaseDialogComponent } from '../_base-dialog.component';
+import { PanZoomComponent, PanZoomConfig } from 'ngx-panzoom';
+import {
+  ButtonClickEvent,
+  ButtonComponent,
+  FavoriteToggleComponent,
+  NsfwToggleComponent,
+} from '../../../../ui';
+import { CacheService } from '../../../../../../core/services';
+import {
+  AppService,
+  FilesService,
+  ScanService,
+} from '../../../../../../core/services';
+import { ImageDetailsPaneComponent } from '../../../image-details-pane/image-details-pane.component';
+import { ImageActionsComponent } from '../../../image-actions/image-actions.component';
 
 export interface ImageViewerDialogData {
   image: ImageItem;
@@ -49,7 +58,7 @@ export class ImageViewerDialogComponent
   private _mouseDownEvent?: MouseEvent;
 
   isDetailsOpen = signal(
-    this.app.state.settings.openDetailsTabInLightboxByDefault
+    this.app.state.settings.openDetailsTabInLightboxByDefault,
   );
   path = signal('');
 
@@ -81,7 +90,7 @@ export class ImageViewerDialogComponent
           x: 200,
           y: 0,
         },
-        0.05
+        0.05,
       );
     }
     setTimeout(() => {

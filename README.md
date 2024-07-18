@@ -1,4 +1,3 @@
 # StableGallery
 
 do `npm start`
-

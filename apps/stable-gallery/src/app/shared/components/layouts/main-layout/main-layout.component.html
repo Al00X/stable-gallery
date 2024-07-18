@@ -2,14 +2,32 @@
   <div class="relative flex-auto overflow-auto">
     <router-outlet></router-outlet>
   </div>
-  <div class="relative flex items-center flex-none h-8 px-6 gap-2 bg-neutral-50 bg-opacity-50">
-    @if(scan.progress$ | async; as progress) {
-      @if(progress !== 0 && progress !== 1) {
-        <mat-progress-bar class="absolute -top-0.5 left-0 right-0 h-1" [value]="progress * 100"></mat-progress-bar>
+  <div
+    class="relative flex items-center flex-none h-8 px-6 gap-2 bg-neutral-50 bg-opacity-50"
+  >
+    @if (scan.progress$ | async; as progress) {
+      @if (progress !== 0 && progress !== 1) {
+        <mat-progress-bar
+          class="absolute -top-0.5 left-0 right-0 h-1"
+          [value]="progress * 100"
+        ></mat-progress-bar>
       }
     }
-    <div class="w-2.5 h-2.5 transition-all rounded-full border-2 {{ (scan.isScanning$ | async) ? 'border-primary-700 bg-primary-500' : 'border-black' }}"></div>
-    <p class="text-sm">{{ (scan.isScanning$ | async) ? 'Watching...' : 'Idle' }}</p>
-    <p class="overflow-hidden text-ellipsis w-1/2 opacity-50 text-nowrap" dir="rtl">{{ scan.currentScanningFile$ | async }}</p>
+    <div
+      class="w-2.5 h-2.5 transition-all rounded-full border-2 {{
+        (scan.isScanning$ | async)
+          ? 'border-primary-700 bg-primary-500'
+          : 'border-black'
+      }}"
+    ></div>
+    <p class="text-sm">
+      {{ (scan.isScanning$ | async) ? 'Watching...' : 'Idle' }}
+    </p>
+    <p
+      class="overflow-hidden text-ellipsis w-1/2 opacity-50 text-nowrap"
+      dir="rtl"
+    >
+      {{ scan.currentScanningFile$ | async }}
+    </p>
   </div>
 </main>

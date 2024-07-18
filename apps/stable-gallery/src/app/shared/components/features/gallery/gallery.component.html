@@ -4,11 +4,19 @@
 >
   <div
     class="flex-none flex items-center w-full bg-neutral-200 gap-6 px-12 h-12 z-[2]"
-    style="box-shadow: 0 6px 15px 0 rgba(0,0,0,0.7)"
+    style="box-shadow: 0 6px 15px 0 rgba(0, 0, 0, 0.7)"
   >
-    <ui-icon class="w-8" [matMenuTriggerFor]="ViewMenu" icon="view" matTooltip="View Options"></ui-icon>
+    <ui-icon
+      class="w-8"
+      [matMenuTriggerFor]="ViewMenu"
+      icon="view"
+      matTooltip="View Options"
+    ></ui-icon>
     <mat-menu #ViewMenu>
-      <div class="grid grid-cols-2 gap-4 justify-items-start" (click)="$event.stopPropagation()">
+      <div
+        class="grid grid-cols-2 gap-4 justify-items-start"
+        (click)="$event.stopPropagation()"
+      >
         <feature-view-options-form></feature-view-options-form>
       </div>
     </mat-menu>
@@ -27,7 +35,7 @@
       [control]="sortDirectionControl"
       [items]="[
         { icon: 'asc', value: 'asc', hint: 'Ascending' },
-        { icon: 'desc', value: 'desc', hint: 'Descending' }
+        { icon: 'desc', value: 'desc', hint: 'Descending' },
       ]"
     ></ui-button-group>
     <ui-field
@@ -39,45 +47,45 @@
 
   <div class="flex-auto flex relative overflow-hidden">
     <div class="flex-auto overflow-auto px-1" (scroll)="onScroll($event)">
-      @if(state.viewStyle === 'grid') {
-      <div
-        class="grid"
-        [style.gap.px]="itemGapControl.value$ | async"
-        [style.grid-template-columns]="
-          'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
-        "
-      >
-        @for(item of items(); track item.path; let index = $index) {
-        <feature-image-card
-          [image]="item"
-          class="border-2 {{
-            selectionModel.selectedIds()[item.path]
-              ? 'border-primary-600'
-              : 'border-transparent'
-          }}"
-          [style.aspect-ratio]="itemSizeControl.value$ | async"
-          [isSelected]="selectionModel.selectedIds()[item.path]"
-          (mousedown)="onImageMouseDown(index, item)"
-          (mousemove)="onImageMouseMove(index, item)"
-          (mouseup)="onImageMouseUp(index, item)"
-        ></feature-image-card>
-        }
-      </div>
+      @if (state.viewStyle === 'grid') {
+        <div
+          class="grid"
+          [style.gap.px]="itemGapControl.value$ | async"
+          [style.grid-template-columns]="
+            'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
+          "
+        >
+          @for (item of items(); track item.path; let index = $index) {
+            <feature-image-card
+              [image]="item"
+              class="border-2 {{
+                selectionModel.selectedIds()[item.path]
+                  ? 'border-primary-600'
+                  : 'border-transparent'
+              }}"
+              [style.aspect-ratio]="itemSizeControl.value$ | async"
+              [isSelected]="selectionModel.selectedIds()[item.path]"
+              (mousedown)="onImageMouseDown(index, item)"
+              (mousemove)="onImageMouseMove(index, item)"
+              (mouseup)="onImageMouseUp(index, item)"
+            ></feature-image-card>
+          }
+        </div>
       } @else {
-      <ui-masonry
-        [items]="items()"
-        [cols]="(columnsControl.value$ | async) ?? 4"
-        [trackBy]="itemTrackBy"
-        [style.gap.px]="itemGapControl.value$ | async"
-      >
-        <ng-template let-item="item">
-          <feature-image-card
-            [image]="item"
-            [isSelected]="selectionModel.selectedIds()[item.path]"
-            (onMouseUp)="selectionModel.set(item)"
-          ></feature-image-card>
-        </ng-template>
-      </ui-masonry>
+        <ui-masonry
+          [items]="items()"
+          [cols]="(columnsControl.value$ | async) ?? 4"
+          [trackBy]="itemTrackBy"
+          [style.gap.px]="itemGapControl.value$ | async"
+        >
+          <ng-template let-item="item">
+            <feature-image-card
+              [image]="item"
+              [isSelected]="selectionModel.selectedIds()[item.path]"
+              (onMouseUp)="selectionModel.set(item)"
+            ></feature-image-card>
+          </ng-template>
+        </ui-masonry>
       }
     </div>
     <feature-image-details-pane

@@ -1,11 +1,11 @@
-import {Injectable, signal} from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import type { ipcRenderer } from 'electron';
-import {BehaviorSubject, filter} from "rxjs";
+import { BehaviorSubject, filter } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import type {environment} from "../../../../../stable-gallery-electron/src/environments/environment";
+import type { environment } from '../../../../../stable-gallery-electron/src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ElectronService {
   electron: any;
@@ -14,29 +14,34 @@ export class ElectronService {
   userDataPath!: string;
   environment!: typeof environment;
   changelogMd!: string;
-  version!: string
+  version!: string;
 
   isMaximized = signal(false);
 
   private _initialized$ = new BehaviorSubject(false);
 
-  initialized$ = this._initialized$.pipe(filter(t => t))
+  initialized$ = this._initialized$.pipe(filter((t) => t));
 
   constructor() {
     this.electron = window.require('electron');
     this.ipc = this.electron.ipcRenderer;
 
-    Promise.all([this.getUserDataPath(), this.getEnvironment(), this.getChangelog(), this.isWindowMaximized()]).then(() => {
+    Promise.all([
+      this.getUserDataPath(),
+      this.getEnvironment(),
+      this.getChangelog(),
+      this.isWindowMaximized(),
+    ]).then(() => {
       this._initialized$.next(true);
-    })
+    });
 
     this.ipc.on('window', (e, message) => {
       this.isMaximized.set(message);
-    })
+    });
   }
 
   async openDirectorySelectDialog() {
-    return await this.ipc.invoke('open-directory-select-dialog')
+    return await this.ipc.invoke('open-directory-select-dialog');
   }
 
   setWindow(state: 'close' | 'maximize' | 'minimize') {
@@ -53,11 +58,11 @@ export class ElectronService {
 
   private async getChangelog() {
     this.changelogMd = await this.ipc.invoke('get-changelog');
-    this.version = this.changelogMd.split('\n')[0].substring(1)
+    this.version = this.changelogMd.split('\n')[0].substring(1);
   }
 
   private async isWindowMaximized() {
-    const res = await this.ipc.invoke('is-window-maximized')
+    const res = await this.ipc.invoke('is-window-maximized');
     this.isMaximized.set(res);
   }
 }

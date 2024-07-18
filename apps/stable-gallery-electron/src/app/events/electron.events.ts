@@ -3,18 +3,18 @@
  * between the frontend to the electron backend.
  */
 
-import {app, dialog, ipcMain} from 'electron';
+import { app, dialog, ipcMain } from 'electron';
 import { environment } from '../../environments/environment';
-import {dataPath} from "../constants";
-import App from "../app";
+import { dataPath } from '../constants';
+import App from '../app';
 import * as fs from 'fs/promises';
-import {join} from "path";
+import { join } from 'path';
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
     App.mainWindow.on('resize', () => {
-      App.mainWindow.webContents.send('window', App.mainWindow.isMaximized())
-    })
+      App.mainWindow.webContents.send('window', App.mainWindow.isMaximized());
+    });
     return ipcMain;
   }
 }
@@ -28,31 +28,33 @@ ipcMain.handle('get-app-version', (event) => {
 
 ipcMain.handle('get-user-data-path', () => {
   return dataPath;
-})
+});
 
 ipcMain.handle('get-environment', () => {
   return environment;
-})
+});
 
 ipcMain.handle('get-changelog', async () => {
-  return (await fs.readFile(join(__dirname, '../../..', 'CHANGELOG.md'))).toString();
-})
+  return (
+    await fs.readFile(join(__dirname, '../../..', 'CHANGELOG.md'))
+  ).toString();
+});
 
 ipcMain.handle('is-window-maximized', () => {
   return App.mainWindow.isMaximized();
-})
+});
 
 ipcMain.handle('open-directory-select-dialog', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog(App.mainWindow, {
     title: 'Choose a directory',
-    properties: ['openDirectory']
-  })
+    properties: ['openDirectory'],
+  });
   if (canceled) {
-    return
+    return;
   } else {
-    return filePaths[0]
+    return filePaths[0];
   }
-})
+});
 
 ipcMain.handle('window', (e, message) => {
   switch (message) {
@@ -60,7 +62,9 @@ ipcMain.handle('window', (e, message) => {
       App.mainWindow.close();
       break;
     case 'maximize':
-      App.mainWindow.isMaximized() ? App.mainWindow.unmaximize() : App.mainWindow.maximize();
+      App.mainWindow.isMaximized()
+        ? App.mainWindow.unmaximize()
+        : App.mainWindow.maximize();
       break;
     case 'minimize':
       App.mainWindow.minimize();

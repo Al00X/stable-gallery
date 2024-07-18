@@ -1,11 +1,20 @@
-import {ChangeDetectorRef, Component, EventEmitter, HostListener, inject, NgZone, Output, signal} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  HostListener,
+  inject,
+  NgZone,
+  Output,
+  signal,
+} from '@angular/core';
 
 @Component({
   selector: 'ui-drop-zone',
   standalone: true,
   imports: [],
   templateUrl: './drop-zone.component.html',
-  styleUrl: './drop-zone.component.scss'
+  styleUrl: './drop-zone.component.scss',
 })
 export class DropZoneComponent {
   private ngZone = inject(NgZone);
@@ -49,8 +58,8 @@ export class DropZoneComponent {
         if (c.startsWith('file://')) return;
         this.ngZone.run(() => {
           this.onDrop.emit(files);
-        })
-      })
+        });
+      });
     } else {
       this.onDrop.emit(files);
     }

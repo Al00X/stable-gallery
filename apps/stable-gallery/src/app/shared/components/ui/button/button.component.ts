@@ -21,7 +21,7 @@ import { NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { pipe, tap, UnaryFunction } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {startWithTap} from "../../../../core/helpers";
+import { startWithTap } from '../../../../core/helpers';
 
 export interface ButtonClickEvent {
   event: MouseEvent;
@@ -32,7 +32,12 @@ export interface ButtonClickEvent {
 
 export type ButtonAppearanceType = 'stroked' | 'filled' | 'text';
 
-export type ButtonThemeType = 'primary' | 'secondary' | 'tertiary' | 'error' | 'custom';
+export type ButtonThemeType =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'error'
+  | 'custom';
 
 @Component({
   selector: 'ui-button',
@@ -52,7 +57,8 @@ export type ButtonThemeType = 'primary' | 'secondary' | 'tertiary' | 'error' | '
   ],
 })
 export class ButtonComponent implements OnInit, AfterViewInit, OnChanges {
-  @ViewChild('Button', { read: ElementRef }) btnElement?: ElementRef<HTMLButtonElement>;
+  @ViewChild('Button', { read: ElementRef })
+  btnElement?: ElementRef<HTMLButtonElement>;
 
   @Input() icon?: string;
   @Input() iconPosition: 'prefix' | 'suffix' = 'prefix';
@@ -172,6 +178,6 @@ export class ButtonComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   private setDisabledClass() {
-    this.disabledClass = (this.disabled ?? false);
+    this.disabledClass = this.disabled ?? false;
   }
 }

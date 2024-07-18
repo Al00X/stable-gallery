@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import {ButtonAppearanceType, ButtonClickEvent, ButtonComponent} from '../../../../ui';
+import {
+  ButtonAppearanceType,
+  ButtonClickEvent,
+  ButtonComponent,
+} from '../../../../ui';
 import { DialogLayoutComponent } from '../../../../layouts';
 import { BaseDialogComponent } from '../_base-dialog.component';
 
@@ -21,7 +25,10 @@ export type PromptDialogResult = boolean;
   standalone: true,
   imports: [ButtonComponent, DialogLayoutComponent],
 })
-export class PromptDialogComponent extends BaseDialogComponent<PromptDialogData, PromptDialogResult> {
+export class PromptDialogComponent extends BaseDialogComponent<
+  PromptDialogData,
+  PromptDialogResult
+> {
   onYes(e: ButtonClickEvent) {
     this.submit(true, e.pipe());
   }

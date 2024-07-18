@@ -1,8 +1,8 @@
-import {AfterViewInit, Component, inject, signal} from '@angular/core';
-import {ElectronService} from "../../../../../../core/services";
-import {BaseDialogComponent} from "../_base-dialog.component";
-import {DialogLayoutComponent} from "../../../../layouts";
-import {marked} from "marked";
+import { AfterViewInit, Component, inject, signal } from '@angular/core';
+import { ElectronService } from '../../../../../../core/services';
+import { BaseDialogComponent } from '../_base-dialog.component';
+import { DialogLayoutComponent } from '../../../../layouts';
+import { marked } from 'marked';
 
 @Component({
   selector: 'feature-changelog-dialog',

@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {AsyncPipe} from "@angular/common";
-import {MatTooltip} from "@angular/material/tooltip";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'ui-nsfw-toggle',

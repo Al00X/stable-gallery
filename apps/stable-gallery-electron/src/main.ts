@@ -4,7 +4,7 @@ import UpdateEvents from './app/events/update.events';
 import { app, BrowserWindow } from 'electron';
 import App from './app/app';
 import * as fs from 'fs/promises';
-import {dataPath} from "./app/constants";
+import { dataPath } from './app/constants';
 
 export default class Main {
   static initialize() {
@@ -28,7 +28,7 @@ export default class Main {
   }
 
   static async prepare() {
-    await fs.mkdir(dataPath, {recursive: true});
+    await fs.mkdir(dataPath, { recursive: true });
   }
 }
 
@@ -38,4 +38,4 @@ Main.prepare().then(() => {
 
   Main.bootstrapApp();
   Main.bootstrapAppEvents();
-})
+});

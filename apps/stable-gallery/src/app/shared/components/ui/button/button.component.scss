@@ -35,7 +35,8 @@
     }
   }
 
-  transition-property: width, height, background-color, opacity, font-size, border, box-shadow, filter;
+  transition-property: width, height, background-color, opacity, font-size,
+    border, box-shadow, filter;
   transition-duration: 0.15s;
   transition-timing-function: ease;
   box-sizing: content-box;

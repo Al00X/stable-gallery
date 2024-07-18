@@ -97,7 +97,7 @@ export class DbService {
       .delete(imagesEntry)
 
       .where(
-        typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q)
+        typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q),
       )
       .catch((err) => {
         console.error(err);
@@ -127,8 +127,8 @@ export class DbService {
             ? query.sortBy === 'createdAt'
               ? imagesEntry.createdAt
               : imagesEntry.addedAt
-            : imagesEntry.createdAt
-        )
+            : imagesEntry.createdAt,
+        ),
       )
       .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id));
     if (query?.search) {
@@ -137,8 +137,8 @@ export class DbService {
           like(lower(imagesEntry.prompt), `%${query.search.toLowerCase()}%`),
           like(lower(imagesEntry.sampler), `%${query.search.toLowerCase()}%`),
           like(lower(imagesEntry.seed), `%${query.search.toLowerCase()}%`),
-          like(lower(imagesEntry.modelHash), `%${query.search.toLowerCase()}%`)
-        )
+          like(lower(imagesEntry.modelHash), `%${query.search.toLowerCase()}%`),
+        ),
       );
     }
     return fn.then((res) => {
@@ -146,7 +146,7 @@ export class DbService {
         ImageItem.fromImageEntry({
           ...t.entries,
           ...t.stats,
-        } as ImageEntry)
+        } as ImageEntry),
       );
     });
   }
@@ -157,7 +157,7 @@ export class DbService {
       .select()
       .from(imagesEntry)
       .where(
-        typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q)
+        typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q),
       )
       .limit(1)
       .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id))
@@ -244,7 +244,7 @@ function readMigrationFiles(): MigrationMeta[] {
       });
     } catch {
       throw new Error(
-        `No file ${migrationPath} found in ${migrationFolderTo} folder`
+        `No file ${migrationPath} found in ${migrationFolderTo} folder`,
       );
     }
   }

@@ -1,6 +1,20 @@
-import { Observable, pipe, Subject, Subscription, take, UnaryFunction } from 'rxjs';
+import {
+  Observable,
+  pipe,
+  Subject,
+  Subscription,
+  take,
+  UnaryFunction,
+} from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { AfterViewInit, ChangeDetectorRef, Component, inject, signal, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { DialogLayoutComponent } from '../../../layouts';
 
 export interface BaseDialogData<RESULT, ACTION> {
@@ -13,7 +27,10 @@ export interface BaseDialogResult<RESULT, ACTION> {
 
 export type DialogAction<INPUT, RESULT> = (value: INPUT) => Observable<RESULT>;
 
-export type DialogActionEvent<DIALOG, ACTION> = { dialogResult: DIALOG; actionResult: ACTION };
+export type DialogActionEvent<DIALOG, ACTION> = {
+  dialogResult: DIALOG;
+  actionResult: ACTION;
+};
 
 @Component({
   selector: 'ui-base-dialog',

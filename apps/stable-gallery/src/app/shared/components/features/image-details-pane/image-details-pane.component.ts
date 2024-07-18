@@ -1,10 +1,19 @@
-import {Component, inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges} from '@angular/core';
-import {ImageItem} from "../../../../core/helpers";
-import {formatDate} from "@angular/common";
-import {ItemRecord} from "../../../../core/interfaces";
-import {ButtonComponent, IconComponent} from "../../ui";
-import {MatIcon} from "@angular/material/icon";
-import {AppService} from "../../../../core/services";
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
+import { ImageItem } from '../../../../core/helpers';
+import { formatDate } from '@angular/common';
+import { ItemRecord } from '../../../../core/interfaces';
+import { ButtonComponent, IconComponent } from '../../ui';
+import { MatIcon } from '@angular/material/icon';
+import { AppService } from '../../../../core/services';
 
 @Component({
   selector: 'feature-image-details-pane',
@@ -14,7 +23,7 @@ import {AppService} from "../../../../core/services";
   styleUrl: './image-details-pane.component.scss',
 })
 export class ImageDetailsPaneComponent implements OnInit, OnChanges {
-  private app = inject(AppService)
+  private app = inject(AppService);
 
   @Input() open = false;
   @Input() image?: ImageItem;
@@ -45,15 +54,15 @@ export class ImageDetailsPaneComponent implements OnInit, OnChanges {
   openImage() {
     if (!this.image) return;
     dialog$.imageViewer({
-      image: this.image
-    })
+      image: this.image,
+    });
   }
 
   toggleExpand() {
-    this.isImageExpanded.set(!this.isImageExpanded())
+    this.isImageExpanded.set(!this.isImageExpanded());
     this.app.setSettings({
-      detailsTabImageExpanded: this.isImageExpanded()
-    })
+      detailsTabImageExpanded: this.isImageExpanded(),
+    });
   }
 
   private populateDetails() {

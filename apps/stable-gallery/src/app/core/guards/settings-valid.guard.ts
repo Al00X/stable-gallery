@@ -1,6 +1,6 @@
-import {CanActivateFn, Router} from "@angular/router";
-import {inject} from "@angular/core";
-import {AppService} from "../services";
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { AppService } from '../services';
 
 export const SettingsValidGuard: CanActivateFn = () => {
   const router = inject(Router);
