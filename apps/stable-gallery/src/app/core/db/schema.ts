@@ -4,7 +4,8 @@ import {
   sqliteTable,
   text,
 } from 'drizzle-orm/sqlite-core';
-import {and, relations, SQL, sql} from 'drizzle-orm';
+import { and, between, gte, lte, relations, SQL, sql } from 'drizzle-orm';
+import { MinMax } from '../interfaces';
 
 export const imagesEntry = sqliteTable('entries', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -40,9 +41,9 @@ export type StatsEntryInsert = typeof statEntry.$inferInsert;
 export const imagesAndStatRelation = relations(imagesEntry, (op) => ({
   stats: op.one(statEntry, {
     fields: [imagesEntry.id],
-    references: [statEntry.id]
-  })
-}))
+    references: [statEntry.id],
+  }),
+}));
 
 export type ImageEntry = ImagePartialEntry & StatsEntry;
 
@@ -52,10 +53,25 @@ export function lower(col: AnySQLiteColumn): any {
 
 export function andLeast(and1: any, and2: any): any {
   if (and1 && !and2) {
-    return and1
+    return and1;
   } else if (!and1 && and2) {
     return and2;
   } else {
-    return and(and1, and2)
+    return and(and1, and2);
   }
+}
+
+export function minMax(value: MinMax | undefined, col: AnySQLiteColumn): any {
+  if (!value || !value.length) return undefined;
+
+  const isMin = value[0] !== null && value[0] !== undefined;
+  const isMax = value[1] !== null && value[1] !== undefined;
+
+  return isMin && isMax
+    ? between(col, value[0], value[1])
+    : isMin
+      ? gte(col, value[0])
+      : isMax
+        ? lte(col, value[1])
+        : undefined;
 }

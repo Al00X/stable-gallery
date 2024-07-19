@@ -40,7 +40,11 @@ export class TabGroupComponent<T> implements OnChanges {
     const value = this.control.value || [];
 
     if (!this.keybind.ctrl()) {
-      this.control.setValue([group.value]);
+      if (this.control.value.length === 1 && this.control.value.includes(group.value)) {
+        this.control.setValue([]);
+      } else {
+        this.control.setValue([group.value]);
+      }
       return;
     }
 

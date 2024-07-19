@@ -45,7 +45,7 @@ const appStore = createStore(
       {
         index: 2,
         name: 'High Samples',
-        filters: { cfg: [50, undefined] },
+        filters: { steps: [50, undefined] },
       },
     ],
     settings: {

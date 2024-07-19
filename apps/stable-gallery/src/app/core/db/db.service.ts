@@ -12,12 +12,13 @@ import {
   andLeast,
   ImageEntry,
   imagesEntry,
-  lower,
+  lower, minMax,
   statEntry,
 } from '../db/schema';
 import { BehaviorSubject } from 'rxjs';
 import { eq} from 'drizzle-orm';
 import { MinMax } from '../interfaces';
+import {flattenMinMax} from "../helpers";
 
 export interface ImageQueryModel {
   page?: number;
@@ -126,7 +127,8 @@ export class DbService {
       });
   }
 
-  async getImages(query?: ImageQueryModel) {
+  async getImages(queryModel?: ImageQueryModel) {
+    const query = flattenImageQuery(queryModel);
     console.log(query);
 
     return this.db.query.imagesEntry
@@ -178,26 +180,9 @@ export class DbService {
             query?.sampler && query.sampler.length
               ? like(lower(items.sampler), `%${query.sampler.toLowerCase()}%`)
               : undefined;
-          const stepQ =
-            query?.steps && query.steps.length
-              ? query.steps[0] !== undefined && query.steps[1] !== undefined
-                ? between(items.steps, query.steps[0], query.steps[1])
-                : query.steps[0] !== undefined
-                  ? gte(items.steps, query.steps[0])
-                  : query.steps[1] !== undefined
-                    ? lte(items.steps, query.steps[1])
-                    : undefined
-              : undefined;
-          const cfgQ =
-            query?.cfg && query.cfg.length
-              ? query.cfg[0] !== undefined && query.cfg[1] !== undefined
-                ? between(items.cfg, query.cfg[0], query.cfg[1])
-                : query.cfg[0] !== undefined
-                  ? gte(items.cfg, query.cfg[0])
-                  : query.cfg[1] !== undefined
-                    ? lte(items.cfg, query.cfg[1])
-                    : undefined
-              : undefined;
+          const stepQ = minMax(query.steps, items.steps);
+
+          const cfgQ = minMax(query.cfg, items.cfg);
 
           const filterArray = [
             promptQ,
@@ -281,6 +266,18 @@ export class DbService {
     const migrations = readMigrationFiles();
     // @ts-ignore
     this.db.dialect.migrate(migrations, this.db.session);
+  }
+}
+
+function flattenImageQuery(model: ImageQueryModel | undefined): ImageQueryModel {
+  const q = [model, ...model?.preFilters ?? []];
+  return {
+    ...model,
+    prompt: q.map(t => t?.prompt).filter(t => !!t).join(','),
+    negativePrompt: q.map(t => t?.negativePrompt).filter(t => !!t).join(','),
+    sampler: q.map(t => t?.sampler).filter(t => !!t).join(','),
+    steps: flattenMinMax(q.map(t => t?.steps)),
+    cfg: flattenMinMax(q.map(t => t?.cfg)),
   }
 }
 

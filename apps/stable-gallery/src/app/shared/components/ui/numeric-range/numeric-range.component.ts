@@ -19,8 +19,8 @@ export class NumericRangeComponent {
   @Input() min?: number;
   @Input() max?: number;
 
-  minControl = formControl<string>();
-  maxControl = formControl<string>();
+  minControl = formControl<string>(undefined);
+  maxControl = formControl<string>(undefined);
 
   constructor() {
     combineLatest({

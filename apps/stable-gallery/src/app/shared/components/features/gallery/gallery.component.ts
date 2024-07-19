@@ -226,7 +226,6 @@ export class GalleryComponent {
 
   setFilterModel() {
     const model = this.filterForm.getModel();
-    console.log(model);
     this.currentFilterModel.set(isObjectEmpty(model) ? undefined : model);
     this.activeFilterItems.set(this.filterForm.getActiveItems());
     this.updateQueries();
