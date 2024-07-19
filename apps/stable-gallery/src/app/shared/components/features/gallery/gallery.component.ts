@@ -165,13 +165,13 @@ export class GalleryComponent {
         debounceTime(SEARCH_DEBOUNCE),
       ),
     )
-      .pipe(debounceTime(5), takeUntilDestroyed())
+      .pipe(debounceTime(2), takeUntilDestroyed())
       .subscribe(() => {
         this.updateQueries();
       });
 
     toObservable(this.query)
-      .pipe(skip(1), takeUntilDestroyed(), debounceTime(5))
+      .pipe(skip(1), takeUntilDestroyed(), debounceTime(2))
       .subscribe(() => {
         this.get(true);
       });
