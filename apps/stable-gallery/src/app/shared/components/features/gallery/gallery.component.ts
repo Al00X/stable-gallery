@@ -1,10 +1,18 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import {
   formControl,
   ImageItem,
+  isObjectEmpty,
   SelectionModel,
 } from '../../../../core/helpers';
-import { debounceTime, distinctUntilChanged, merge } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  merge,
+  Observable,
+  skip,
+} from 'rxjs';
 import {
   AppService,
   KeybindService,
@@ -12,14 +20,17 @@ import {
 } from '../../../../core/services';
 import { AsyncPipe, NgIf } from '@angular/common';
 import {
+  ButtonComponent,
   ButtonGroupComponent,
+  ChipsComponent,
   FieldComponent,
   IconComponent,
   MasonryComponent,
   SliderComponent,
+  TabGroupComponent,
 } from '../../ui';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ImageCardComponent } from '../image-card/image-card.component';
 import { ImageDetailsPaneComponent } from '../image-details-pane/image-details-pane.component';
 import { ItemRecord } from '../../../../core/interfaces';
@@ -27,6 +38,8 @@ import { ImageActionsComponent } from '../image-actions/image-actions.component'
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ViewOptionsFormComponent } from '../view-options-form/view-options-form.component';
+import { FilterFormComponent } from '../filter-form/filter-form.component';
+import { ImageQueryModel } from '../../../../core/db';
 
 type SortByOptions = 'createdAt' | 'addedAt';
 type SortDirection = 'asc' | 'desc';
@@ -54,6 +67,10 @@ const SCROLL_THRESHOLD = 200;
     MatMenuTrigger,
     MatTooltip,
     ViewOptionsFormComponent,
+    FilterFormComponent,
+    ButtonComponent,
+    ChipsComponent,
+    TabGroupComponent,
   ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
@@ -63,20 +80,18 @@ export class GalleryComponent {
   public readonly app = inject(AppService);
   public readonly keybind = inject(KeybindService);
 
-  selectionModel = new SelectionModel<ImageItem>(0, true, [], (t) => t.path);
+  @ViewChild('FilterForm') filterForm!: FilterFormComponent;
 
   items = signal<ImageItem[]>([]);
-  filters = signal<{
-    search?: string;
-    sortBy?: SortByOptions;
-    sortDirection?: SortDirection;
-  }>({});
+  query = signal<ImageQueryModel>({});
   page = signal(0);
   currentCount = computed(() => this.items().length);
   allLoaded = signal(false);
   openDetails = signal(
     this.app.state.settings.openDetailsTabInGalleryByDefault,
   );
+  currentFilterModel = signal<ImageQueryModel | undefined>(undefined);
+  activeFilterItems = signal<ItemRecord<any>[]>([]);
 
   firstHighlightedImage = computed(() => this.selectionModel.selected().at(0));
 
@@ -88,6 +103,16 @@ export class GalleryComponent {
   private _lastMouseMove?: number;
   private _lastSelectionRange?: { l: number; h: number };
 
+  selectionModel = new SelectionModel<ImageItem>(0, true, [], (t) => t.path);
+  filterGroups$: Observable<ItemRecord<string>[]> = this.app.filterGroups$.pipe(
+    map((items) =>
+      items?.map((t) => ({
+        label: t.name,
+        value: t.name,
+      })),
+    ),
+  );
+
   sortByControl = formControl<SortByOptions>(
     this.app.state.settings.gallerySortBy as any,
   );
@@ -95,6 +120,7 @@ export class GalleryComponent {
     this.app.state.settings.gallerySortDirection as any,
   );
   searchControl = formControl('');
+  filterGroupControl = formControl<string[]>([]);
 
   sortByItems: ItemRecord<SortByOptions>[] = [
     { label: 'Date Created', value: 'createdAt' },
@@ -104,7 +130,7 @@ export class GalleryComponent {
   itemTrackBy = (_: number, item: ImageItem) => item.path;
 
   constructor() {
-    this.updateFilters();
+    this.updateQueries();
 
     db$.initialized$.subscribe(() => {
       this.get(true);
@@ -133,6 +159,7 @@ export class GalleryComponent {
     merge(
       this.sortByControl.valueChanges.pipe(distinctUntilChanged()),
       this.sortDirectionControl.valueChanges.pipe(distinctUntilChanged()),
+      this.filterGroupControl.valueChanges.pipe(distinctUntilChanged()),
       this.searchControl.valueChanges.pipe(
         distinctUntilChanged(),
         debounceTime(SEARCH_DEBOUNCE),
@@ -140,7 +167,12 @@ export class GalleryComponent {
     )
       .pipe(debounceTime(5), takeUntilDestroyed())
       .subscribe(() => {
-        this.updateFilters();
+        this.updateQueries();
+      });
+
+    toObservable(this.query)
+      .pipe(skip(1), takeUntilDestroyed(), debounceTime(5))
+      .subscribe(() => {
         this.get(true);
       });
   }
@@ -192,6 +224,23 @@ export class GalleryComponent {
     this.highlightImageRange(_state.index, index, _state.isSelected);
   }
 
+  setFilterModel() {
+    const model = this.filterForm.getModel();
+    console.log(model);
+    this.currentFilterModel.set(isObjectEmpty(model) ? undefined : model);
+    this.activeFilterItems.set(this.filterForm.getActiveItems());
+    this.updateQueries();
+  }
+
+  resetFilterModel() {
+    this.filterForm.reset();
+    this.currentFilterModel.set(undefined);
+    this.activeFilterItems.set([]);
+    this.updateQueries();
+  }
+
+  saveFilterGroup() {}
+
   private highlightImageRange(start: number, end: number, deselect?: boolean) {
     const l = start > end ? end : start;
     const h = (start > end ? start : end) + 1;
@@ -233,7 +282,7 @@ export class GalleryComponent {
 
   private async get(reset?: boolean) {
     if (!db$.initialized$.value) return;
-    const filters = this.filters();
+    const filters = this.query();
     const perPage = 100;
 
     this.app.setSettings({
@@ -243,11 +292,9 @@ export class GalleryComponent {
 
     const fn = async () =>
       await db$.getImages({
+        ...filters,
         page: this.page(),
         perPage,
-        search: filters.search,
-        sortBy: filters.sortBy,
-        sortDirection: filters.sortDirection,
       });
     if (reset) {
       this.page.set(1);
@@ -263,14 +310,20 @@ export class GalleryComponent {
     }
   }
 
-  private updateFilters() {
+  private updateQueries() {
+    const model = this.currentFilterModel();
     const search = this.searchControl.value;
     const sortBy = this.sortByControl.value;
     const sortDir = this.sortDirectionControl.value;
-    this.filters.set({
+    const filterGroups = this.filterGroupControl.value.map((t) =>
+      this.app.state.filterGroups.find((y) => y.name === t)!.filters,
+    );
+    this.query.set({
+      ...model,
       sortBy,
       search,
       sortDirection: sortDir,
+      preFilters: filterGroups,
     });
   }
 }

@@ -161,6 +161,7 @@ export class ImageItem {
         .split('\n')
         .map((t) => t.trim())
         .filter((t) => t.length);
+      chunks.splice(3);
 
       prompt = (
         chunks.length === 2

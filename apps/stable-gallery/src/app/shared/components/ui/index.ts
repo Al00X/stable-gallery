@@ -10,3 +10,7 @@ export * from './list-field/list-field.component';
 export * from './button-group/button-group.component';
 export * from './masonry/masonry.component';
 export * from './drop-zone/drop-zone.component';
+export * from './numeric-range/numeric-range.component'
+export * from './chips/chips.component';
+export * from './chips-group/chips-group.component';
+export * from './tab-group/tab-group.component';

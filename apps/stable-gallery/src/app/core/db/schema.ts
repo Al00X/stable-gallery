@@ -4,7 +4,7 @@ import {
   sqliteTable,
   text,
 } from 'drizzle-orm/sqlite-core';
-import { SQL, sql } from 'drizzle-orm';
+import {and, relations, SQL, sql} from 'drizzle-orm';
 
 export const imagesEntry = sqliteTable('entries', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -37,8 +37,25 @@ export const statEntry = sqliteTable('stats', {
 export type StatsEntry = typeof statEntry.$inferSelect;
 export type StatsEntryInsert = typeof statEntry.$inferInsert;
 
+export const imagesAndStatRelation = relations(imagesEntry, (op) => ({
+  stats: op.one(statEntry, {
+    fields: [imagesEntry.id],
+    references: [statEntry.id]
+  })
+}))
+
 export type ImageEntry = ImagePartialEntry & StatsEntry;
 
 export function lower(col: AnySQLiteColumn): any {
   return sql`lower(${col})`;
+}
+
+export function andLeast(and1: any, and2: any): any {
+  if (and1 && !and2) {
+    return and1
+  } else if (!and1 && and2) {
+    return and2;
+  } else {
+    return and(and1, and2)
+  }
 }

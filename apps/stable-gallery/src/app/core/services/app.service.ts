@@ -2,8 +2,14 @@ import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
 import { map } from 'rxjs';
+import { ImageQueryModel } from '../db';
 
 interface AppState {
+  filterGroups: {
+    index: number;
+    name: string;
+    filters: Partial<ImageQueryModel>;
+  }[];
   settings: {
     dirs: string[];
     showNsfw: boolean;
@@ -25,6 +31,23 @@ interface AppState {
 const appStore = createStore(
   { name: 'app' },
   withProps<AppState>({
+    filterGroups: [
+      {
+        index: 0,
+        name: 'Nature',
+        filters: { prompt: 'nature, landscape' },
+      },
+      {
+        index: 1,
+        name: 'Low CFGs',
+        filters: { cfg: [0, 4] },
+      },
+      {
+        index: 2,
+        name: 'High Samples',
+        filters: { cfg: [50, undefined] },
+      },
+    ],
     settings: {
       dirs: [],
       showNsfw: false,
@@ -53,6 +76,9 @@ export class AppService {
   state$ = appStore.pipe();
   showNsfw$ = this.state$.pipe(map((t) => t.settings.showNsfw));
   showSampler$ = this.state$.pipe(map((t) => t.settings.showSamplerInGallery));
+  filterGroups$ = this.state$.pipe(
+    map((t) => t.filterGroups?.sort((a, b) => (a.index > b.index ? 1 : -1))),
+  );
 
   get state() {
     return appStore.state;

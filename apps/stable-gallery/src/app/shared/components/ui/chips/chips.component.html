@@ -1,0 +1,6 @@
+<div class="flex items-center justify-center rounded-full py-0.5 px-2 gap-1 select-none bg-primary-300" (click)="onClicked()">
+  <span class="flex-auto">{{ label }}</span>
+  @if(clearable) {
+    <ui-icon icon="close" class="rounded-full" (onClick)="onCleared(); $event.stopPropagation()"></ui-icon>
+  }
+</div>

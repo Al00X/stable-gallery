@@ -8,7 +8,8 @@
       <input
         [formControl]="control"
         [placeholder]="placeholder ?? ''"
-        [readOnly]="type === 'number'"
+        [readOnly]="control.readonly$ | async"
+        [class.select-none]="type === 'number'"
       />
     } @else if (controlType === 'select') {
       <input

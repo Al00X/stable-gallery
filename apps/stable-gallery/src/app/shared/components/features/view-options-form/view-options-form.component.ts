@@ -27,10 +27,10 @@ export class ViewOptionsFormComponent {
   public readonly app = inject(AppService);
 
   viewStyleControl = formControl(this.app.state.settings.galleryViewStyle);
-  itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow);
-  columnsControl = formControl(this.app.state.settings.galleryColumns);
+  itemPerRowControl = formControl(this.app.state.settings.galleryItemPerRow).setReadonly(true);
+  columnsControl = formControl(this.app.state.settings.galleryColumns).setReadonly(true);
   itemSizeControl = formControl(this.app.state.settings.galleryItemAspectRatio);
-  itemGapControl = formControl(this.app.state.settings.galleryItemGap);
+  itemGapControl = formControl(this.app.state.settings.galleryItemGap).setReadonly(true);
 
   constructor() {
     combineLatest({

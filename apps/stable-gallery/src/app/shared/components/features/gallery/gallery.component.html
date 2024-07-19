@@ -1,9 +1,6 @@
-<div
-  class="flex flex-col relative h-full"
-  *ngIf="{ viewStyle: viewStyleControl.value$ | async } as state"
->
+<div class="flex flex-col relative h-full">
   <div
-    class="flex-none flex items-center w-full bg-neutral-200 gap-6 px-12 h-12 z-[2]"
+    class="flex-none flex items-center w-full bg-neutral-200 gap-6 px-12 h-12 z-[4]"
     style="box-shadow: 0 6px 15px 0 rgba(0, 0, 0, 0.7)"
   >
     <ui-icon
@@ -17,7 +14,37 @@
         class="grid grid-cols-2 gap-4 justify-items-start"
         (click)="$event.stopPropagation()"
       >
-        <feature-view-options-form></feature-view-options-form>
+        <feature-view-options-form #ViewOptions></feature-view-options-form>
+      </div>
+    </mat-menu>
+
+    <ui-icon
+      #FilterMenuTrigger="matMenuTrigger"
+      class="w-8"
+      [matMenuTriggerFor]="FilterMenu"
+      [icon]="currentFilterModel() ? 'filter-filled' : 'filter'"
+      matTooltip="Filters"
+    ></ui-icon>
+    <mat-menu #FilterMenu>
+      <div
+        class="grid grid-cols-2 gap-4 justify-items-start"
+        (click)="$event.stopPropagation()"
+      >
+        <feature-filter-form #FilterForm></feature-filter-form>
+        <div class="w-full col-span-full flex items-center justify-end gap-4">
+          <ui-button
+            class="h-8 w-36"
+            appearance="stroked"
+            theme="error"
+            (onClick)="resetFilterModel(); FilterMenuTrigger.closeMenu()"
+            >Reset</ui-button
+          >
+          <ui-button
+            class="text-black bg-primary-600 h-8 w-48"
+            (onClick)="setFilterModel(); FilterMenuTrigger.closeMenu()"
+            >Apply</ui-button
+          >
+        </div>
       </div>
     </mat-menu>
 
@@ -45,14 +72,55 @@
     ></ui-field>
   </div>
 
+  @if (activeFilterItems(); as filterItems) {
+    <div
+      class="transition-all flex flex-none items-center gap-3 px-6 overflow-hidden z-[3] {{
+        filterItems.length ? 'h-12' : 'h-0'
+      }}"
+      style="box-shadow: 0 6px 15px 0 rgba(0, 0, 0, 0.7)"
+    >
+      <span>Active Filters:</span>
+      <div class="flex-auto flex items-center overflow-auto">
+        @for (item of filterItems; track item.label) {
+          <ui-chips
+            [label]="item.label"
+            [value]="item.value"
+            [clearable]="true"
+            (onClear)="FilterForm.resetSingle($any(item.key)); setFilterModel()"
+          ></ui-chips>
+        }
+      </div>
+      <ui-button (onClick)="saveFilterGroup()" class="bg-primary-600 text-black"
+        >Save as Group</ui-button
+      >
+    </div>
+  }
+
+  @if (filterGroups$ | async; as filterGroups) {
+    <div
+      class="flex-none flex items-center overflow-hidden z-[2] {{
+        filterGroups.length ? 'h-10' : 'h-0'
+      }}"
+      style="box-shadow: 0 6px 15px 0 rgba(0, 0, 0, 0.7)"
+    >
+      <ui-tab-group
+        class="h-full"
+        [items]="filterGroups"
+        [control]="filterGroupControl"
+      ></ui-tab-group>
+    </div>
+  }
+
   <div class="flex-auto flex relative overflow-hidden">
     <div class="flex-auto overflow-auto px-1" (scroll)="onScroll($event)">
-      @if (state.viewStyle === 'grid') {
+      @if ((ViewOptions.viewStyleControl.value$ | async) === 'grid') {
         <div
           class="grid"
-          [style.gap.px]="itemGapControl.value$ | async"
+          [style.gap.px]="ViewOptions.itemGapControl.value$ | async"
           [style.grid-template-columns]="
-            'repeat(' + (itemPerRowControl.value$ | async) + ', minmax(0, 1fr))'
+            'repeat(' +
+            (ViewOptions.itemPerRowControl.value$ | async) +
+            ', minmax(0, 1fr))'
           "
         >
           @for (item of items(); track item.path; let index = $index) {
@@ -63,7 +131,7 @@
                   ? 'border-primary-600'
                   : 'border-transparent'
               }}"
-              [style.aspect-ratio]="itemSizeControl.value$ | async"
+              [style.aspect-ratio]="ViewOptions.itemSizeControl.value$ | async"
               [isSelected]="selectionModel.selectedIds()[item.path]"
               (mousedown)="onImageMouseDown(index, item)"
               (mousemove)="onImageMouseMove(index, item)"
@@ -74,9 +142,9 @@
       } @else {
         <ui-masonry
           [items]="items()"
-          [cols]="(columnsControl.value$ | async) ?? 4"
+          [cols]="(ViewOptions.columnsControl.value$ | async) ?? 4"
           [trackBy]="itemTrackBy"
-          [style.gap.px]="itemGapControl.value$ | async"
+          [style.gap.px]="ViewOptions.itemGapControl.value$ | async"
         >
           <ng-template let-item="item">
             <feature-image-card

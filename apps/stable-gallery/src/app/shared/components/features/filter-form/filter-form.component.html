@@ -1,0 +1,24 @@
+<ui-field
+  [label]="filterDictionary.prompt"
+  [control]="filterGroup.controls.prompt"
+></ui-field>
+
+<ui-field
+  [label]="filterDictionary.negativePrompt"
+  [control]="filterGroup.controls.negativePrompt"
+></ui-field>
+
+<ui-field
+  [label]="filterDictionary.sampler"
+  [control]="filterGroup.controls.sampler"
+></ui-field>
+
+<ui-numeric-range
+  [label]="filterDictionary.cfg"
+  [control]="filterGroup.controls.cfg"
+></ui-numeric-range>
+
+<ui-numeric-range
+  [label]="filterDictionary.steps"
+  [control]="filterGroup.controls.steps"
+></ui-numeric-range>

@@ -8,9 +8,30 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as schema from '../db/schema';
 import type { MigrationMeta } from 'drizzle-orm/migrator';
 import { ImageItem } from '../helpers/image.helper';
-import { ImageEntry, imagesEntry, lower, statEntry } from '../db/schema';
+import {
+  andLeast,
+  ImageEntry,
+  imagesEntry,
+  lower,
+  statEntry,
+} from '../db/schema';
 import { BehaviorSubject } from 'rxjs';
-import { asc, desc, eq, like, or } from 'drizzle-orm';
+import { eq} from 'drizzle-orm';
+import { MinMax } from '../interfaces';
+
+export interface ImageQueryModel {
+  page?: number;
+  perPage?: number;
+  search?: string;
+  sortBy?: 'createdAt' | 'addedAt';
+  sortDirection?: 'asc' | 'desc';
+  prompt?: string;
+  negativePrompt?: string;
+  sampler?: string;
+  cfg?: MinMax;
+  steps?: MinMax;
+  preFilters?: ImageQueryModel[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -105,50 +126,110 @@ export class DbService {
       });
   }
 
-  async getImages(query?: {
-    page?: number;
-    perPage?: number;
-    search?: string;
-    sortBy?: 'createdAt' | 'addedAt';
-    sortDirection?: 'asc' | 'desc';
-  }) {
-    const fn = this.db
-      .select()
-      .from(imagesEntry)
-      .limit(query?.perPage ?? 10)
-      .offset((query?.perPage ?? 10) * (query?.page ? query.page - 1 : 0))
-      .orderBy(
-        (query?.sortDirection
-          ? query.sortDirection === 'desc'
-            ? desc
-            : asc
-          : desc)(
-          query?.sortBy
-            ? query.sortBy === 'createdAt'
-              ? imagesEntry.createdAt
-              : imagesEntry.addedAt
-            : imagesEntry.createdAt,
-        ),
-      )
-      .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id));
-    if (query?.search) {
-      fn.where(
-        or(
-          like(lower(imagesEntry.prompt), `%${query.search.toLowerCase()}%`),
-          like(lower(imagesEntry.sampler), `%${query.search.toLowerCase()}%`),
-          like(lower(imagesEntry.seed), `%${query.search.toLowerCase()}%`),
-          like(lower(imagesEntry.modelHash), `%${query.search.toLowerCase()}%`),
-        ),
-      );
-    }
-    return fn.then((res) => {
-      return res.map((t) =>
-        ImageItem.fromImageEntry({
-          ...t.entries,
-          ...t.stats,
-        } as ImageEntry),
-      );
-    });
+  async getImages(query?: ImageQueryModel) {
+    console.log(query);
+
+    return this.db.query.imagesEntry
+      .findMany({
+        limit: query?.perPage ?? 10,
+        offset: (query?.perPage ?? 10) * (query?.page ? query.page - 1 : 0),
+        orderBy: (items, op) => [
+          (query?.sortDirection
+            ? query.sortDirection === 'desc'
+              ? op.desc
+              : op.asc
+            : op.desc)(
+            query?.sortBy
+              ? query.sortBy === 'createdAt'
+                ? items.createdAt
+                : items.addedAt
+              : items.createdAt,
+          ),
+        ],
+        with: {
+          stats: true,
+        },
+        where: (items, { inArray, like, or, and, between, gte, lte }) => {
+          const search = query?.search
+            ? or(
+                like(lower(items.prompt), `%${query.search.toLowerCase()}%`),
+                like(
+                  lower(items.negativePrompt),
+                  `%${query.search.toLowerCase()}%`,
+                ),
+                like(lower(items.sampler), `%${query.search.toLowerCase()}%`),
+                like(lower(items.seed), `%${query.search.toLowerCase()}%`),
+                like(lower(items.modelHash), `%${query.search.toLowerCase()}%`),
+              )
+            : undefined;
+
+          const promptQ =
+            query?.prompt && query.prompt.length
+              ? like(lower(items.prompt), `%${query.prompt.toLowerCase()}%`)
+              : undefined;
+          const negativePromptQ =
+            query?.negativePrompt && query.negativePrompt.length
+              ? like(
+                  lower(items.negativePrompt),
+                  `%${query.negativePrompt.toLowerCase()}%`,
+                )
+              : undefined;
+          const samplerQ =
+            query?.sampler && query.sampler.length
+              ? like(lower(items.sampler), `%${query.sampler.toLowerCase()}%`)
+              : undefined;
+          const stepQ =
+            query?.steps && query.steps.length
+              ? query.steps[0] !== undefined && query.steps[1] !== undefined
+                ? between(items.steps, query.steps[0], query.steps[1])
+                : query.steps[0] !== undefined
+                  ? gte(items.steps, query.steps[0])
+                  : query.steps[1] !== undefined
+                    ? lte(items.steps, query.steps[1])
+                    : undefined
+              : undefined;
+          const cfgQ =
+            query?.cfg && query.cfg.length
+              ? query.cfg[0] !== undefined && query.cfg[1] !== undefined
+                ? between(items.cfg, query.cfg[0], query.cfg[1])
+                : query.cfg[0] !== undefined
+                  ? gte(items.cfg, query.cfg[0])
+                  : query.cfg[1] !== undefined
+                    ? lte(items.cfg, query.cfg[1])
+                    : undefined
+              : undefined;
+
+          const filterArray = [
+            promptQ,
+            negativePromptQ,
+            samplerQ,
+            cfgQ,
+            stepQ,
+          ].filter((t) => !!t);
+          const filter = and(...filterArray);
+
+          return filter
+            ? andLeast(
+                filter,
+                inArray(
+                  items.id,
+                  this.db
+                    .select({ id: imagesEntry.id })
+                    .from(imagesEntry)
+                    .where(search),
+                ),
+              )
+            : search;
+        },
+      })
+      .then((res) => {
+        return res.map((t) =>
+          ImageItem.fromImageEntry({
+            ...t,
+            ...t.stats,
+          } as ImageEntry),
+        );
+      });
   }
 
   async getImage(q: string | number | undefined) {
