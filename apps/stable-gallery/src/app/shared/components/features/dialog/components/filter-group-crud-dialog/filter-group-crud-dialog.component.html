@@ -1,0 +1,10 @@
+<app-dialog-layout
+  [title]="isNew() ? 'New Group' : 'Edit Group'"
+  [subtitle]="isNew() ? 'Give your group a name' : ''"
+  (onSubmit)="onSubmit()"
+  [form]="formGroup"
+>
+  <ui-field label="Name" [control]="formGroup.controls.name"></ui-field>
+  @if (isNew()) {
+  } @else {}
+</app-dialog-layout>

@@ -17,6 +17,10 @@ import {
 } from './components/settings-dialog/settings-dialog.component';
 import { ScanProgressDialogComponent } from './components/scan-progress-dialog/scan-progress-dialog.component';
 import { ChangelogDialogComponent } from './components/changelog-dialog/changelog-dialog.component';
+import {
+  FilterGroupCrudData,
+  FilterGroupCrudDialogComponent, FilterGroupCrudResult
+} from "./components/filter-group-crud-dialog/filter-group-crud-dialog.component";
 
 @Injectable({
   providedIn: 'root',
@@ -73,5 +77,12 @@ export class DialogService {
       minWidth: '300px',
       minHeight: '300px',
     });
+  }
+
+  filterGroupCrud(data: FilterGroupCrudData) {
+    return this.dialog.open<FilterGroupCrudDialogComponent, FilterGroupCrudData, FilterGroupCrudResult>(FilterGroupCrudDialogComponent, data, {
+      minWidth: '300px',
+      minHeight: '300px'
+    })
   }
 }

@@ -238,7 +238,13 @@ export class GalleryComponent {
     this.updateQueries();
   }
 
-  saveFilterGroup() {}
+  saveFilterGroup() {
+    dialog$.filterGroupCrud({
+      filters: this.currentFilterModel()
+    }).afterSubmit().subscribe(() => {
+      // ... ?
+    })
+  }
 
   private highlightImageRange(start: number, end: number, deselect?: boolean) {
     const l = start > end ? end : start;

@@ -80,7 +80,7 @@
       style="box-shadow: 0 6px 15px 0 rgba(0, 0, 0, 0.7)"
     >
       <span>Active Filters:</span>
-      <div class="flex-auto flex items-center overflow-auto">
+      <div class="flex-auto flex items-center overflow-auto gap-2">
         @for (item of filterItems; track item.label) {
           <ui-chips
             [label]="item.label"

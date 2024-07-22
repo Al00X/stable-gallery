@@ -4,5 +4,6 @@ export * from './components/image-viewer-dialog/image-viewer-dialog.component';
 export * from './components/settings-dialog/settings-dialog.component';
 export * from './components/scan-progress-dialog/scan-progress-dialog.component';
 export * from './components/changelog-dialog/changelog-dialog.component';
+export * from './components/filter-group-crud-dialog/filter-group-crud-dialog.component';
 export * from './dialog.service';
 export * from './dialog-invoker.service';

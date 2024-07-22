@@ -2,14 +2,10 @@ import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
 import { map } from 'rxjs';
-import { ImageQueryModel } from '../db';
+import {FilterGroup} from "../interfaces";
 
 interface AppState {
-  filterGroups: {
-    index: number;
-    name: string;
-    filters: Partial<ImageQueryModel>;
-  }[];
+  filterGroups: FilterGroup[];
   settings: {
     dirs: string[];
     showNsfw: boolean;
@@ -104,5 +100,18 @@ export class AppService {
       return false;
     }
     return true;
+  }
+
+  addFilterGroup(group: Omit<FilterGroup, 'index'>) {
+    const currentGroups =  this.state.filterGroups;
+    const lastIndex = currentGroups.length ? Math.max(...currentGroups.map(t => t.index)) : -1;
+    currentGroups.push({
+      ...group,
+      index: lastIndex + 1
+    })
+    appStore.update((state) => ({
+      ...state,
+      filterGroups: currentGroups,
+    }));
   }
 }

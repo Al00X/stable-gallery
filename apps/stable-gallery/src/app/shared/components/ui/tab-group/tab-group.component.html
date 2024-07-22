@@ -1,8 +1,10 @@
 <div class="h-full flex-auto flex items-center overflow-auto bg-neutral-100">
   @for (group of items$ | async; track group.label) {
     <div
-      class="transition-all h-full flex items-center justify-center select-none cursor-pointer px-4 bg-neutral-50 hover:bg-primary-50 {{
-        isSelected(group) ? 'bg-primary-100 hover:bg-primary-200' : ''
+      class="transition-all h-full flex items-center justify-center select-none cursor-pointer px-4 {{
+        isSelected(group)
+          ? 'bg-primary-100 hover:bg-primary-200'
+          : 'bg-neutral-50 hover:bg-primary-50'
       }}"
       (click)="toggle(group)"
     >
