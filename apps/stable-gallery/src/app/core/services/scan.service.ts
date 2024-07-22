@@ -87,15 +87,15 @@ export class ScanService {
           !cacheState.scanned.includes(state.latest)
         ) {
           this.addToWatchingCount(1);
-          const image = new ImageItem(state.latest);
+          const preImage = new ImageItem(state.latest);
           db$
-            .addImageEntry(image)
-            .then(() => {
+            .addImageEntry(preImage)
+            .then((image) => {
               this.cache.addToScanned(state.latest!);
               cacheState.scanned.push(state.latest!);
               this.currentScanningFile$.next(state.latest);
               this.itemsUpdated$.next();
-              this.itemAdded$.next(image);
+              this.itemAdded$.next(image!);
               this.addToScanningCount(1);
             })
             .catch((err) => {
