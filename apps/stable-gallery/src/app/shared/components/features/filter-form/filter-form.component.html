@@ -13,12 +13,19 @@
   [control]="filterGroup.controls.sampler"
 ></ui-field>
 
-<ui-numeric-range
+<ui-slider
   [label]="filterDictionary.cfg"
   [control]="filterGroup.controls.cfg"
-></ui-numeric-range>
+  [range]="true"
+  [step]="0.5"
+  [min]="0"
+  [max]="50"
+></ui-slider>
 
-<ui-numeric-range
+<ui-slider
   [label]="filterDictionary.steps"
   [control]="filterGroup.controls.steps"
-></ui-numeric-range>
+  [min]="1"
+  [max]="300"
+  [range]="true"
+></ui-slider>

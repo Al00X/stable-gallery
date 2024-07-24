@@ -3,12 +3,14 @@ import type FS from 'fs/promises';
 import type PATH from 'path';
 import type CHOKIDAR from 'chokidar';
 import { BehaviorSubject } from 'rxjs';
+import {ElectronService} from "./electron.service";
 
 @Injectable({
   providedIn: 'root',
 })
 export class FilesService {
   private readonly ngZone = inject(NgZone);
+  private readonly electron = inject(ElectronService);
 
   public fs: typeof FS;
   public path: typeof PATH;
@@ -96,6 +98,12 @@ export class FilesService {
 
   async delete(path: string) {
     return await this.fs.unlink(path);
+  }
+
+  async saveTemp(blob: Blob, name: string) {
+    const filePath = this.path.join(this.electron.tempPath, name);
+    await this.write(filePath, blob.arrayBuffer());
+    return filePath;
   }
 
   private async isDir(dir: string) {

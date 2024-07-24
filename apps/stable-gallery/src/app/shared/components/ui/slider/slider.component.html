@@ -1,9 +1,20 @@
 <div class="flex items-center">
   <ui-label [text]="label"></ui-label>
-  <div class="text-sm min-w-[2rem] text-center">
-    {{ control.value$ | async }}
+  <div class="text-sm text-center {{ range ? 'min-w-[4rem]' : 'min-w-[2rem]' }}">
+    @if(range) {
+      {{ startControl.value$ | async }} , {{ endControl.value$ | async }}
+    } @else {
+      {{ control.value$ | async }}
+    }
+
   </div>
   <mat-slider [min]="min" [step]="step" [max]="max" [showTickMarks]="true">
-    <input matSliderThumb [formControl]="control" />
+    @if (range) {
+      <input matSliderStartThumb [formControl]="startControl" />
+      <input matSliderEndThumb [formControl]="endControl" />
+    } @else {
+      <input matSliderThumb [formControl]="control" />
+    }
+
   </mat-slider>
 </div>

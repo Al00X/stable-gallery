@@ -1,10 +1,17 @@
-@if (isDragging()) {
+@if (isDragging() || loading()) {
   <div
     class="fixed inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-10 pointer-events-none"
   >
-    <p class="text-4xl font-bold max-w-[20rem] text-center leading-relaxed">
-      DRAG AND DROP TO VIEW IT
-    </p>
+    @if(isDragging()) {
+      <p class="text-4xl font-bold max-w-[20rem] text-center leading-relaxed">
+        DRAG AND DROP TO VIEW IT
+      </p>
+    } @else {
+      <p class="text-2xl font-bold text-center">
+        Loading...
+      </p>
+      <mat-progress-bar class="w-32 mt-4" mode="indeterminate"></mat-progress-bar>
+    }
   </div>
 }
 <ng-content></ng-content>

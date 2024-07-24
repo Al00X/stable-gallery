@@ -5,7 +5,7 @@
 
 import { app, dialog, ipcMain } from 'electron';
 import { environment } from '../../environments/environment';
-import { dataPath } from '../constants';
+import {dataPath, tempPath} from '../constants';
 import App from '../app';
 import * as fs from 'fs/promises';
 import { join } from 'path';
@@ -29,6 +29,10 @@ ipcMain.handle('get-app-version', (event) => {
 ipcMain.handle('get-user-data-path', () => {
   return dataPath;
 });
+
+ipcMain.handle('get-temp-path', () => {
+  return tempPath;
+})
 
 ipcMain.handle('get-environment', () => {
   return environment;

@@ -7,3 +7,4 @@ export const electronAppName = 'stable-gallery-electron';
 export const updateServerUrl = 'https://deployment-server-url.com'; // TODO: insert your update server url here
 
 export const dataPath = path.join(app.getPath('appData'), rendererAppName);
+export const tempPath = app.getPath('temp');

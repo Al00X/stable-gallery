@@ -12,6 +12,7 @@ export class ElectronService {
   ipc: typeof ipcRenderer;
 
   userDataPath!: string;
+  tempPath!: string;
   environment!: typeof environment;
   changelogMd!: string;
   version!: string;
@@ -28,6 +29,7 @@ export class ElectronService {
 
     Promise.all([
       this.getUserDataPath(),
+      this.getTempPath(),
       this.getEnvironment(),
       this.getChangelog(),
       this.isWindowMaximized(),
@@ -50,6 +52,10 @@ export class ElectronService {
 
   private async getUserDataPath() {
     this.userDataPath = await this.ipc.invoke('get-user-data-path');
+  }
+
+  private async getTempPath() {
+    this.tempPath = await this.ipc.invoke('get-temp-path');
   }
 
   private async getEnvironment() {

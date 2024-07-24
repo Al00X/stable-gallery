@@ -77,8 +77,17 @@ export class ImageItem {
     if (this._wrongFilePath)
       throw new Error('ImageItem: Cannot load this file. It is unsupported.');
     if (!force && this.loaded) return;
-    await this.extractStat();
-    await this.extractMetadata();
+
+    try {
+      await this.extractStat();
+    } catch(e) {
+      console.warn('Cannot get image stats', e);
+    }
+    try {
+      await this.extractMetadata();
+    } catch (e) {
+      console.warn('Cannot get image metadata', e);
+    }
 
     this.extractPopulatedFields();
     this.loaded = true;
@@ -161,46 +170,52 @@ export class ImageItem {
         .split('\n')
         .map((t) => t.trim())
         .filter((t) => t.length);
-      chunks.splice(3);
 
-      prompt = (
-        chunks.length === 2
-          ? chunks.slice(0, -1)
-          : chunks.length > 0
-            ? chunks.slice(0, -2)
-            : undefined
-      )
+      let infoChunk: string | undefined = undefined;
+      const infoIndex = chunks.findIndex(t => t.startsWith('Steps:'))
+      if (infoIndex !== -1) {
+        infoChunk = chunks[infoIndex];
+        chunks.splice(infoIndex, 1);
+      }
+
+      let promptChunks: string[] = [];
+      let negativeChunks: string[] = [];
+      const negativeIndex = chunks.findIndex(t => t.startsWith('Negative prompt:'));
+      if (negativeIndex !== 0) {
+        promptChunks = chunks.slice(0, negativeIndex > -1 ? negativeIndex : undefined);
+      }
+      if (negativeIndex !== -1) {
+        negativeChunks = chunks.slice(negativeIndex);
+        if (negativeChunks.length) {
+          negativeChunks[0] = negativeChunks[0].substring(17);
+        }
+      }
+
+      // console.log(chunks, promptChunks, negativeChunks, infoChunk);
+
+      prompt = promptChunks
         ?.join(' ')
         ?.trim();
-      negative = (
-        chunks.length === 2
-          ? undefined
-          : chunks.length > 1
-            ? chunks.at(-2)!.substring(17)
-            : undefined
-      )?.trim();
-      const infoChunk =
-        chunks.length > 2
-          ? chunks
-              .at(-1)!
-              .split(', ')
-              .reduce((pre, cur) => {
-                const entry = cur.split(': ');
+      negative = negativeChunks
+        ?.join(' ')
+        ?.trim();
+      const info = infoChunk && infoChunk.length ? infoChunk.split(', ')
+        .reduce((pre, cur) => {
+          const entry = cur.split(': ');
 
-                if (entry.length <= 1) return pre;
-                pre[entry[0]] = entry[1];
+          if (entry.length <= 1) return pre;
+          pre[entry[0]] = entry[1];
 
-                return pre;
-              }, {} as any)
-          : undefined;
+          return pre;
+        }, {} as any) : undefined
 
-      if (infoChunk && Object.keys(infoChunk).length > 0) {
-        steps = infoChunk.Steps;
-        hash = infoChunk['Model hash'];
-        cfg = infoChunk['CFG scale'];
-        seed = infoChunk.Seed;
-        sampler = infoChunk.Sampler;
-        clipSkip = infoChunk['Clip skip'];
+      if (info && Object.keys(info).length > 0) {
+        steps = info.Steps;
+        hash = info['Model hash'];
+        cfg = info['CFG scale'];
+        seed = info.Seed;
+        sampler = info.Sampler;
+        clipSkip = info['Clip skip'];
       }
     }
 

@@ -1,4 +1,5 @@
 :host ::ng-deep mat-slider {
+  flex: auto;
   .mdc-slider__track--active_fill {
     @apply bg-neutral-900;
   }

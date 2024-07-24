@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { GalleryComponent } from '../../shared/components/features';
 import { ScanService } from '../../core/services';
 import { NgxFileDropModule } from 'ngx-file-drop';
-import { DropZoneComponent } from '../../shared/components/ui';
+import {DropZoneComponent, DropZoneOnDropEvent} from '../../shared/components/ui';
 import { ImageItem } from '../../core/helpers';
 
 @Component({
@@ -19,13 +19,13 @@ export class HomeComponent {
     this.scan.startScan();
   }
 
-  async onFileDragAndDrop(e: FileList) {
-    const file = e?.item(0);
+  async onFileDragAndDrop(e: DropZoneOnDropEvent) {
+    const file = e?.at(0);
     if (!file) return;
     const image = new ImageItem(file);
     if (!image.isImageValid()) return;
     image.load().then(() => {
-      dialog$.imageViewer({ image, loadFromBuffer: true });
+      dialog$.imageViewer({ image, loadFromBuffer: typeof file !== 'string' });
     });
   }
 }
