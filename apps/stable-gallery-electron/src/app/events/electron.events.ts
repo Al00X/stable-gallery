@@ -76,6 +76,10 @@ ipcMain.handle('window', (e, message) => {
   }
 });
 
+ipcMain.handle('reload', () => {
+  App.mainWindow.reload();
+})
+
 // Handle App termination
 ipcMain.on('quit', (event, code) => {
   app.exit(code);

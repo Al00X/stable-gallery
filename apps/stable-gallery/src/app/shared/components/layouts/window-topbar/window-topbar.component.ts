@@ -3,11 +3,12 @@ import { ButtonComponent, IconComponent, ToggleComponent } from '../../ui';
 import { AppService, ElectronService } from '../../../../core/services';
 import { formControl } from '../../../../core/helpers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-window-topbar',
   standalone: true,
-  imports: [IconComponent, ToggleComponent, ButtonComponent],
+  imports: [IconComponent, ToggleComponent, ButtonComponent, MatTooltip],
   templateUrl: './window-topbar.component.html',
   styleUrl: './window-topbar.component.scss',
 })
@@ -23,6 +24,10 @@ export class WindowTopbarComponent {
         showNsfw: v,
       });
     });
+  }
+
+  onRefresh() {
+    this.electron.refresh();
   }
 
   openChangelog() {

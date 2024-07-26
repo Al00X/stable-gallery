@@ -50,6 +50,10 @@ export class ElectronService {
     this.ipc.invoke('window', state);
   }
 
+  refresh() {
+    this.ipc.invoke('reload');
+  }
+
   private async getUserDataPath() {
     this.userDataPath = await this.ipc.invoke('get-user-data-path');
   }
