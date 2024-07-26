@@ -1,4 +1,4 @@
-import { ImageEntry } from '../db';
+import {ImageEntry, ImageToTagsEntry, TagEntry} from '../db';
 import { signal } from '@angular/core';
 
 const exifr = window.require('exifr');
@@ -20,6 +20,10 @@ export class ImageItem {
   createdAt!: Date;
   updatedAt?: Date;
 
+  tags: ImageToTagsEntry[] = [];
+  promptTags: TagEntry[] = [];
+  negativeTags: TagEntry[] = [];
+
   nsfw = signal(false);
   favorite = signal(false);
 
@@ -35,8 +39,9 @@ export class ImageItem {
     item.id = entry.id ?? undefined;
     item.seed = entry.seed ?? undefined;
     item.steps = entry.steps ?? undefined;
-    item.prompt = entry.prompt ?? undefined;
-    item.negativePrompt = entry.negativePrompt ?? undefined;
+    item.tags = entry.tags ?? [];
+    // item.prompt = entry.prompt ?? undefined;
+    // item.negativePrompt = entry.negativePrompt ?? undefined;
     item.sampler = entry.sampler ?? undefined;
     item.modelHash = entry.modelHash ?? undefined;
     item.cfgScale = entry.cfg ?? undefined;
@@ -90,6 +95,7 @@ export class ImageItem {
     }
 
     this.extractPopulatedFields();
+    this.populateTags();
     this.loaded = true;
   }
 
@@ -111,6 +117,9 @@ export class ImageItem {
       updatedAt: this.updatedAt,
       nsfw: this.nsfw(),
       favorite: this.favorite(),
+      tags: [...this.promptTags, ...this.negativeTags],
+      promptTags: this.promptTags,
+      negativeTags: this.negativeTags
     };
   }
 
@@ -233,6 +242,19 @@ export class ImageItem {
 
   private extractPopulatedFields() {
     this.nsfw.set(checkForNSFW(this.prompt));
+  }
+
+  private populateTags() {
+    if (this.prompt && this.prompt.length) {
+      this.promptTags = this.prompt.split(',').map(t => ({
+        name: t.trim()
+      }));
+    }
+    if (this.negativePrompt && this.negativePrompt.length) {
+      this.negativeTags = this.negativePrompt.split(',').map(t => ({
+        name: t.trim()
+      }));
+    }
   }
 
   private saveStateTimeout: any;

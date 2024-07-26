@@ -12,13 +12,16 @@ import {
   andLeast,
   ImageEntry,
   imagesEntry,
-  lower, minMax,
+  imagesToTagsEntry,
+  lower,
+  minMax,
   statEntry,
+  tagEntry,
 } from '../db/schema';
 import { BehaviorSubject } from 'rxjs';
-import { eq} from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { MinMax } from '../interfaces';
-import {flattenMinMax} from "../helpers";
+import { flattenMinMax } from '../helpers';
 
 export interface ImageQueryModel {
   page?: number;
@@ -75,6 +78,20 @@ export class DbService {
             addedAt: new Date(),
           })
           .returning({ id: imagesEntry.id });
+        const promptTagInsertRes = model.promptTags.length
+          ? await this.db
+              .insert(tagEntry)
+              .values(model.promptTags)
+              .returning({ id: tagEntry.id, name: tagEntry.name })
+              .onConflictDoNothing()
+          : undefined;
+        const negatveTagInsertRes = model.negativeTags.length
+          ? await this.db
+              .insert(tagEntry)
+              .values(model.negativeTags)
+              .returning({ id: tagEntry.id, name: tagEntry.name })
+              .onConflictDoNothing()
+          : undefined;
         const id = insetRes.at(0)?.id;
         if (id) {
           await this.db.insert(statEntry).values({
@@ -82,6 +99,21 @@ export class DbService {
             favorite: false,
             nsfw: model.nsfw,
           });
+          const tagValues = [
+            ...(promptTagInsertRes?.map((t) => ({
+              imageId: id,
+              tagId: t.id,
+              negative: false,
+            })) ?? []),
+            ...(negatveTagInsertRes?.map((t) => ({
+              imageId: id,
+              tagId: t.id,
+              negative: true,
+            })) ?? []),
+          ];
+          tagValues.length
+            ? await this.db.insert(imagesToTagsEntry).values(tagValues)
+            : null;
         }
         return await this.getImage(id);
       })
@@ -152,30 +184,30 @@ export class DbService {
           stats: true,
         },
         where: (items, { inArray, like, or, and, between, gte, lte }) => {
-          const search = query?.search
-            ? or(
-                like(lower(items.prompt), `%${query.search.toLowerCase()}%`),
-                like(
-                  lower(items.negativePrompt),
-                  `%${query.search.toLowerCase()}%`,
-                ),
-                like(lower(items.sampler), `%${query.search.toLowerCase()}%`),
-                like(lower(items.seed), `%${query.search.toLowerCase()}%`),
-                like(lower(items.modelHash), `%${query.search.toLowerCase()}%`),
-              )
-            : undefined;
-
-          const promptQ =
-            query?.prompt && query.prompt.length
-              ? like(lower(items.prompt), `%${query.prompt.toLowerCase()}%`)
-              : undefined;
-          const negativePromptQ =
-            query?.negativePrompt && query.negativePrompt.length
-              ? like(
-                  lower(items.negativePrompt),
-                  `%${query.negativePrompt.toLowerCase()}%`,
-                )
-              : undefined;
+          // const search = query?.search
+          //   ? or(
+          //       like(lower(items.prompt), `%${query.search.toLowerCase()}%`),
+          //       like(
+          //         lower(items.negativePrompt),
+          //         `%${query.search.toLowerCase()}%`,
+          //       ),
+          //       like(lower(items.sampler), `%${query.search.toLowerCase()}%`),
+          //       like(lower(items.seed), `%${query.search.toLowerCase()}%`),
+          //       like(lower(items.modelHash), `%${query.search.toLowerCase()}%`),
+          //     )
+          //   : undefined;
+          //
+          // const promptQ =
+          //   query?.prompt && query.prompt.length
+          //     ? like(lower(items.prompt), `%${query.prompt.toLowerCase()}%`)
+          //     : undefined;
+          // const negativePromptQ =
+          //   query?.negativePrompt && query.negativePrompt.length
+          //     ? like(
+          //         lower(items.negativePrompt),
+          //         `%${query.negativePrompt.toLowerCase()}%`,
+          //       )
+          //     : undefined;
           const samplerQ =
             query?.sampler && query.sampler.length
               ? like(lower(items.sampler), `%${query.sampler.toLowerCase()}%`)
@@ -185,26 +217,27 @@ export class DbService {
           const cfgQ = minMax(query.cfg, items.cfg);
 
           const filterArray = [
-            promptQ,
-            negativePromptQ,
+            // promptQ,
+            // negativePromptQ,
             samplerQ,
             cfgQ,
             stepQ,
           ].filter((t) => !!t);
           const filter = and(...filterArray);
 
-          return filter
-            ? andLeast(
-                filter,
-                inArray(
-                  items.id,
-                  this.db
-                    .select({ id: imagesEntry.id })
-                    .from(imagesEntry)
-                    .where(search),
-                ),
-              )
-            : search;
+          // return filter
+          //   ? andLeast(
+          //       filter,
+          //       inArray(
+          //         items.id,
+          //         this.db
+          //           .select({ id: imagesEntry.id })
+          //           .from(imagesEntry)
+          //           .where(search),
+          //       ),
+          //     )
+          //   : search;
+          return filter;
         },
       })
       .then((res) => {
@@ -212,6 +245,7 @@ export class DbService {
           ImageItem.fromImageEntry({
             ...t,
             ...t.stats,
+            tags: [],
           } as ImageEntry),
         );
       });
@@ -233,6 +267,7 @@ export class DbService {
         return ImageItem.fromImageEntry({
           ...t.entries,
           ...t.stats,
+          tags: [],
         } as ImageEntry);
       });
   }
@@ -269,16 +304,27 @@ export class DbService {
   }
 }
 
-function flattenImageQuery(model: ImageQueryModel | undefined): ImageQueryModel {
-  const q = [model, ...model?.preFilters ?? []];
+function flattenImageQuery(
+  model: ImageQueryModel | undefined,
+): ImageQueryModel {
+  const q = [model, ...(model?.preFilters ?? [])];
   return {
     ...model,
-    prompt: q.map(t => t?.prompt).filter(t => !!t).join(','),
-    negativePrompt: q.map(t => t?.negativePrompt).filter(t => !!t).join(','),
-    sampler: q.map(t => t?.sampler).filter(t => !!t).join(','),
-    steps: flattenMinMax(q.map(t => t?.steps)),
-    cfg: flattenMinMax(q.map(t => t?.cfg)),
-  }
+    prompt: q
+      .map((t) => t?.prompt)
+      .filter((t) => !!t)
+      .join(','),
+    negativePrompt: q
+      .map((t) => t?.negativePrompt)
+      .filter((t) => !!t)
+      .join(','),
+    sampler: q
+      .map((t) => t?.sampler)
+      .filter((t) => !!t)
+      .join(','),
+    steps: flattenMinMax(q.map((t) => t?.steps)),
+    cfg: flattenMinMax(q.map((t) => t?.cfg)),
+  };
 }
 
 function readMigrationFiles(): MigrationMeta[] {

@@ -4,15 +4,22 @@ import {
   sqliteTable,
   text,
 } from 'drizzle-orm/sqlite-core';
-import { and, between, gte, lte, relations, SQL, sql } from 'drizzle-orm';
+import { and, between, gte, lte, relations, sql } from 'drizzle-orm';
 import { MinMax } from '../interfaces';
+
+export const tagEntry = sqliteTable('tags', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').unique().notNull(),
+})
+export type TagEntry = {
+  id?: number;
+  name: string;
+}
 
 export const imagesEntry = sqliteTable('entries', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   path: text('path').unique().notNull(),
   seed: text('seed'),
-  prompt: text('prompt'),
-  negativePrompt: text('negative_prompt'),
   sampler: text('sampler'),
   cfg: integer('cfg'),
   clipSkip: integer('clip_skip'),
@@ -38,14 +45,34 @@ export const statEntry = sqliteTable('stats', {
 export type StatsEntry = typeof statEntry.$inferSelect;
 export type StatsEntryInsert = typeof statEntry.$inferInsert;
 
-export const imagesAndStatRelation = relations(imagesEntry, (op) => ({
+export const imagesRelations = relations(imagesEntry, (op) => ({
   stats: op.one(statEntry, {
     fields: [imagesEntry.id],
     references: [statEntry.id],
   }),
+  tags: op.many(imagesToTagsEntry)
 }));
 
-export type ImageEntry = ImagePartialEntry & StatsEntry;
+export type ImageEntry = ImagePartialEntry & StatsEntry & { tags: ImageToTagsEntry[] };
+
+export const imagesToTagsEntry = sqliteTable('images_to_tags', {
+  imageId: integer('image_id').notNull().references(() => imagesEntry.id),
+  tagId: integer('tag_id').notNull().references(() => tagEntry.id),
+  negative: integer('is_negative', {mode: 'boolean'}).default(false)
+})
+export type ImageToTagsEntry = typeof imagesToTagsEntry.$inferSelect;
+
+const imagesToTagsRelations = relations(imagesToTagsEntry, (op) => ({
+  image: op.one(imagesEntry, {
+    fields: [imagesToTagsEntry.imageId],
+    references: [imagesEntry.id],
+  }),
+  tag: op.one(tagEntry, {
+    fields: [imagesToTagsEntry.tagId],
+    references: [tagEntry.id],
+  }),
+}))
+
 
 export function lower(col: AnySQLiteColumn): any {
   return sql`lower(${col})`;
