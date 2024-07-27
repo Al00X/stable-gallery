@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5750733e-8adb-4462-bad4-952a93b35523",
+  "id": "d2d4df91-538a-47eb-bc3d-ed39f004b545",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "entries": {
@@ -157,7 +157,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "images_to_tags_tag_id_tags_id_fk": {
@@ -170,7 +170,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

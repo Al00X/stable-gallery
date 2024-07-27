@@ -56,8 +56,8 @@ export const imagesRelations = relations(imagesEntry, (op) => ({
 export type ImageEntry = ImagePartialEntry & StatsEntry & { tags: ImageToTagsEntry[] };
 
 export const imagesToTagsEntry = sqliteTable('images_to_tags', {
-  imageId: integer('image_id').notNull().references(() => imagesEntry.id),
-  tagId: integer('tag_id').notNull().references(() => tagEntry.id),
+  imageId: integer('image_id').notNull().references(() => imagesEntry.id, { onDelete: 'cascade' }),
+  tagId: integer('tag_id').notNull().references(() => tagEntry.id, { onDelete: 'cascade' }),
   negative: integer('is_negative', {mode: 'boolean'}).default(false)
 })
 export type ImageToTagsEntry = typeof imagesToTagsEntry.$inferSelect;

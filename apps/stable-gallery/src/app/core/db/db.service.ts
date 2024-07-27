@@ -19,7 +19,7 @@ import {
   tagEntry,
 } from '../db/schema';
 import { BehaviorSubject } from 'rxjs';
-import { eq } from 'drizzle-orm';
+import {eq, sql} from 'drizzle-orm';
 import { MinMax } from '../interfaces';
 import { flattenMinMax } from '../helpers';
 
@@ -83,14 +83,24 @@ export class DbService {
               .insert(tagEntry)
               .values(model.promptTags)
               .returning({ id: tagEntry.id, name: tagEntry.name })
-              .onConflictDoNothing()
+              .onConflictDoUpdate({
+                target: tagEntry.name,
+                set: {
+                  name: sql`excluded.name`
+                }
+              })
           : undefined;
         const negatveTagInsertRes = model.negativeTags.length
           ? await this.db
               .insert(tagEntry)
               .values(model.negativeTags)
               .returning({ id: tagEntry.id, name: tagEntry.name })
-              .onConflictDoNothing()
+              .onConflictDoUpdate({
+                target: tagEntry.name,
+                set: {
+                  name: sql`excluded.name`
+                }
+              })
           : undefined;
         const id = insetRes.at(0)?.id;
         if (id) {

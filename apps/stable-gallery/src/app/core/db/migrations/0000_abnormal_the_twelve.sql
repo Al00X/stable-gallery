@@ -19,8 +19,8 @@ CREATE TABLE `images_to_tags` (
 	`image_id` integer NOT NULL,
 	`tag_id` integer NOT NULL,
 	`is_negative` integer DEFAULT false,
-	FOREIGN KEY (`image_id`) REFERENCES `entries`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`image_id`) REFERENCES `entries`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `stats` (
