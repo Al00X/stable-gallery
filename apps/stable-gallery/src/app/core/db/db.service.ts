@@ -258,7 +258,7 @@ export class DbService {
                     .where(
                       and(
                         eq(imagesToTagsEntry.negative, true),
-                        and(
+                        or(
                           ...query.negativePrompt.toLowerCase().split(',').map((t) => like(lower(tagEntry.name), `%${t.trim()}%`)),
                         )
                       ),
