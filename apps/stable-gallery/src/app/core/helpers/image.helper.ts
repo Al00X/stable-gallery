@@ -40,8 +40,6 @@ export class ImageItem {
     item.seed = entry.seed ?? undefined;
     item.steps = entry.steps ?? undefined;
     item.tags = entry.tags ?? [];
-    // item.prompt = entry.prompt ?? undefined;
-    // item.negativePrompt = entry.negativePrompt ?? undefined;
     item.sampler = entry.sampler ?? undefined;
     item.modelHash = entry.modelHash ?? undefined;
     item.cfgScale = entry.cfg ?? undefined;
@@ -52,6 +50,23 @@ export class ImageItem {
     item.updatedAt = entry.updatedAt ?? undefined;
     item.nsfw.set(entry.nsfw ?? false);
     item.favorite.set(entry.favorite ?? false);
+
+    if (entry.tags) {
+      item.promptTags = [];
+      item.negativeTags = [];
+      item.prompt = '';
+      item.negativePrompt = '';
+      for (const tagEntry of entry.tags) {
+        const tag = tagEntry.tag;
+        if (!tagEntry.negative) {
+          item.promptTags.push(tag);
+          item.prompt += (item.prompt.length ? ', ' : '') + tag.name;
+        } else {
+          item.negativeTags.push(tag);
+          item.negativePrompt += (item.negativePrompt.length ? ', ' : '') + tag.name;
+        }
+      }
+    }
 
     return item;
   }

@@ -11,6 +11,9 @@ export const tagEntry = sqliteTable('tags', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').unique().notNull(),
 })
+export const tagRelations = relations(tagEntry, (op) => ({
+  entries: op.many(imagesToTagsEntry)
+}))
 export type TagEntry = {
   id?: number;
   name: string;
@@ -60,9 +63,9 @@ export const imagesToTagsEntry = sqliteTable('images_to_tags', {
   tagId: integer('tag_id').notNull().references(() => tagEntry.id, { onDelete: 'cascade' }),
   negative: integer('is_negative', {mode: 'boolean'}).default(false)
 })
-export type ImageToTagsEntry = typeof imagesToTagsEntry.$inferSelect;
+export type ImageToTagsEntry = typeof imagesToTagsEntry.$inferSelect & { tag: TagEntry };
 
-const imagesToTagsRelations = relations(imagesToTagsEntry, (op) => ({
+export const imagesToTagsRelations = relations(imagesToTagsEntry, (op) => ({
   image: op.one(imagesEntry, {
     fields: [imagesToTagsEntry.imageId],
     references: [imagesEntry.id],

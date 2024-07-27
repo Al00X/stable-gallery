@@ -19,7 +19,7 @@ import {
   tagEntry,
 } from '../db/schema';
 import { BehaviorSubject } from 'rxjs';
-import {eq, sql} from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { MinMax } from '../interfaces';
 import { flattenMinMax } from '../helpers';
 
@@ -86,8 +86,8 @@ export class DbService {
               .onConflictDoUpdate({
                 target: tagEntry.name,
                 set: {
-                  name: sql`excluded.name`
-                }
+                  name: sql`excluded.name`,
+                },
               })
           : undefined;
         const negatveTagInsertRes = model.negativeTags.length
@@ -98,8 +98,8 @@ export class DbService {
               .onConflictDoUpdate({
                 target: tagEntry.name,
                 set: {
-                  name: sql`excluded.name`
-                }
+                  name: sql`excluded.name`,
+                },
               })
           : undefined;
         const id = insetRes.at(0)?.id;
@@ -192,20 +192,36 @@ export class DbService {
         ],
         with: {
           stats: true,
+          tags: {
+            with: {
+              tag: true,
+            },
+          },
         },
         where: (items, { inArray, like, or, and, between, gte, lte }) => {
-          // const search = query?.search
-          //   ? or(
-          //       like(lower(items.prompt), `%${query.search.toLowerCase()}%`),
-          //       like(
-          //         lower(items.negativePrompt),
-          //         `%${query.search.toLowerCase()}%`,
-          //       ),
-          //       like(lower(items.sampler), `%${query.search.toLowerCase()}%`),
-          //       like(lower(items.seed), `%${query.search.toLowerCase()}%`),
-          //       like(lower(items.modelHash), `%${query.search.toLowerCase()}%`),
-          //     )
-          //   : undefined;
+          const search = query?.search
+            ? or(
+                like(lower(items.sampler), `%${query.search.toLowerCase()}%`),
+                like(lower(items.seed), `%${query.search.toLowerCase()}%`),
+                like(lower(items.modelHash), `%${query.search.toLowerCase()}%`),
+                inArray(
+                  items.id,
+                  this.db
+                    .select({ id: imagesToTagsEntry.imageId })
+                    .from(imagesToTagsEntry)
+                    .leftJoin(
+                      tagEntry,
+                      eq(tagEntry.id, imagesToTagsEntry.tagId),
+                    )
+                    .where(
+                      like(
+                        lower(tagEntry.name),
+                        `%${query.search!.toLowerCase()}%`,
+                      ),
+                    ),
+                ),
+              )
+            : undefined;
           //
           // const promptQ =
           //   query?.prompt && query.prompt.length
@@ -235,19 +251,19 @@ export class DbService {
           ].filter((t) => !!t);
           const filter = and(...filterArray);
 
-          // return filter
-          //   ? andLeast(
-          //       filter,
-          //       inArray(
-          //         items.id,
-          //         this.db
-          //           .select({ id: imagesEntry.id })
-          //           .from(imagesEntry)
-          //           .where(search),
-          //       ),
-          //     )
-          //   : search;
-          return filter;
+          return filter
+            ? andLeast(
+                filter,
+                search,
+                // inArray(
+                //   items.id,
+                //   this.db
+                //     .select({ id: imagesEntry.id })
+                //     .from(imagesEntry)
+                //     .where(search),
+                // ),
+              )
+            : search;
         },
       })
       .then((res) => {
@@ -255,7 +271,6 @@ export class DbService {
           ImageItem.fromImageEntry({
             ...t,
             ...t.stats,
-            tags: [],
           } as ImageEntry),
         );
       });
@@ -263,21 +278,28 @@ export class DbService {
 
   async getImage(q: string | number | undefined) {
     if (!q) return;
-    return this.db
-      .select()
-      .from(imagesEntry)
-      .where(
-        typeof q === 'string' ? eq(imagesEntry.path, q) : eq(imagesEntry.id, q),
-      )
-      .limit(1)
-      .leftJoin(statEntry, eq(imagesEntry.id, statEntry.id))
+
+    return this.db.query.imagesEntry
+      .findFirst({
+        where: (item, op) => {
+          return typeof q === 'string'
+            ? op.eq(item.path, q)
+            : op.eq(item.id, q);
+        },
+        with: {
+          stats: true,
+          tags: {
+            with: {
+              tag: true,
+            },
+          },
+        },
+      })
       .then((res) => {
-        const t = res.at(0);
-        if (!t) return undefined;
+        if (!res) return undefined;
         return ImageItem.fromImageEntry({
-          ...t.entries,
-          ...t.stats,
-          tags: [],
+          ...res,
+          ...res.stats,
         } as ImageEntry);
       });
   }
