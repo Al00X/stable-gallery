@@ -81,16 +81,6 @@ export function lower(col: AnySQLiteColumn): any {
   return sql`lower(${col})`;
 }
 
-export function andLeast(and1: any, and2: any): any {
-  if (and1 && !and2) {
-    return and1;
-  } else if (!and1 && and2) {
-    return and2;
-  } else {
-    return and(and1, and2);
-  }
-}
-
 export function minMax(value: MinMax | undefined, col: AnySQLiteColumn): any {
   if (!value || !value.length) return undefined;
 

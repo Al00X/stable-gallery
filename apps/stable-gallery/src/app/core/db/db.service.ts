@@ -9,7 +9,6 @@ import * as schema from '../db/schema';
 import type { MigrationMeta } from 'drizzle-orm/migrator';
 import { ImageItem } from '../helpers/image.helper';
 import {
-  andLeast,
   ImageEntry,
   imagesEntry,
   imagesToTagsEntry,
@@ -22,6 +21,7 @@ import { BehaviorSubject } from 'rxjs';
 import { eq, sql } from 'drizzle-orm';
 import { MinMax } from '../interfaces';
 import { flattenMinMax } from '../helpers';
+import {intersect} from "drizzle-orm/sqlite-core";
 
 export interface ImageQueryModel {
   page?: number;
@@ -222,18 +222,49 @@ export class DbService {
                 ),
               )
             : undefined;
-          //
-          // const promptQ =
-          //   query?.prompt && query.prompt.length
-          //     ? like(lower(items.prompt), `%${query.prompt.toLowerCase()}%`)
-          //     : undefined;
-          // const negativePromptQ =
-          //   query?.negativePrompt && query.negativePrompt.length
-          //     ? like(
-          //         lower(items.negativePrompt),
-          //         `%${query.negativePrompt.toLowerCase()}%`,
-          //       )
-          //     : undefined;
+
+          const promptQ =
+            query?.prompt && query.prompt.length
+              ? inArray(
+                  items.id,
+                  this.db
+                    .select({ id: imagesToTagsEntry.imageId })
+                    .from(imagesToTagsEntry)
+                    .leftJoin(
+                      tagEntry,
+                      eq(tagEntry.id, imagesToTagsEntry.tagId),
+                    )
+                    .where(
+                      and(
+                        eq(imagesToTagsEntry.negative, false),
+                        or(
+                          ...query.prompt!.toLowerCase().split(',').map((t) => like(lower(tagEntry.name), `%${t.trim()}%`)),
+                        )
+                      ),
+                    ),
+                )
+              : undefined;
+          const negativePromptQ =
+            query?.negativePrompt && query.negativePrompt.length
+              ? inArray(
+                  items.id,
+                  this.db
+                    .select({ id: imagesToTagsEntry.imageId })
+                    .from(imagesToTagsEntry)
+                    .leftJoin(
+                      tagEntry,
+                      eq(tagEntry.id, imagesToTagsEntry.tagId),
+                    )
+                    .where(
+                      and(
+                        eq(imagesToTagsEntry.negative, true),
+                        and(
+                          ...query.negativePrompt.toLowerCase().split(',').map((t) => like(lower(tagEntry.name), `%${t.trim()}%`)),
+                        )
+                      ),
+                    ),
+                )
+              : undefined;
           const samplerQ =
             query?.sampler && query.sampler.length
               ? like(lower(items.sampler), `%${query.sampler.toLowerCase()}%`)
@@ -243,27 +274,15 @@ export class DbService {
           const cfgQ = minMax(query.cfg, items.cfg);
 
           const filterArray = [
-            // promptQ,
-            // negativePromptQ,
+            promptQ,
+            negativePromptQ,
             samplerQ,
             cfgQ,
             stepQ,
           ].filter((t) => !!t);
           const filter = and(...filterArray);
 
-          return filter
-            ? andLeast(
-                filter,
-                search,
-                // inArray(
-                //   items.id,
-                //   this.db
-                //     .select({ id: imagesEntry.id })
-                //     .from(imagesEntry)
-                //     .where(search),
-                // ),
-              )
-            : search;
+          return and(filter, search);
         },
       })
       .then((res) => {

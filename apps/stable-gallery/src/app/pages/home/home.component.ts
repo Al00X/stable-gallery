@@ -2,8 +2,13 @@ import { Component, inject } from '@angular/core';
 import { GalleryComponent } from '../../shared/components/features';
 import { ScanService } from '../../core/services';
 import { NgxFileDropModule } from 'ngx-file-drop';
-import {DropZoneComponent, DropZoneOnDropEvent} from '../../shared/components/ui';
+import {
+  DropZoneComponent,
+  DropZoneOnDropEvent,
+} from '../../shared/components/ui';
 import { ImageItem } from '../../core/helpers';
+import { imagesToTagsEntry, lower, tagEntry } from '../../core/db';
+import {and, eq, inArray, like} from 'drizzle-orm';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +22,36 @@ export class HomeComponent {
 
   constructor() {
     this.scan.startScan();
+
+    setTimeout(() => {
+      const query = 'body, magical, masterpiece';
+
+      const subQuery = (t: string) => inArray(
+        imagesToTagsEntry.tagId,
+        db$.db.select({ tagId: tagEntry.id })
+          .from(tagEntry)
+          .where(like(lower(tagEntry.name), `%${t}%`))
+      )
+
+      let mainQuery = db$.db
+        .select({ id: imagesToTagsEntry.imageId })
+        .from(imagesToTagsEntry)
+        .where(
+          and(eq(imagesToTagsEntry.negative, false))
+        )
+
+      for(const tag of query.split(',').map(t => t.trim())) {
+        mainQuery = mainQuery.intersect(db$.db
+          .select({ id: imagesToTagsEntry.imageId })
+          .from(imagesToTagsEntry)
+          .where(
+            subQuery(tag)
+          )) as any
+      }
+
+      mainQuery.then(t => console.log(t))
+      console.log(mainQuery.toSQL())
+    });
   }
 
   async onFileDragAndDrop(e: DropZoneOnDropEvent) {
