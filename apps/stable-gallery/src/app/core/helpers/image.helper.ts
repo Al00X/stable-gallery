@@ -184,7 +184,7 @@ export class ImageItem {
       const infoIndex = chunks.findIndex(t => t.startsWith('Steps:'))
       if (infoIndex !== -1) {
         infoChunk = chunks[infoIndex];
-        chunks.splice(infoIndex, 1);
+        chunks.splice(infoIndex);
       }
 
       let promptChunks: string[] = [];
