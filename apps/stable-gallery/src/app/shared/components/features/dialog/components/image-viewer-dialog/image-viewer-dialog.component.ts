@@ -68,6 +68,7 @@ export class ImageViewerDialogComponent
     if (!this.data.image.id) {
       this.isDetailsOpen.set(true);
     }
+
     if (this.data.loadFromBuffer) {
       const blob = this.data.image.blob();
       if (!blob) return;

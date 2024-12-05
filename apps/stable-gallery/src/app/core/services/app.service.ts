@@ -2,26 +2,29 @@ import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
 import { map } from 'rxjs';
-import {FilterGroup} from "../interfaces";
+import { FilterGroup } from '../interfaces';
 
-interface AppState {
+export interface AppState {
   filterGroups: FilterGroup[];
-  settings: {
-    dirs: string[];
-    showNsfw: boolean;
-    galleryItemPerRow: number;
-    galleryItemAspectRatio: number;
-    galleryItemGap: number;
-    galleryColumns: number;
-    galleryViewStyle?: 'grid' | 'masonry';
-    gallerySortBy?: string;
-    gallerySortDirection?: string;
-    showSamplerInGallery?: boolean;
-    openDetailsTabInGalleryByDefault: boolean;
-    openDetailsTabInLightboxByDefault: boolean;
-    detailsTabImageExpanded: boolean;
-    peakNsfwWithKeybinding?: string;
-  };
+  settings: AppSettings;
+}
+
+export interface AppSettings {
+  dirs: string[];
+  showNsfw: boolean;
+  galleryItemPerRow: number;
+  galleryItemAspectRatio: number;
+  galleryItemGap: number;
+  galleryColumns: number;
+  galleryViewStyle?: 'grid' | 'masonry';
+  gallerySortBy?: string;
+  gallerySortDirection?: string;
+  showSamplerInGallery?: boolean;
+  openDetailsTabInGalleryByDefault: boolean;
+  openDetailsTabInLightboxByDefault: boolean;
+  imageControls: 'hover' | 'select' | 'none';
+  detailsTabImageExpanded: boolean;
+  peakNsfwWithKeybinding?: string;
 }
 
 const appStore = createStore(
@@ -31,7 +34,7 @@ const appStore = createStore(
       {
         index: 0,
         name: 'Nature',
-        filters: { prompt: 'nature, landscape' },
+        filters: { prompt: 'nature' },
       },
       {
         index: 1,
@@ -55,6 +58,7 @@ const appStore = createStore(
       openDetailsTabInGalleryByDefault: false,
       openDetailsTabInLightboxByDefault: false,
       showSamplerInGallery: false,
+      imageControls: 'hover',
       detailsTabImageExpanded: false,
       peakNsfwWithKeybinding: 'Alt',
     },
@@ -74,6 +78,9 @@ export class AppService {
   showSampler$ = this.state$.pipe(map((t) => t.settings.showSamplerInGallery));
   filterGroups$ = this.state$.pipe(
     map((t) => t.filterGroups?.sort((a, b) => (a.index > b.index ? 1 : -1))),
+  );
+  imageControls$ = this.state$.pipe(
+    map((t) => t.settings.imageControls),
   );
 
   get state() {
@@ -103,12 +110,14 @@ export class AppService {
   }
 
   addFilterGroup(group: Omit<FilterGroup, 'index'>) {
-    const currentGroups =  this.state.filterGroups;
-    const lastIndex = currentGroups.length ? Math.max(...currentGroups.map(t => t.index)) : -1;
+    const currentGroups = this.state.filterGroups;
+    const lastIndex = currentGroups.length
+      ? Math.max(...currentGroups.map((t) => t.index))
+      : -1;
     currentGroups.push({
       ...group,
-      index: lastIndex + 1
-    })
+      index: lastIndex + 1,
+    });
     appStore.update((state) => ({
       ...state,
       filterGroups: currentGroups,

@@ -5,7 +5,7 @@
     [style.padding]="padding"
     [class.is-toggled]="control.value$ | async"
     (mouseup)="onToggle()"
-    [matTooltip]="(control.value$ | async) ? activeTooltip! : inactiveTooltip!"
+    [matTooltip]="(control.value$ | async) ? (tooltip ?? activeTooltip!) : (tooltip ?? inactiveTooltip!)"
   >
     <span>{{ (control.value$ | async) ? activeText : inactiveText }}</span>
   </div>

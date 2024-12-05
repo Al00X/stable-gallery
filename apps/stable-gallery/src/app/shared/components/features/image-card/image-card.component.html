@@ -36,15 +36,25 @@
       <span>{{ image.sampler }}</span>
     </div>
   }
-  <div class="feature-image-card-tools z-1" (click)="$event.stopPropagation()">
+  <div
+    class="feature-image-card-tools z-1 {{
+      (app.imageControls$ | async) === 'none' ||
+      ((app.imageControls$ | async) === 'select' && !isSelected)
+        ? 'opacity-0 pointer-events-none'
+        : ''
+    }}"
+  >
     <ui-favorite-toggle
       class=""
       [value]="image.favorite()"
+      (mousedown)="$event.stopPropagation()"
       (click)="$event.stopPropagation()"
       (onToggle)="image.toggleFavorite()"
     ></ui-favorite-toggle>
     <ui-nsfw-toggle
       [value]="image.nsfw()"
+      (mousedown)="$event.stopPropagation()"
+      (click)="$event.stopPropagation()"
       (onToggle)="image.toggleNsfw()"
     ></ui-nsfw-toggle>
   </div>

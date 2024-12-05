@@ -164,7 +164,7 @@
     ></feature-image-details-pane>
 
     <div
-      class="gallery-bottom-controls {{
+      class="bottom-controls {{
         selectionModel.selectedCount() > ((app.imageControls$ | async) === 'none' ? 0 : 1) ? 'h-16' : 'h-0 on-hide'
       }}"
     >

@@ -7,6 +7,10 @@ import {
 import { and, between, gte, lte, relations, sql } from 'drizzle-orm';
 import { MinMax } from '../interfaces';
 
+// // //
+// TAGS
+// // //
+
 export const tagEntry = sqliteTable('tags', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').unique().notNull(),
@@ -18,6 +22,11 @@ export type TagEntry = {
   id?: number;
   name: string;
 }
+
+
+// // //
+// ENTRIES (IMAGES)
+// // //
 
 export const imagesEntry = sqliteTable('entries', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -38,6 +47,11 @@ export const imagesEntry = sqliteTable('entries', {
 export type ImagePartialEntry = typeof imagesEntry.$inferSelect;
 export type ImagePartialEntryInsert = typeof imagesEntry.$inferInsert;
 
+
+// // //
+// STATS
+// // //
+
 export const statEntry = sqliteTable('stats', {
   id: integer('id')
     .primaryKey()
@@ -47,6 +61,11 @@ export const statEntry = sqliteTable('stats', {
 });
 export type StatsEntry = typeof statEntry.$inferSelect;
 export type StatsEntryInsert = typeof statEntry.$inferInsert;
+
+
+// // //
+// ENTRY & STATE RELATIONS
+// // //
 
 export const imagesRelations = relations(imagesEntry, (op) => ({
   stats: op.one(statEntry, {

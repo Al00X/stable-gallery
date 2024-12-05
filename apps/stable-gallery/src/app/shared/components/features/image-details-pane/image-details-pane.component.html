@@ -40,7 +40,7 @@
           @for (item of detailsSection()!.main; track item.label) {
             <section class="col-span-full">
               <label>{{ item.label }}</label>
-              <div>{{ item.value ?? '-' }}</div>
+              <div>{{ (item.value | async) ?? '-' }}</div>
             </section>
           }
         </div>

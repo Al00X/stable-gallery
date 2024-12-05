@@ -1,0 +1,12 @@
+:host ::ng-deep {
+  .gallery-bottom-controls {
+    @apply absolute z-[2] bottom-0 left-0 right-0 flex-none flex items-center w-full overflow-hidden bg-neutral-200 gap-6 px-4 transition-all;
+
+    &.on-hide {
+      & * {
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
-import {ImageEntry, ImageToTagsEntry, TagEntry} from '../db';
+import { ImageEntry, ImageToTagsEntry, TagEntry } from '../db';
 import { signal } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 const exifr = window.require('exifr');
 const fs = window.require('fs/promises');
@@ -28,7 +29,11 @@ export class ImageItem {
   favorite = signal(false);
 
   loaded = false;
+  isPartiallyLoaded = false;
   path: string;
+
+  // loaded image will appear in this subject
+  model$ = new BehaviorSubject<ImageItem | undefined>(undefined);
 
   private _wrongFilePath: boolean;
   private _fileInput?: File;
@@ -60,10 +65,10 @@ export class ImageItem {
         const tag = tagEntry.tag;
         if (!tagEntry.negative) {
           item.promptTags.push(tag);
-          item.prompt += (item.prompt.length ? ', ' : '') + tag.name;
+          // item.prompt += (item.prompt.length ? ', ' : '') + tag.name;
         } else {
           item.negativeTags.push(tag);
-          item.negativePrompt += (item.negativePrompt.length ? ', ' : '') + tag.name;
+          // item.negativePrompt += (item.negativePrompt.length ? ', ' : '') + tag.name;
         }
       }
     }
@@ -94,24 +99,38 @@ export class ImageItem {
   }
 
   async load(force?: boolean) {
-    if (this._wrongFilePath)
-      throw new Error('ImageItem: Cannot load this file. It is unsupported.');
+    this.throwIfPathIsIncorrect();
     if (!force && this.loaded) return;
 
     try {
-      await this.extractStat();
-    } catch(e) {
+      this.replaceProperties(await this.extractStat());
+    } catch (e) {
       console.warn('Cannot get image stats', e);
     }
     try {
-      await this.extractMetadata();
+      this.replaceProperties(await this.extractMetadata());
     } catch (e) {
       console.warn('Cannot get image metadata', e);
     }
 
     this.extractPopulatedFields();
-    this.populateTags();
+    // this.populateTags();
     this.loaded = true;
+    this.isPartiallyLoaded = true;
+    this.model$.next(this);
+  }
+
+  // when the image is loaded via database, but you want to acquire (online) metadata from file
+  // like getting prompt and negative prompt
+  async partialLoad() {
+    if (this.isPartiallyLoaded) return;
+
+    const model = await this.extractMetadata();
+    this.prompt = model.prompt;
+    this.negativePrompt = model.negativePrompt;
+
+    this.isPartiallyLoaded = true;
+    this.model$.next(this);
   }
 
   getModel() {
@@ -134,7 +153,7 @@ export class ImageItem {
       favorite: this.favorite(),
       tags: [...this.promptTags, ...this.negativeTags],
       promptTags: this.promptTags,
-      negativeTags: this.negativeTags
+      negativeTags: this.negativeTags,
     };
   }
 
@@ -165,15 +184,24 @@ export class ImageItem {
     return this._fileInput;
   }
 
+  throwIfPathIsIncorrect() {
+    if (this._wrongFilePath)
+      throw new Error('ImageItem: Cannot load this file. It is unsupported.');
+  }
+
   private async extractStat() {
     if (this.isInMemory()) return;
 
     const stat = await fs.stat(this.path);
-    this.createdAt = stat.birthtime;
-    this.updatedAt = stat.mtime;
+
+    return {
+      createdAt: stat.birthtime,
+      updatedAt: stat.mtime
+    }
   }
 
   private async extractMetadata() {
+    console.log('?!?!?!?!???')
     const buffer = await this.buffer();
     const meta = await sharp(buffer).metadata();
     const exif = await exifr.parse(buffer, true);
@@ -196,7 +224,7 @@ export class ImageItem {
         .filter((t) => t.length);
 
       let infoChunk: string | undefined = undefined;
-      const infoIndex = chunks.findIndex(t => t.startsWith('Steps:'))
+      const infoIndex = chunks.findIndex((t) => t.startsWith('Steps:'));
       if (infoIndex !== -1) {
         infoChunk = chunks[infoIndex];
         chunks.splice(infoIndex);
@@ -204,9 +232,14 @@ export class ImageItem {
 
       let promptChunks: string[] = [];
       let negativeChunks: string[] = [];
-      const negativeIndex = chunks.findIndex(t => t.startsWith('Negative prompt:'));
+      const negativeIndex = chunks.findIndex((t) =>
+        t.startsWith('Negative prompt:'),
+      );
       if (negativeIndex !== 0) {
-        promptChunks = chunks.slice(0, negativeIndex > -1 ? negativeIndex : undefined);
+        promptChunks = chunks.slice(
+          0,
+          negativeIndex > -1 ? negativeIndex : undefined,
+        );
       }
       if (negativeIndex !== -1) {
         negativeChunks = chunks.slice(negativeIndex);
@@ -217,21 +250,19 @@ export class ImageItem {
 
       // console.log(chunks, promptChunks, negativeChunks, infoChunk);
 
-      prompt = promptChunks
-        ?.join(' ')
-        ?.trim();
-      negative = negativeChunks
-        ?.join(' ')
-        ?.trim();
-      const info = infoChunk && infoChunk.length ? infoChunk.split(', ')
-        .reduce((pre, cur) => {
-          const entry = cur.split(': ');
+      prompt = promptChunks?.join(' ')?.trim();
+      negative = negativeChunks?.join(' ')?.trim();
+      const info =
+        infoChunk && infoChunk.length
+          ? infoChunk.split(', ').reduce((pre, cur) => {
+              const entry = cur.split(': ');
 
-          if (entry.length <= 1) return pre;
-          pre[entry[0]] = entry[1];
+              if (entry.length <= 1) return pre;
+              pre[entry[0]] = entry[1];
 
-          return pre;
-        }, {} as any) : undefined
+              return pre;
+            }, {} as any)
+          : undefined;
 
       if (info && Object.keys(info).length > 0) {
         steps = info.Steps;
@@ -243,16 +274,25 @@ export class ImageItem {
       }
     }
 
-    this.prompt = prompt;
-    this.negativePrompt = negative;
-    this.cfgScale = cfg ? +cfg : undefined;
-    this.clipSkip = clipSkip ? +clipSkip : undefined;
-    this.steps = steps ? +steps : undefined;
-    this.seed = seed;
-    this.sampler = sampler;
-    this.modelHash = hash;
-    this.width = meta.width;
-    this.height = meta.height;
+    return {
+      prompt: prompt,
+      negativePrompt: negative,
+      cfgScale: cfg ? +cfg : undefined,
+      clipSkip: clipSkip ? +clipSkip : undefined,
+      steps: steps ? +steps : undefined,
+      seed: seed,
+      sampler: sampler,
+      modelHash: hash,
+      width: meta.width,
+      height: meta.height,
+    };
+  }
+
+  private replaceProperties(obj: any) {
+    for(const key in obj) {
+      // @ts-ignore
+      this[key as any] = obj[key];
+    }
   }
 
   private extractPopulatedFields() {
@@ -261,13 +301,13 @@ export class ImageItem {
 
   private populateTags() {
     if (this.prompt && this.prompt.length) {
-      this.promptTags = this.prompt.split(',').map(t => ({
-        name: t.trim()
+      this.promptTags = this.prompt.split(',').map((t) => ({
+        name: t.trim(),
       }));
     }
     if (this.negativePrompt && this.negativePrompt.length) {
-      this.negativeTags = this.negativePrompt.split(',').map(t => ({
-        name: t.trim()
+      this.negativeTags = this.negativePrompt.split(',').map((t) => ({
+        name: t.trim(),
       }));
     }
   }

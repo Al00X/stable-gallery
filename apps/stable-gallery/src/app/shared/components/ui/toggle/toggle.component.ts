@@ -14,8 +14,9 @@ import { LabelComponent } from '../label/label.component';
 export class ToggleComponent implements OnInit {
   @Input() control = formControl<boolean>(false);
   @Input() label?: string;
-  @Input() activeText = 'On';
-  @Input() inactiveText = 'Off';
+  @Input() activeText = 'ON';
+  @Input() inactiveText = 'OFF';
+  @Input() tooltip?: string;
   @Input() activeTooltip?: string;
   @Input() inactiveTooltip?: string;
   @Input() padding = '0.25rem 0.5rem';

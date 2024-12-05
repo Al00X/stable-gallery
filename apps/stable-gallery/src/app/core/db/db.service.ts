@@ -3,11 +3,11 @@ import type {
   BetterSQLite3Database,
   drizzle,
 } from 'drizzle-orm/better-sqlite3';
-import { ElectronService } from '../services/electron.service';
+import { ElectronService } from '../services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as schema from '../db/schema';
 import type { MigrationMeta } from 'drizzle-orm/migrator';
-import { ImageItem } from '../helpers/image.helper';
+import {ImageItem, sleep} from '../helpers';
 import {
   ImageEntry,
   imagesEntry,
@@ -16,12 +16,12 @@ import {
   minMax,
   statEntry,
   tagEntry,
-} from '../db/schema';
+} from './schema';
 import { BehaviorSubject } from 'rxjs';
 import { eq, sql } from 'drizzle-orm';
 import { MinMax } from '../interfaces';
 import { flattenMinMax } from '../helpers';
-import {intersect} from "drizzle-orm/sqlite-core";
+import {TagEntry} from "../db/schema";
 
 export interface ImageQueryModel {
   page?: number;
@@ -78,10 +78,14 @@ export class DbService {
             addedAt: new Date(),
           })
           .returning({ id: imagesEntry.id });
-        const promptTagInsertRes = model.promptTags.length
+
+        const promptTags = promptTokenizer(model.prompt, true).map(t => ({ name: t } as TagEntry));
+        const negativeTags = promptTokenizer(model.negativePrompt, true).map(t => ({ name: t } as TagEntry));
+
+        const promptTagInsertRes = promptTags.length
           ? await this.db
               .insert(tagEntry)
-              .values(model.promptTags)
+              .values(promptTags)
               .returning({ id: tagEntry.id, name: tagEntry.name })
               .onConflictDoUpdate({
                 target: tagEntry.name,
@@ -90,10 +94,10 @@ export class DbService {
                 },
               })
           : undefined;
-        const negatveTagInsertRes = model.negativeTags.length
+        const negativeTagInsertRes = negativeTags.length
           ? await this.db
               .insert(tagEntry)
-              .values(model.negativeTags)
+              .values(negativeTags)
               .returning({ id: tagEntry.id, name: tagEntry.name })
               .onConflictDoUpdate({
                 target: tagEntry.name,
@@ -115,7 +119,7 @@ export class DbService {
               tagId: t.id,
               negative: false,
             })) ?? []),
-            ...(negatveTagInsertRes?.map((t) => ({
+            ...(negativeTagInsertRes?.map((t) => ({
               imageId: id,
               tagId: t.id,
               negative: true,
@@ -238,8 +242,10 @@ export class DbService {
                       and(
                         eq(imagesToTagsEntry.negative, false),
                         or(
-                          ...query.prompt!.toLowerCase().split(',').map((t) => like(lower(tagEntry.name), `%${t.trim()}%`)),
-                        )
+                          ...query.promptTokens.map(
+                            (t) => like(lower(tagEntry.name), `${t}%`),
+                          ),
+                        ),
                       ),
                     ),
                 )
@@ -259,8 +265,11 @@ export class DbService {
                       and(
                         eq(imagesToTagsEntry.negative, true),
                         or(
-                          ...query.negativePrompt.toLowerCase().split(',').map((t) => like(lower(tagEntry.name), `%${t.trim()}%`)),
-                        )
+                          ...query.negativePromptTokens
+                            .map((t) =>
+                              like(lower(tagEntry.name), `${t}%`),
+                            ),
+                        ),
                       ),
                     ),
                 )
@@ -324,9 +333,11 @@ export class DbService {
   }
 
   async reset() {
-    this.initialized$.next(false);
+    console.log(this.sqlite, this.db);
     this.sqlite.close();
+    await sleep(200);
     await fs$.delete(this.getDatabasePath());
+    this.initialized$.next(false);
     this.setup();
   }
 
@@ -355,20 +366,52 @@ export class DbService {
   }
 }
 
+function promptTokenizer(prompt: string | undefined, removeStopWords = false) {
+  if (!prompt) return [];
+
+  // prettier-ignore
+  const stopwords = [
+        'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
+        'has', 'he', 'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the',
+        'to', 'was', 'were', 'will', 'with'
+    ];
+
+  const stopwordRegex = new RegExp(`^(${stopwords.join('|')})$`, 'i');
+
+  const words = prompt
+    .replaceAll(/(\(|\)|\[|\]|)/g, '')
+    .replaceAll(/<[^:>]*:|(:[^>]*)?>/g, '')
+    .replaceAll(/:[0-9\.]+/g, '')
+    .split(/(\s|,|\.|:)+/)
+    .map((t) => t.toLowerCase().trim())
+    .filter((t) => !!t.length && (removeStopWords ? !stopwordRegex.test(t) : true));
+
+  return words;
+}
+
 function flattenImageQuery(
   model: ImageQueryModel | undefined,
-): ImageQueryModel {
+): ImageQueryModel & { promptTokens: string[]; negativePromptTokens: string[] } {
   const q = [model, ...(model?.preFilters ?? [])];
-  return {
-    ...model,
-    prompt: q
+
+  const prompt = q
       .map((t) => t?.prompt)
       .filter((t) => !!t)
-      .join(','),
-    negativePrompt: q
+      .join(',');
+  const negativePrompt = q
       .map((t) => t?.negativePrompt)
       .filter((t) => !!t)
-      .join(','),
+      .join(',')
+
+  const promptTokens = promptTokenizer(prompt)
+  const negativePromptTokens = promptTokenizer(negativePrompt)
+
+  return {
+    ...model,
+    prompt,
+    negativePrompt,
+    promptTokens,
+    negativePromptTokens,
     sampler: q
       .map((t) => t?.sampler)
       .filter((t) => !!t)

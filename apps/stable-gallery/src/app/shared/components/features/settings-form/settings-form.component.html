@@ -7,6 +7,18 @@
 ></ui-list-field>
 
 @if (showOptionals) {
+  <ui-button-group
+    label="Image controls"
+    [tooltip]="'favorite, nsfw toggles, etc.\nIf None selected, Controls will be shown on the bottom bar'"
+    [control]="settingsForm.controls.imageControls"
+    [items]="[{ label: 'Hover', value: 'hover' }, { label: 'Selection', value: 'select' }, { label: 'None', value: 'none' }]"
+  ></ui-button-group>
+<!--  <ui-toggle-->
+<!--    label="Show image controls by hovering"-->
+<!--    [tooltip]="'favorite, nsfw toggles, etc. If disabled, Controls will be shown on image selection'"-->
+<!--    [control]="settingsForm.controls.showControlsOnImageHoverInGallery"-->
+<!--  ></ui-toggle>-->
+
   <ui-toggle
     label="Show sampler on images in gallery"
     [control]="settingsForm.controls.showSampler"

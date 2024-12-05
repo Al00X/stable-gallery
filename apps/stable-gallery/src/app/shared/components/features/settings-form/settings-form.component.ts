@@ -1,16 +1,21 @@
 import { Component, inject, Input, ViewChild } from '@angular/core';
 import {
+  ButtonGroupComponent,
   ListFieldAddEvent,
   ListFieldComponent,
   ToggleComponent,
 } from '../../ui';
-import { AppService, ElectronService } from '../../../../core/services';
+import {
+  AppService,
+  AppSettings,
+  ElectronService,
+} from '../../../../core/services';
 import { formControl, formGroup } from '../../../../core/helpers';
 
 @Component({
   selector: 'feature-settings-form',
   standalone: true,
-  imports: [ListFieldComponent, ToggleComponent],
+  imports: [ListFieldComponent, ToggleComponent, ButtonGroupComponent],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss',
 })
@@ -29,6 +34,7 @@ export class SettingsFormComponent {
     dirs: formControl<string[]>(),
     openDetailsInGalleryByDefault: formControl<boolean>(),
     openDetailsInLightboxByDefault: formControl<boolean>(),
+    imageControls: formControl<AppSettings['imageControls']>(),
     peakNsfw: formControl<boolean>(),
     showSampler: formControl<boolean>(),
   });
@@ -40,6 +46,7 @@ export class SettingsFormComponent {
       openDetailsInGalleryByDefault: settings.openDetailsTabInGalleryByDefault,
       openDetailsInLightboxByDefault:
         settings.openDetailsTabInLightboxByDefault,
+      imageControls: settings.imageControls,
       peakNsfw: !!settings.peakNsfwWithKeybinding,
       showSampler: !!settings.showSamplerInGallery,
     });
@@ -62,6 +69,7 @@ export class SettingsFormComponent {
       dirs: values.dirs,
       openDetailsTabInGalleryByDefault: values.openDetailsInGalleryByDefault,
       openDetailsTabInLightboxByDefault: values.openDetailsInLightboxByDefault,
+      imageControls: values.imageControls,
       peakNsfwWithKeybinding: values.peakNsfw ? 'Alt' : undefined,
       showSamplerInGallery: values.showSampler,
     });

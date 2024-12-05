@@ -5,3 +5,4 @@ export * from './observable.helper';
 export * from './selection-model';
 export * from './array.helper';
 export * from './object.helper';
+export * from './promise.helper';

@@ -20,5 +20,6 @@ export class AppComponent {
     registerIcons();
 
     inject(KeybindService);
+    console.log("Refresh the page if you don't see anything! (using the button in the toolbar or Ctrl+R)\nThis is a development bug")
   }
 }

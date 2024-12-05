@@ -2,7 +2,7 @@ import {MinMax} from "../interfaces";
 
 export function isObjectEmpty(obj: any) {
   for(const value of Object.values(obj)) {
-    if (isEmpty(value)) {
+    if (!isEmpty(value)) {
       return false;
     }
   }

@@ -9,16 +9,18 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ImageItem } from '../../../../core/helpers';
-import { formatDate } from '@angular/common';
+import {AsyncPipe, formatDate} from '@angular/common';
 import { ItemRecord } from '../../../../core/interfaces';
 import { ButtonComponent, IconComponent } from '../../ui';
 import { MatIcon } from '@angular/material/icon';
 import { AppService } from '../../../../core/services';
+import {map, Observable} from "rxjs";
+import {fromPromise} from "rxjs/internal/observable/innerFrom";
 
 @Component({
   selector: 'feature-image-details-pane',
   standalone: true,
-  imports: [ButtonComponent, IconComponent, MatIcon],
+  imports: [ButtonComponent, IconComponent, MatIcon, AsyncPipe],
   templateUrl: './image-details-pane.component.html',
   styleUrl: './image-details-pane.component.scss',
 })
@@ -34,7 +36,7 @@ export class ImageDetailsPaneComponent implements OnInit, OnChanges {
   isImageExpanded = signal(this.app.state.settings.detailsTabImageExpanded);
   detailsSection = signal<
     | {
-        main: ItemRecord<string | number | undefined>[];
+        main: ItemRecord<Observable<string | number | undefined>>[];
         other: ItemRecord<string | number | undefined>[];
         metadata: ItemRecord<string | number | undefined>[];
       }
@@ -71,11 +73,18 @@ export class ImageDetailsPaneComponent implements OnInit, OnChanges {
       return;
     }
 
+    this.image.partialLoad();
     const image = this.image;
     this.detailsSection.set({
       main: [
-        { label: 'Prompt', value: image.prompt },
-        { label: 'Negative Prompt', value: image.negativePrompt },
+        {
+          label: 'Prompt',
+          value: this.image.model$.pipe().pipe(map((m) => m?.prompt)),
+        },
+        {
+          label: 'Negative Prompt',
+          value: this.image.model$.pipe().pipe(map((m) => m?.negativePrompt)),
+        },
       ],
       other: [
         { label: 'Seed', value: image.seed },

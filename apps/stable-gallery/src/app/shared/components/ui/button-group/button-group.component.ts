@@ -17,6 +17,7 @@ export class ButtonGroupComponent {
   @Input() control = formControl<any>();
   @Input() label?: string;
   @Input() items: ItemRecord<any>[] = [];
+  @Input() tooltip?: string;
 
   onClick(item: ItemRecord<any>) {
     if (item.value === this.control.value) return;

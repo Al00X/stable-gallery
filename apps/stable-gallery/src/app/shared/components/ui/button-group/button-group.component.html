@@ -1,6 +1,6 @@
 <div class="ui-button-group">
   <ui-label [text]="label"></ui-label>
-  <div class="ui-button-group-wrapper">
+  <div class="ui-button-group-wrapper" [matTooltip]="tooltip!">
     @for (item of items; track item.value) {
       <div
         [class.selected]="(control.value$ | async) === item.value"

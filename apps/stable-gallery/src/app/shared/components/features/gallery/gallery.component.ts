@@ -47,6 +47,8 @@ type SortDirection = 'asc' | 'desc';
 const SEARCH_DEBOUNCE = 150;
 const SCROLL_THRESHOLD = 200;
 
+// TODO: virtual grid/scroll view
+
 @Component({
   selector: 'feature-gallery',
   standalone: true,
@@ -100,6 +102,11 @@ export class GalleryComponent {
     image: ImageItem;
     isSelected: boolean;
   };
+  private _mouseUpState?: {
+    index: number;
+    image: ImageItem;
+    isSelected: boolean;
+  }
   private _lastMouseMove?: number;
   private _lastSelectionRange?: { l: number; h: number };
 
@@ -207,21 +214,31 @@ export class GalleryComponent {
     );
   }
   onImageMouseUp(index: number, item: ImageItem) {
-    const _state = this._mouseDownState;
+    const _mouseDownState = this._mouseDownState;
+    const _mouseUpState = this._mouseUpState;
+
     this._mouseDownState = undefined;
+    this._mouseUpState = {
+      index,
+      image: item,
+      isSelected: this.selectionModel.isSelected(item),
+    }
 
     if (this.keybind.shift()) {
+      // TODO select range
       return;
     }
-    if (!_state || _state.index === index) {
-      if (_state?.isSelected) {
+
+    if (!_mouseDownState || _mouseDownState.index === index) {
+      if (_mouseDownState?.isSelected) {
         this.selectionModel.deselect(item);
       } else {
         this.selectionModel.select(item);
       }
       return;
     }
-    this.highlightImageRange(_state.index, index, _state.isSelected);
+
+    this.highlightImageRange(_mouseDownState.index, index, _mouseDownState.isSelected);
   }
 
   setFilterModel() {
